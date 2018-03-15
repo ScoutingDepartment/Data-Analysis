@@ -3,10 +3,18 @@ Reads csv files scanned from the QR scanner
 """
 
 import pandas as pd
+from sqlalchemy import types as sql_types
 
-from processor import indexing
+from processor import indexing, database, validation
 
-HEADERS = ["Match", "Team", "Name", "StartTime", "Board", "Data", "Comments"]
+HEADER = {"Match": sql_types.Integer,
+          "Team": sql_types.Integer,
+          "Name": sql_types.String,
+          "StartTime": sql_types.Integer,
+          "Board": sql_types.Integer,
+          "Data": sql_types.String,
+          "Comments": sql_types.String
+          }
 
 
 def read_one_csv_file(file_name):
@@ -32,31 +40,25 @@ def read_all_csv():
 
     for f in indexing.filtered_files("data/scan", ".csv"):
         for entry in read_one_csv_file(f):
-            yield entry
+            if validation.check_encode(entry):
+                yield entry
 
 
 def unique_entries():
+    """
+    Removes duplicate entries
+    :return: A set of unique entries
+    """
+
     return set(read_all_csv())
 
 
-# TODO reads and puts into database
-
-
-def generate_raw_database():
-    entries = unique_entries()
-    dictionaries = []
-    for entry in entries:
-        entry = entry.split("_")
-        d = {}
-        for i, column in enumerate(HEADERS):
-            d[column] = entry[i]
-        dictionaries.append(d)
-    db = pd.DataFrame(dictionaries, columns=HEADERS)
-    return db
-
-
 def get_entry_dict(entry):
-
+    """
+    Formats a string entry into a dictionary
+    :param entry: The encoded string entry
+    :return: Formatted dictionary
+    """
     split = entry.split("_")
 
     return {"Match": split[0],
@@ -70,7 +72,22 @@ def get_entry_dict(entry):
 
 
 def get_entries_table():
-    return pd.DataFrame([get_entry_dict(e) for e in unique_entries()], columns=HEADERS)
+    """
+    Creates a table of unique entries
+    :return: The pandas table of entries
+    """
+    return pd.DataFrame([get_entry_dict(e) for e in unique_entries()], columns=HEADER.keys())
 
-# TODO fix this so that the types are not object
-# TODO Check for encode validation
+
+def write_to_database():
+    """
+    Writes entries into the database
+    """
+    conn = database.get_connection()
+
+    get_entries_table().to_sql(name="RAW_ENTRIES",
+                               con=conn,
+                               if_exists="replace",  # replaces existing table
+                               dtype=HEADER  # sets the column data types
+                               )
+    conn.close()
