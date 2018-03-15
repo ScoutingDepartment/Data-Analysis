@@ -2,7 +2,8 @@
 Manages the databases used for storing data
 """
 
-import sqlite3
+import sqlalchemy
+
 
 def get_connection():
-    return sqlite3.connect("data/database/data.warp7")
+    return sqlalchemy.create_engine("sqlite:///data/database/data.warp7").connect()
