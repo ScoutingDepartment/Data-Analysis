@@ -5,12 +5,12 @@ Reads csv files scanned from the QR scanner
 import pandas as pd
 from sqlalchemy import types as sql_types
 
-from processor import indexing, database, validation
+from processor import indexing, database, validation, format_time
 
 HEADER = {"Match": sql_types.Integer,
           "Team": sql_types.Integer,
           "Name": sql_types.String,
-          "StartTime": sql_types.Integer,
+          "StartTime": sql_types.String,
           "Board": sql_types.Integer,
           "Data": sql_types.String,
           "Comments": sql_types.String
@@ -64,7 +64,7 @@ def get_entry_dict(entry):
     return {"Match": split[0],
             "Team": int(split[1]),
             "Name": split[2],
-            "StartTime": int(split[3], 16),
+            "StartTime": format_time.display_time(int(split[3], 16)),
             "Board": int(split[4], 16),
             "Data": split[5],
             "Comments": split[6]
