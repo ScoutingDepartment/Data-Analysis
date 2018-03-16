@@ -23,6 +23,8 @@ def find_entries(df, match='', team='', name=''):
     if name != '':
         df = df[df['Name'].isin(name)]
 
+    return df
+
 
 class EntryManager:
     def __init__(self):
