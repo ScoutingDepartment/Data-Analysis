@@ -1,3 +1,3 @@
-from processor.csv_to_database import write_to_database
+from processor.csv_to_database import write_unique
 
-write_to_database()
+write_unique()
