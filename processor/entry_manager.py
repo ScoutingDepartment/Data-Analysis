@@ -2,7 +2,10 @@
 Manages all the entered entries for navigation
 A list of all entries
 """
+
 import pandas as pd
+
+from processor import database
 
 
 def find_entries(df, match='', team='', name=''):
@@ -27,5 +30,124 @@ def find_entries(df, match='', team='', name=''):
 
 
 class EntryManager:
-    def __init__(self):
-        self.entries = pd.DataFrame()
+
+    def __init__(self, database_file):
+
+        self.database_file = database_file
+        self.entries = pd.DataFrame()  # The edited data
+
+        conn = database.get_connection(self.database_file)
+
+        try:
+            # TODO Read Raw Entries Table
+
+            # TODO If Edited Table exists: Read Edited Entries Table;
+            # TODO Merge Raw Table with Edited Table to avoid loss of changes by comparing columns
+            pass
+
+        except IOError:
+            # TODO Change Error Type
+            # TODO Handle errors in case the connection is not established or table doesn't exist
+            pass
+
+        finally:
+            conn.close()
+
+    def filter(self, match=None, team=None, name=None):
+        # TODO other options: filter by time and board
+        # TODO consider: use one argument (dictionary) instead of multiple because previous and next also calls
+
+        # Used for searching through entries
+
+        # TODO Return a new DataFrame/List containing the filtered list
+        # TODO Add the option for list of filters
+        # TODO Return the filtered list excluding data and comments because they don't need to be displayed
+        # TODO Sort the data in a logical way
+
+        return pd.DataFrame(self.entries)  # TODO Replace this
+
+    def entry_at(self, index):
+        # Used for displaying a specific entry
+
+        if not self.entries.empty:  # TODO Also check bounds
+
+            # TODO Create data info dictionary
+            # TODO Create data list: call the decoder and formatter
+
+            return {"Match": 0,
+                    "Team": 0,
+                    "Name": "",
+                    "StartTime": "",
+                    "Board": "",
+
+                    "Data": [
+                        ("Type String", "Type Value (Formatted)", "Exclude/Undo")
+                    ],
+
+                    # TODO Data can be possibly a pandas table
+
+                    "Comments": ""
+                    }
+        return {}
+
+    def original_entry_at(self, index):
+
+        # TODO call entry at
+        # TODO connect to RAW_ENTRIES database
+        # TODO use info from entry at to locate entry in raw database
+
+        # TODO Return a data info dictionary (see entry_at)
+
+        return {}
+
+    def next(self, index, match=None, team=None, name=None):
+
+        # TODO Call self.filter to get list of filtered entries
+        # TODO Find the next index
+        # TODO Return the next entry, or current entry if no more to be found
+
+        next_index = 0
+
+        return self.entry_at(next_index)
+
+    def previous(self, index, match=None, team=None, name=None):
+
+        # TODO Call self.filter to get list of filtered entries
+        # TODO Find the previous index
+        # TODO Return the previous entry, or current entry if no more to be found
+
+        previous_index = 0
+
+        return self.entry_at(previous_index)
+
+    def add_entry(self, match, team, name, start_time, data, comments):
+
+        # TODO Append one entry to the edited table
+        # TODO Check if entry already exists
+
+        # NOTE this only adds a blank entry. Editing of this entry is in edit_entry method
+
+        new_index = 0
+        return new_index
+
+    def remove_entry(self, index):
+        # TODO remove a row from the table if such row exists
+        pass
+
+    def edit_entry(self, index, data):
+        # Used to change data for one entry
+
+        # TODO Call the board to get data type
+        # TODO Call validation and format parser
+        # TODO call the encoder
+        # TODO change the data in the pandas table
+
+        pass
+
+    def save(self):
+
+        conn = database.get_connection(self.database_file)
+
+        # TODO Save entries table to database
+
+        conn.close()

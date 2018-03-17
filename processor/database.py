@@ -5,5 +5,9 @@ Manages the databases used for storing data
 import sqlalchemy
 
 
-def get_connection():
-    return sqlalchemy.create_engine("sqlite:///data/database/data.warp7").connect()
+def get_connection(file):
+    return sqlalchemy.create_engine(get_sqlite_uri(file)).connect()
+
+
+def get_sqlite_uri(file):
+    return "sqlite:///" + file

@@ -70,11 +70,11 @@ def get_entries_table():
     return pd.DataFrame([get_entry_dict(e) for e in set(read_all_csv())], columns=HEADER.keys())
 
 
-def write_unique():
+def write_unique(file):
     """
     Writes entries into the database
     """
-    conn = database.get_connection()
+    conn = database.get_connection(file)
 
     get_entries_table().to_sql(name="RAW_ENTRIES",
                                con=conn,
