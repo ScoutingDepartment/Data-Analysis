@@ -5,8 +5,14 @@ A list of all entries
 
 import pandas as pd
 
-from processor import database
-
+HEADERS = ["Match",
+           "Team",
+           "Name",
+           "StartTime",
+           "Board",
+           "Data",
+           "Comments"
+           ]
 
 def find_entries(df, match='', team='', name=''):
     """
@@ -108,6 +114,7 @@ class EntryManager:
 
         next_index = 0
 
+
         return self.entry_at(next_index)
 
     def previous(self, index, match=None, team=None, name=None):
@@ -121,26 +128,32 @@ class EntryManager:
         return self.entry_at(previous_index)
 
     def add_entry(self, match, team, name, start_time, data, comments):
-
         # TODO Append one entry to the edited table
-        # TODO Check if entry already exists
+        new_row = pd.DataFrame(
+            data={"Match": [1], HEADERS[1]: [team], HEADERS[2]: [name], HEADERS[3]: [start_time], HEADERS[
+                4]: [data], HEADERS[5]: [comments]})
 
-        # NOTE this only adds a blank entry. Editing of this entry is in edit_entry method
+        # if len(find_entries("match":match, "team":team, "name": name))# TODO Check if entry already exists
+        if len(find_entries(match, team, name)) > 0:
+            self.df.append(new_row)
+        else:
+            return "Duplicate"
 
-        new_index = 0
+        new_index = 0  # Not sure what this is for
         return new_index
 
     def remove_entry(self, index):
         # TODO remove a row from the table if such row exists
+        self.entries.drop(index=index)
         pass
 
     def edit_entry(self, index, data):
         # Used to change data for one entry
 
-        # TODO Call the board to get data type
+        # TODO Call the board to get data type #
         # TODO Call validation and format parser
         # TODO call the encoder
-        # TODO change the data in the pandas table
+        self.entries.set_value(index, "Data", data)
 
         pass
 
@@ -151,3 +164,6 @@ class EntryManager:
         # TODO Save entries table to database
 
         conn.close()
+
+
+entry_manager = EntryManager()
