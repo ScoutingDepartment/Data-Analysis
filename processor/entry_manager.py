@@ -5,6 +5,8 @@ A list of all entries
 
 import pandas as pd
 
+from processor import database
+
 HEADERS = ["Match",
            "Team",
            "Name",
@@ -40,12 +42,12 @@ class EntryManager:
     def __init__(self, database_file):
 
         self.database_file = database_file
-        self.entries = pd.DataFrame()  # The edited data
+        self.edited_data = pd.DataFrame()  # The edited data
 
         conn = database.get_connection(self.database_file)
 
         try:
-            # TODO Read Raw Entries Table
+            self.original_data = pd.read_sql("SELECT * FROM RAW_ENTRIES", conn)
 
             # TODO If Edited Table exists: Read Edited Entries Table;
             # TODO Merge Raw Table with Edited Table to avoid loss of changes by comparing columns
@@ -70,12 +72,12 @@ class EntryManager:
         # TODO Return the filtered list excluding data and comments because they don't need to be displayed
         # TODO Sort the data in a logical way
 
-        return pd.DataFrame(self.entries)  # TODO Replace this
+        return pd.DataFrame(self.edited_data)  # TODO Replace this
 
     def entry_at(self, index):
         # Used for displaying a specific entry
 
-        if not self.entries.empty:  # TODO Also check bounds
+        if not self.edited_data.empty:  # TODO Also check bounds
 
             # TODO Create data info dictionary
             # TODO Create data list: call the decoder and formatter
@@ -130,10 +132,9 @@ class EntryManager:
     def add_entry(self, match, team, name, start_time, data, comments):
         # TODO Append one entry to the edited table
         new_row = pd.DataFrame(
-            data={"Match": [1], HEADERS[1]: [team], HEADERS[2]: [name], HEADERS[3]: [start_time], HEADERS[
+            data={HEADERS[0]: [match], HEADERS[1]: [team], HEADERS[2]: [name], HEADERS[3]: [start_time], HEADERS[
                 4]: [data], HEADERS[5]: [comments]})
 
-        # if len(find_entries("match":match, "team":team, "name": name))# TODO Check if entry already exists
         if len(find_entries(match, team, name)) > 0:
             self.df.append(new_row)
         else:
@@ -144,7 +145,7 @@ class EntryManager:
 
     def remove_entry(self, index):
         # TODO remove a row from the table if such row exists
-        self.entries.drop(index=index)
+        self.edited_data.drop(index=index)
         pass
 
     def edit_entry(self, index, data):
@@ -153,17 +154,16 @@ class EntryManager:
         # TODO Call the board to get data type #
         # TODO Call validation and format parser
         # TODO call the encoder
-        self.entries.set_value(index, "Data", data)
-
-        pass
+        self.edited_data.set_value(index, "Data", data)
 
     def save(self):
 
         conn = database.get_connection(self.database_file)
-
+        # TODO if exist replace
+        self.edited_data.to_sql("EDITED_DATA", conn, if_exists="replace")
         # TODO Save entries table to database
 
         conn.close()
 
 
-entry_manager = EntryManager()
+entry_manager = EntryManager("../data/database/data.warp7")
