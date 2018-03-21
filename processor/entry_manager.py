@@ -86,10 +86,10 @@ class EntryManager:
 
     def increment(self, df,index, increment):
         # TODO Return the next entry, or current entry if no more to be found
-        incremented_entry = df[((index + increment + 1) % df.length())]
-        unfiltered_index = self.filter({'Match': incremented_entry['Match'],
-                                        'Team': incremented_entry['Team'],
-                                        'Name': incremented_entry['Name']})['index']
+        incremented_entry = df[((index + increment + 1) % df.shape[0])]
+        unfiltered_index = self.filter(sort_order=[],Match= incremented_entry['Match'],
+                                       Team= incremented_entry['Team'],
+                                       Name= incremented_entry['Name'])['index']
 
         return self.entry_at(unfiltered_index)
 
@@ -105,7 +105,7 @@ class EntryManager:
             data={HEADERS[0]: [match], HEADERS[1]: [team], HEADERS[2]: [name], HEADERS[3]: [start_time], HEADERS[
                 4]: [data], HEADERS[5]: [comments]})
 
-        if len(find_entries(match, team, name)) > 0:
+        if len(self.filter(sort_order=[],Match=match, Team=team, Name=name)) > 0:
             self.df.append(new_row)
         else:
             return "Duplicate"
