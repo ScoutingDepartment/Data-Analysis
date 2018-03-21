@@ -42,12 +42,11 @@ class EntryManager:
         finally:
             conn.close()
 
-    def filter(self, filter_dict={'Match': [], 'Team': [], 'Name': []}, sort_order=['Match', 'Team']):
+    def filter(self, sort_order=['Match', 'Team'], **filter_dict):
         df = self.edited_data
 
         for i in filter_dict.keys():
-            for j in filter_dict[i]:
-                df = df[df[i].isin(j)]
+            df = df[df[i].isin(filter_dict[i])]
 
         return df.sort_values(by=sort_order).loc[:, ['index', 'Match', 'Team', 'Name']]
 
@@ -85,22 +84,20 @@ class EntryManager:
 
         return {}
 
-    def increment(self, index, increment, filter_dict={'Match': [], 'Team': [], 'Name': []},
-                  sort_order=['Match', 'Team']):
+    def increment(self, df,index, increment):
         # TODO Return the next entry, or current entry if no more to be found
-        filtered_list = self.filter(filter_dict, sort_order)
-        incremented_entry = filtered_list[((index + increment + 1) % filtered_list.length())]
+        incremented_entry = df[((index + increment + 1) % df.length())]
         unfiltered_index = self.filter({'Match': incremented_entry['Match'],
                                         'Team': incremented_entry['Team'],
                                         'Name': incremented_entry['Name']})['index']
 
         return self.entry_at(unfiltered_index)
 
-    def next(self, index, filter_dict={'Match': [], 'Team': [], 'Name': []}, sort_order=['Match', 'Team']):
-        self.increment(index, 1, filter_dict, sort_order)
+    def next(self,df, index):
+        self.increment(df,index, 1)
 
-    def previous(self, index, filter_dict={'Match': [], 'Team': [], 'Name': []}, sort_order=['Match', 'Team']):
-        self.increment(index, -1, filter_dict, sort_order)
+    def previous(self, df,index):
+        self.increment(df,index, -1,)
 
     def add_entry(self, match, team, name, start_time, data, comments):
         # TODO Append one entry to the edited table
