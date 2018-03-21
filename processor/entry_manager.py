@@ -3,6 +3,7 @@ Manages all the entered entries for navigation
 A list of all entries
 """
 
+
 import pandas as pd
 
 from processor import database
@@ -15,26 +16,6 @@ HEADERS = ["Match",
            "Data",
            "Comments"
            ]
-
-def find_entries(df, match='', team='', name=''):
-    """
-    :param df: DataFrame which contains all entries
-    :param match: the match you want entries from
-    :param team: the team you want entries from
-    :param name: the name of the scouter for whom you want matches from (exact spelling)
-    :return: DataFrame which contains all of the entries which match all of the given parameters
-    """
-
-    if match != '':
-        df = df[df['Match'].isin(match)]
-
-    if team != '':
-        df = df[df['Team'].isin(team)]
-
-    if name != '':
-        df = df[df['Name'].isin(name)]
-
-    return df
 
 
 class EntryManager:
@@ -61,18 +42,16 @@ class EntryManager:
         finally:
             conn.close()
 
-    def filter(self, match=None, team=None, name=None):
-        # TODO other options: filter by time and board
-        # TODO consider: use one argument (dictionary) instead of multiple because previous and next also calls
+    def filter(self, filter_dict={'Match': [], 'Team': [], 'Name': []}, sort_order=['Match', 'Team']):
+        df = self.edited_data
 
-        # Used for searching through entries
+        for i in filter_dict.keys():
+            for j in filter_dict[i]:
+                df = df[df[i].isin(j)]
 
-        # TODO Return a new DataFrame/List containing the filtered list
-        # TODO Add the option for list of filters
-        # TODO Return the filtered list excluding data and comments because they don't need to be displayed
-        # TODO Sort the data in a logical way
+        return df.sort_values(by=sort_order).loc[:, ['index', 'Match', 'Team', 'Name']]
 
-        return pd.DataFrame(self.edited_data)  # TODO Replace this
+
 
     def entry_at(self, index):
         # Used for displaying a specific entry
@@ -82,19 +61,17 @@ class EntryManager:
             # TODO Create data info dictionary
             # TODO Create data list: call the decoder and formatter
 
-            return {"Match": 0,
-                    "Team": 0,
-                    "Name": "",
-                    "StartTime": "",
-                    "Board": "",
+            return {"Match": self.edited_data['Match'][index],
+                    "Team": self.edited_data['Team'][index],
+                    "Name": self.edited_data['Name'][index],
+                    "StartTime": self.edited_data['StartTime'][index],
+                    "Board": self.edited_data['Board'][index],
 
-                    "Data": [
-                        ("Type String", "Type Value (Formatted)", "Exclude/Undo")
-                    ],
+                    "Data": self.edited_data['Data'][index],
 
                     # TODO Data can be possibly a pandas table
 
-                    "Comments": ""
+                    "Comments": self.edited_data['Comments'][index]
                     }
         return {}
 
@@ -108,26 +85,22 @@ class EntryManager:
 
         return {}
 
-    def next(self, index, match=None, team=None, name=None):
-
-        # TODO Call self.filter to get list of filtered entries
-        # TODO Find the next index
+    def increment(self, index, increment, filter_dict={'Match': [], 'Team': [], 'Name': []},
+                  sort_order=['Match', 'Team']):
         # TODO Return the next entry, or current entry if no more to be found
+        filtered_list = self.filter(filter_dict, sort_order)
+        incremented_entry = filtered_list[((index + increment + 1) % filtered_list.length())]
+        unfiltered_index = self.filter({'Match': incremented_entry['Match'],
+                                        'Team': incremented_entry['Team'],
+                                        'Name': incremented_entry['Name']})['index']
 
-        next_index = 0
+        return self.entry_at(unfiltered_index)
 
+    def next(self, index, filter_dict={'Match': [], 'Team': [], 'Name': []}, sort_order=['Match', 'Team']):
+        self.increment(index, 1, filter_dict, sort_order)
 
-        return self.entry_at(next_index)
-
-    def previous(self, index, match=None, team=None, name=None):
-
-        # TODO Call self.filter to get list of filtered entries
-        # TODO Find the previous index
-        # TODO Return the previous entry, or current entry if no more to be found
-
-        previous_index = 0
-
-        return self.entry_at(previous_index)
+    def previous(self, index, filter_dict={'Match': [], 'Team': [], 'Name': []}, sort_order=['Match', 'Team']):
+        self.increment(index, -1, filter_dict, sort_order)
 
     def add_entry(self, match, team, name, start_time, data, comments):
         # TODO Append one entry to the edited table
