@@ -7,15 +7,6 @@ import pandas as pd
 
 from processor import database
 
-HEADERS = ["Match",
-           "Team",
-           "Name",
-           "StartTime",
-           "Board",
-           "Data",
-           "Comments"
-           ]
-
 
 class EntryManager:
 
@@ -51,7 +42,6 @@ class EntryManager:
         return df.sort_values(by=['Match', 'Team']).loc[:, ['index', 'Match', 'Team', 'Name']]
 
     def entry_at(self, index):
-        # Used for displaying a specific entry
 
         if not self.edited_data.empty:  # TODO Also check bounds
 
@@ -64,7 +54,7 @@ class EntryManager:
                     "StartTime": self.edited_data['StartTime'][index],
                     "Board": self.edited_data['Board'][index],
 
-                    "Data": self.edited_data['Data'][index],
+                    "Data": [("Type", "Value", "Exclude")], #TODO Change this with actual data
 
                     # TODO Data can be possibly a pandas table
 
@@ -75,7 +65,7 @@ class EntryManager:
     def increment(self, df, index, increment):
 
         incremented_entry = df[((index + increment + 1) % df.shape[0])]
-        unfiltered_index = self.filter(sort_order=[], Match=incremented_entry['Match'],
+        unfiltered_index = self.filter(Match=incremented_entry['Match'],
                                        Team=incremented_entry['Team'],
                                        Name=incremented_entry['Name'])['index']
 
@@ -87,23 +77,21 @@ class EntryManager:
     def previous(self, df, index):
         return self.increment(df, index, -1, )
 
-    def add_entry(self, match, team, name, start_time, data, comments):
+    def add_entry(self, **entry_data):
 
-        new_row = pd.DataFrame(
-            data={HEADERS[0]: [match], HEADERS[1]: [team], HEADERS[2]: [name], HEADERS[3]: [start_time], HEADERS[
-                4]: [data], HEADERS[5]: [comments]})
+        match = entry_data.get("Match")
+        team = entry_data.get("Team")
+        name = entry_data.get("Name")
 
-        if len(self.filter(sort_order=[], Match=match, Team=team, Name=name)) > 0:
-            self.edited_data.append(new_row)
-        else:
-            return "Duplicate"
+        # Check if entry exists
+        if len(self.filter(Match=match, Team=team, Name=name)) == 0:
+            self.edited_data.append(entry_data)
 
-        new_index = 0  # Not sure what this is for
-        return new_index
+        # TODO return the proper index
 
     def remove_entry(self, index):
-        self.edited_data.drop(index=index)
-        pass
+        # TODO Wrong
+        self.edited_data.drop(index=index, inplace=True)
 
     def edit_entry(self, index, data):
         # Used to change data for one entry
