@@ -3,7 +3,6 @@ Manages all the entered entries for navigation
 A list of all entries
 """
 
-
 import pandas as pd
 
 from processor import database
@@ -42,15 +41,14 @@ class EntryManager:
         finally:
             conn.close()
 
-    def filter(self, sort_order=['Match', 'Team'], **filter_dict):
+    def filter(self, **filter_dict):
+
         df = self.edited_data
 
         for i in filter_dict.keys():
             df = df[df[i].isin(filter_dict[i])]
 
-        return df.sort_values(by=sort_order).loc[:, ['index', 'Match', 'Team', 'Name']]
-
-
+        return df.sort_values(by=['Match', 'Team']).loc[:, ['index', 'Match', 'Team', 'Name']]
 
     def entry_at(self, index):
         # Used for displaying a specific entry
@@ -74,39 +72,29 @@ class EntryManager:
                     }
         return {}
 
-    def original_entry_at(self, index):
+    def increment(self, df, index, increment):
 
-        # TODO call entry at
-        # TODO connect to RAW_ENTRIES database
-        # TODO use info from entry at to locate entry in raw database
-
-        # TODO Return a data info dictionary (see entry_at)
-
-        return {}
-
-    def increment(self, df,index, increment):
-        # TODO Return the next entry, or current entry if no more to be found
         incremented_entry = df[((index + increment + 1) % df.shape[0])]
-        unfiltered_index = self.filter(sort_order=[],Match= incremented_entry['Match'],
-                                       Team= incremented_entry['Team'],
-                                       Name= incremented_entry['Name'])['index']
+        unfiltered_index = self.filter(sort_order=[], Match=incremented_entry['Match'],
+                                       Team=incremented_entry['Team'],
+                                       Name=incremented_entry['Name'])['index']
 
         return self.entry_at(unfiltered_index)
 
-    def next(self,df, index):
-        self.increment(df,index, 1)
+    def next(self, df, index):
+        return self.increment(df, index, 1)
 
-    def previous(self, df,index):
-        self.increment(df,index, -1,)
+    def previous(self, df, index):
+        return self.increment(df, index, -1, )
 
     def add_entry(self, match, team, name, start_time, data, comments):
-        # TODO Append one entry to the edited table
+
         new_row = pd.DataFrame(
             data={HEADERS[0]: [match], HEADERS[1]: [team], HEADERS[2]: [name], HEADERS[3]: [start_time], HEADERS[
                 4]: [data], HEADERS[5]: [comments]})
 
-        if len(self.filter(sort_order=[],Match=match, Team=team, Name=name)) > 0:
-            self.df.append(new_row)
+        if len(self.filter(sort_order=[], Match=match, Team=team, Name=name)) > 0:
+            self.edited_data.append(new_row)
         else:
             return "Duplicate"
 
@@ -114,7 +102,6 @@ class EntryManager:
         return new_index
 
     def remove_entry(self, index):
-        # TODO remove a row from the table if such row exists
         self.edited_data.drop(index=index)
         pass
 
@@ -129,11 +116,15 @@ class EntryManager:
     def save(self):
 
         conn = database.get_connection(self.database_file)
-        # TODO if exist replace
-        self.edited_data.to_sql("EDITED_DATA", conn, if_exists="replace")
-        # TODO Save entries table to database
+
+        self.edited_data.to_sql(name="EDITED_DATA",
+                                con=conn,
+                                if_exists="replace",
+                                dtype=database.EDITED_HEADER)
 
         conn.close()
 
 
-entry_manager = EntryManager("../data/database/data.warp7")
+if __name__ == "__main__":
+    # Do Testing Here
+    entry_manager = EntryManager("../data/database/data.warp7")

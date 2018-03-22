@@ -3,18 +3,8 @@ Reads csv files scanned from the QR scanner
 """
 
 import pandas as pd
-from sqlalchemy import types as sql_types
 
 from processor import indexing, database, validation, format_time
-
-HEADER = {"Match": sql_types.Integer,
-          "Team": sql_types.Integer,
-          "Name": sql_types.String,
-          "StartTime": sql_types.String,
-          "Board": sql_types.Integer,
-          "Data": sql_types.String,
-          "Comments": sql_types.String
-          }
 
 
 def read_one_csv_file(file_name):
@@ -67,7 +57,7 @@ def get_entries_table():
     Creates a table of unique entries
     :return: The pandas table of entries
     """
-    return pd.DataFrame([get_entry_dict(e) for e in set(read_all_csv())], columns=HEADER.keys())
+    return pd.DataFrame([get_entry_dict(e) for e in set(read_all_csv())], columns=database.RAW_HEADER.keys())
 
 
 def write_unique(file):
@@ -79,6 +69,6 @@ def write_unique(file):
     get_entries_table().to_sql(name="RAW_ENTRIES",
                                con=conn,
                                if_exists="replace",  # replaces existing table
-                               dtype=HEADER  # sets the column data types
+                               dtype=database.RAW_HEADER  # sets the column data types
                                )
     conn.close()
