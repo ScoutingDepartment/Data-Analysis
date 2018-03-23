@@ -9,20 +9,42 @@ from processor import database
 
 
 class EntryManager:
-
     def __init__(self, database_file):
 
         self.database_file = database_file
         self.edited_data = pd.DataFrame()  # The edited data
 
-        conn = database.get_connection(self.database_file)
+        engine = database.get_engine(self.database_file)
+        conn = engine.connect()
 
         try:
             self.original_data = pd.read_sql("SELECT * FROM RAW_ENTRIES", conn)
+            #
+            # a = pd.DataFrame([{"index": 381,
+            #                    "Match": 1000,
+            #                    "Team": 1000,
+            #                    "Name": "me",
+            #                    "StartTime": "no time",
+            #                    "Board": 1,
+            #                    "Data": "0",
+            #                    "Comments": ""}])[list(database.RAW_HEADER.keys())]
+            # self.original_data = self.original_data.append(a, ignore_index=True)
 
-            # TODO If Edited Table exists: Read Edited Entries Table;
-            # TODO Merge Raw Table with Edited Table to avoid loss of changes by comparing columns
-            pass
+            if engine.dialect.has_table(conn, "EDITED_ENTRIES"):
+                self.edited_data = pd.read_sql("SELECT * FROM EDITED_ENTRIES", conn)
+                newly_added = self.original_data[~self.original_data["index"].isin(self.edited_data["RawIndex"])].copy()
+                newly_added.rename(columns={"index": "RawIndex"}, inplace=True)
+
+                newly_added['Edited'] = ""
+
+                self.edited_data = self.edited_data.append(newly_added)
+                print(self.edited_data)
+
+
+            else:
+                self.edited_data = pd.read_sql("SELECT * FROM RAW_ENTRIES", conn)
+                self.edited_data.rename(columns={"index": "RawIndex"}, inplace=True)
+                self.edited_data['Edited'] = " "
 
         except IOError:
             # TODO Change Error Type
@@ -54,7 +76,7 @@ class EntryManager:
                     "StartTime": self.edited_data['StartTime'][index],
                     "Board": self.edited_data['Board'][index],
 
-                    "Data": [("Type", "Value", "Exclude")], #TODO Change this with actual data
+                    "Data": [("Type", "Value", "Exclude")],  # TODO Change this with actual data
 
                     # TODO Data can be possibly a pandas table
 
@@ -87,7 +109,7 @@ class EntryManager:
         if len(self.filter(Match=match, Team=team, Name=name)) == 0:
             self.edited_data.append(entry_data)
 
-        # TODO return the proper index
+            # TODO return the proper index
 
     def remove_entry(self, index):
         # TODO Wrong
@@ -103,12 +125,14 @@ class EntryManager:
 
     def save(self):
 
-        conn = database.get_connection(self.database_file)
+        conn = database.get_engine(self.database_file).connect()
 
-        self.edited_data.to_sql(name="EDITED_DATA",
+        self.edited_data.drop("index", 1, inplace=True)
+
+        self.edited_data.to_sql(name="EDITED_ENTRIES",
                                 con=conn,
                                 if_exists="replace",
-                                dtype=database.EDITED_HEADER)
+                                dtype=database.EDITED_HEADER, index_label="index")
 
         conn.close()
 
@@ -116,3 +140,4 @@ class EntryManager:
 if __name__ == "__main__":
     # Do Testing Here
     entry_manager = EntryManager("../data/database/data.warp7")
+    entry_manager.save()
