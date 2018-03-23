@@ -85,13 +85,17 @@ class EntryManager:
         return {}
 
     def increment(self, df, index, increment):
+        old_index = ''
+        for i in range(len(list(df.index.values))):
+            if list(df.index.values)[i] == index:
+                old_index = i
+                break
 
-        incremented_entry = df[((index + increment + 1) % df.shape[0])]
-        unfiltered_index = self.filter(Match=incremented_entry['Match'],
-                                       Team=incremented_entry['Team'],
-                                       Name=incremented_entry['Name'])['index']
+        if old_index == '':
+            return ''
 
-        return self.entry_at(unfiltered_index)
+        new_index = list(df.index.values)[(old_index + increment) % len(list(df.index.values))]
+        return self.entry_at(new_index)
 
     def next(self, df, index):
         return self.increment(df, index, 1)
@@ -140,4 +144,3 @@ class EntryManager:
 if __name__ == "__main__":
     # Do Testing Here
     entry_manager = EntryManager("../data/database/data.warp7")
-    entry_manager.save()
