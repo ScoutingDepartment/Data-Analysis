@@ -9,7 +9,7 @@ from processor import database
 
 
 class EntryManager:
-    def __init__(self, database_file):
+    def __init__(self, database_file: object) -> object:
 
         self.database_file = database_file
         self.edited_data = pd.DataFrame()  # The edited data
@@ -38,8 +38,6 @@ class EntryManager:
                 newly_added['Edited'] = ""
 
                 self.edited_data = self.edited_data.append(newly_added)
-                print(self.edited_data)
-
 
             else:
                 self.edited_data = pd.read_sql("SELECT * FROM RAW_ENTRIES", conn)
@@ -115,9 +113,34 @@ class EntryManager:
 
             # TODO return the proper index
 
-    def remove_entry(self, index):
+    def remove_entry(self, match, team, name, index_value):
         # TODO Wrong
-        self.edited_data.drop(index=index, inplace=True)
+        # TODO Check if the index is correct
+        match_at_index = self.edited_data.loc[index_value, "Match"]
+        print(match_at_index)
+        team_at_index = self.edited_data.loc[index_value, "Team"]
+        print(team_at_index)
+        name_at_index = self.edited_data.loc[index_value, "Name"]
+        print(name_at_index)
+
+        if match_at_index == match:
+            match_correct = True
+        else:
+            match_correct = False
+
+        match_correct = match_at_index == match
+
+        if team_at_index == team:
+            team_correct = True
+        else:
+            team_correct = False
+
+        if name_at_index == name:
+            name_correct = True
+        else:
+            name_correct = False
+        if match_correct and team_correct and name_correct:
+            self.edited_data.drop(index=index_value, inplace=True)
 
     def edit_entry(self, index, data):
         # Used to change data for one entry
@@ -144,3 +167,6 @@ class EntryManager:
 if __name__ == "__main__":
     # Do Testing Here
     entry_manager = EntryManager("../data/database/data.warp7")
+    entry_manager.save()
+    print(entry_manager.remove_entry(42, 4152, "Sam.s", 2))
+    print(entry_manager.edited_data)
