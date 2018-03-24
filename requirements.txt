@@ -1,3 +1,4 @@
 pandas
 sqlalchemy
 xlwings
+pywin32

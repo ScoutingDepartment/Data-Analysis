@@ -1,11 +1,7 @@
-# write_unique()
+from processor import board, decoder
+bd = board.find("data/board", int("e3bb3f98", 16))
+a = list(decoder.decode("4001430b4d014e004f005000510452025300540555005602474b4a6a4a724776", bd))
 
-import numpy as np
-import pandas as pd
-
-a = pd.Series(np.arange(120))
-b = pd.Series(np.arange(0, 100, 3))
-
-# print(a)
-# print(b)
-print(a.isin(b))
+import pandas
+b = pandas.DataFrame(a)
+print(b)

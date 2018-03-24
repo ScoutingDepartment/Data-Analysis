@@ -50,7 +50,7 @@ class Board:
         return self.dc(index)["log"]
 
 
-def get_board(path, board_id):
+def find(path, board_id):
     idf = open(os.path.join(path, "index.json"), "r")
     index_data = json.load(idf)
     idf.close()
@@ -61,9 +61,9 @@ def get_board(path, board_id):
     board_file = open(os.path.join(path, files[ids.index(board_id)]), "r")
     board_data = json.load(board_file)
     board_file.close()
-    return board_data
+    return Board(board_data)
 
 
 if __name__ == "__main__":
-    board = get_board("../data/board", int("e3bb3f98", 16))
+    board = find("../data/board", int("e3bb3f98", 16))
     print(board)

@@ -76,8 +76,10 @@ def decode(hex_encode, board):
         if not s:
             formatted_type += ":Off"
 
-        formatted_value = format_encode_value(v, board.cs(t))
+        formatted_value = format_encode_value(v, board.dc(t))
 
         undo = "Yes" if u else "No"
 
         yield (formatted_type, formatted_value, undo)
+
+
