@@ -4,50 +4,57 @@ A list of all entries
 """
 
 import pandas as pd
+from sqlalchemy.exc import SQLAlchemyError
 
 from processor import database
 
 
 class EntryManager:
-    def __init__(self, database_file: object) -> object:
 
-        self.database_file = database_file
-        self.edited_data = pd.DataFrame()  # The edited data
+    def __init__(self, db_file):
+        """
+        Loads raw data and edited data from database
+        :param db_file: the database file to read from
+        """
+
+        self.database_file = db_file
 
         engine = database.get_engine(self.database_file)
         conn = engine.connect()
 
         try:
-            self.original_data = pd.read_sql("SELECT * FROM RAW_ENTRIES", conn)
-            #
-            # a = pd.DataFrame([{"index": 381,
-            #                    "Match": 1000,
-            #                    "Team": 1000,
-            #                    "Name": "me",
-            #                    "StartTime": "no time",
-            #                    "Board": 1,
-            #                    "Data": "0",
-            #                    "Comments": ""}])[list(database.RAW_HEADER.keys())]
-            # self.original_data = self.original_data.append(a, ignore_index=True)
+            # Read the entire table but use 'index' as the table index
+            self.original_data = pd.read_sql(sql="SELECT * FROM RAW_ENTRIES",
+                                             con=conn,
+                                             index_col="index")
 
-            if engine.dialect.has_table(conn, "EDITED_ENTRIES"):
-                self.edited_data = pd.read_sql("SELECT * FROM EDITED_ENTRIES", conn)
-                newly_added = self.original_data[~self.original_data["index"].isin(self.edited_data["RawIndex"])].copy()
-                newly_added.rename(columns={"index": "RawIndex"}, inplace=True)
+            # Check if we use the existing EDITED_ENTRIES table or create a new one
+            if engine.dialect.has_table(connection=conn,
+                                        table_name="EDITED_ENTRIES"):
 
-                newly_added['Edited'] = ""
+                self.edited_data = pd.read_sql(sql="SELECT * FROM EDITED_ENTRIES",
+                                               con=conn,
+                                               index_col="index")
 
-                self.edited_data = self.edited_data.append(newly_added)
+                # Compute a boolean array indicating the add values to raw
+                condition = ~self.original_data.index.isin(self.edited_data["RawIndex"])
+
+                # Filter by the condition to get new data values
+                new_data = self.original_data[condition].reset_index()
+                new_data.rename(columns={"index": "RawIndex"}, inplace=True)
+                new_data["Edited"] = " "
+
+                # Add new data to the edited table
+                self.edited_data = pd.concat([self.edited_data, new_data], ignore_index=True)
 
             else:
-                self.edited_data = pd.read_sql("SELECT * FROM RAW_ENTRIES", conn)
+                self.edited_data = self.original_data.reset_index()
                 self.edited_data.rename(columns={"index": "RawIndex"}, inplace=True)
-                self.edited_data['Edited'] = " "
+                self.edited_data["Edited"] = " "
 
-        except IOError:
-            # TODO Change Error Type
-            # TODO Handle errors in case the connection is not established or table doesn't exist
-            pass
+        except SQLAlchemyError:
+            self.original_data = pd.DataFrame(columns=database.RAW_HEADER.keys())
+            self.edited_data = pd.DataFrame(columns=database.EDITED_HEADER.keys())
 
         finally:
             conn.close()
@@ -154,8 +161,6 @@ class EntryManager:
 
         conn = database.get_engine(self.database_file).connect()
 
-        self.edited_data.drop("index", 1, inplace=True)
-
         self.edited_data.to_sql(name="EDITED_ENTRIES",
                                 con=conn,
                                 if_exists="replace",
@@ -167,6 +172,6 @@ class EntryManager:
 if __name__ == "__main__":
     # Do Testing Here
     entry_manager = EntryManager("../data/database/data.warp7")
-    entry_manager.save()
-    print(entry_manager.remove_entry(42, 4152, "Sam.s", 2))
-    print(entry_manager.edited_data)
+    # entry_manager.save()
+    # print(entry_manager.remove_entry(42, 4152, "Sam.s", 2))
+    # print(entry_manager.edited_data)
