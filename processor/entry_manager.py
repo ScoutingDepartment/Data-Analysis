@@ -8,7 +8,6 @@ from sqlalchemy.exc import SQLAlchemyError
 
 from processor import database
 
-
 FILTER_HEADER = ['Match', 'Team', 'Name', "Board", "Edited"]
 FILTER_SORT = ['Match', 'Team']
 
@@ -193,18 +192,8 @@ class EntryManager:
 
 if __name__ == "__main__":
     # Do Testing Here
+
     entry_manager = EntryManager("../data/database/data.warp7")
-
-    import xlwings as xw
-    book = xw.Book("/Users/juice/Desktop/Book4.xlsx")
-
-    book.sheets[0].range("Table1").options(pd.DataFrame,
-                                           index=False,
-                                           header=False,
-                                           expand="table").value = entry_manager.filter(match=[55, 40])
-
-    book.sheets[0].range("Table1").expand("right").offset(-1, 0).value = FILTER_HEADER
-
     # entry_manager.save()
     # print(entry_manager.remove_entry(42, 4152, "Sam.s", 2))
     # print(entry_manager.edited_data)
