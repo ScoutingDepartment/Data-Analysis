@@ -9,6 +9,10 @@ from sqlalchemy.exc import SQLAlchemyError
 from processor import database
 
 
+FILTER_HEADER = ['Match', 'Team', 'Name', "Board", "Edited"]
+FILTER_SORT = ['Match', 'Team']
+
+
 class EntryManager:
 
     def __init__(self, db_file):
@@ -41,15 +45,22 @@ class EntryManager:
 
                 # Filter by the condition to get new data values
                 new_data = self.original_data[condition].reset_index()
-                new_data.rename(columns={"index": "RawIndex"}, inplace=True)
+
+                new_data.rename(columns={"index": "RawIndex"},
+                                inplace=True)
+
                 new_data["Edited"] = " "
 
                 # Add new data to the edited table
-                self.edited_data = pd.concat([self.edited_data, new_data], ignore_index=True)
+                self.edited_data = pd.concat([self.edited_data, new_data],
+                                             ignore_index=True)
 
             else:
                 self.edited_data = self.original_data.reset_index()
-                self.edited_data.rename(columns={"index": "RawIndex"}, inplace=True)
+
+                self.edited_data.rename(columns={"index": "RawIndex"},
+                                        inplace=True)
+
                 self.edited_data["Edited"] = " "
 
         except SQLAlchemyError:
@@ -59,14 +70,30 @@ class EntryManager:
         finally:
             conn.close()
 
-    def filter(self, **filter_dict):
+    def filter(self, **kwargs):
+        """
+        Filters the database of entries to show relevant results
+
+        Parameters
+        ----------
+        team: Team number
+        match: Match number
+        name: Scout name
+        board: Board
+        edited: Time edited
+
+        :return: A filtered DataFrame match the criteria
+        """
+
+        filters = {k.capitalize(): kwargs[k] for k in kwargs.keys()}
 
         df = self.edited_data
 
-        for i in filter_dict.keys():
-            df = df[df[i].isin(filter_dict[i])]
+        for i in filters.keys():
+            if i in FILTER_HEADER:
+                df = df[df[i].isin(filters[i])]
 
-        return df.sort_values(by=['Match', 'Team']).loc[:, ['index', 'Match', 'Team', 'Name']]
+        return df.sort_values(by=FILTER_SORT)[FILTER_HEADER].reset_index()
 
     def entry_at(self, index):
 
@@ -121,8 +148,6 @@ class EntryManager:
             # TODO return the proper index
 
     def remove_entry(self, match, team, name, index_value):
-        # TODO Wrong
-        # TODO Check if the index is correct
         match_at_index = self.edited_data.loc[index_value, "Match"]
         print(match_at_index)
         team_at_index = self.edited_data.loc[index_value, "Team"]
@@ -130,22 +155,10 @@ class EntryManager:
         name_at_index = self.edited_data.loc[index_value, "Name"]
         print(name_at_index)
 
-        if match_at_index == match:
-            match_correct = True
-        else:
-            match_correct = False
-
         match_correct = match_at_index == match
+        team_correct = team_at_index == team
+        name_correct = name_at_index == name
 
-        if team_at_index == team:
-            team_correct = True
-        else:
-            team_correct = False
-
-        if name_at_index == name:
-            name_correct = True
-        else:
-            name_correct = False
         if match_correct and team_correct and name_correct:
             self.edited_data.drop(index=index_value, inplace=True)
 
@@ -164,7 +177,8 @@ class EntryManager:
         self.edited_data.to_sql(name="EDITED_ENTRIES",
                                 con=conn,
                                 if_exists="replace",
-                                dtype=database.EDITED_HEADER, index_label="index")
+                                dtype=database.EDITED_HEADER,
+                                index_label="index")
 
         conn.close()
 
@@ -172,6 +186,7 @@ class EntryManager:
 if __name__ == "__main__":
     # Do Testing Here
     entry_manager = EntryManager("../data/database/data.warp7")
+    print(entry_manager.filter(team=[865]))
     # entry_manager.save()
     # print(entry_manager.remove_entry(42, 4152, "Sam.s", 2))
     # print(entry_manager.edited_data)
