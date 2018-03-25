@@ -64,7 +64,7 @@ def write_unique(file):
     """
     Writes entries into the database
     """
-    conn = database.get_connection(file)
+    conn = database.get_engine(file).connect()
 
     get_entries_table().to_sql(name="RAW_ENTRIES",
                                con=conn,

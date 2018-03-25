@@ -96,6 +96,11 @@ class EntryManager:
         return df.sort_values(by=FILTER_SORT)[FILTER_HEADER].reset_index()
 
     def entry_at(self, index):
+        """
+        Get data for one specific entry based on the index
+        :param index:
+        :return:
+        """
 
         if not self.edited_data.empty:  # TODO Also check bounds
 
@@ -170,6 +175,9 @@ class EntryManager:
         # TODO call the encoder
         self.edited_data.set_value(index, "Data", data)
 
+    def revert_entry(self, index):
+        pass
+
     def save(self):
 
         conn = database.get_engine(self.database_file).connect()
@@ -186,7 +194,17 @@ class EntryManager:
 if __name__ == "__main__":
     # Do Testing Here
     entry_manager = EntryManager("../data/database/data.warp7")
-    print(entry_manager.filter(team=[865]))
+
+    import xlwings as xw
+    book = xw.Book("/Users/juice/Desktop/Book4.xlsx")
+
+    book.sheets[0].range("Table1").options(pd.DataFrame,
+                                           index=False,
+                                           header=False,
+                                           expand="table").value = entry_manager.filter(match=[55, 40])
+
+    book.sheets[0].range("Table1").expand("right").offset(-1, 0).value = FILTER_HEADER
+
     # entry_manager.save()
     # print(entry_manager.remove_entry(42, 4152, "Sam.s", 2))
     # print(entry_manager.edited_data)
