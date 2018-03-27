@@ -195,5 +195,5 @@ if __name__ == "__main__":
 
     entry_manager = EntryManager("../data/database/data.warp7")
     # entry_manager.save()
-    # print(entry_manager.remove_entry(42, 4152, "Sam.s", 2))
+    print(entry_manager.remove_entry(42, 4152, "Sam.s", 2))
     # print(entry_manager.edited_data)

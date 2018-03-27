@@ -190,7 +190,12 @@ def load_and_show_data():
     folder_path = get_val(wb, locations["Import Folder"])
     database_file = get_val(wb, locations["Database File"])
 
-    # TODO call code to load unique data from csv
+    # Load data
+    entry_manager = EntryManager
+    # TODO put data on sheet
+
+
     log(wb, "Showing data ... ")
-    # TODO show new unfiltered database ? filter ?
+    wb.sheets[sheet_num].range("J5")
+
     log(wb, "Done", append=True)
