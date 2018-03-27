@@ -1,4 +1,7 @@
+import pandas as pd
 import xlwings as xw
+
+from processor import entry_manager
 
 locations = {"Entries Table Top Left": "J5",
              "Working Entry Table Top Left": "Y1",
@@ -21,6 +24,7 @@ log_loc = "B2"
 
 default_sheet_num = 0
 
+default_path = "data/database/data.warp7"
 
 def get_val(wb, loc, sheet_num=default_sheet_num):
     return wb.sheets[sheet_num].range(loc).value
@@ -191,11 +195,15 @@ def load_and_show_data():
     database_file = get_val(wb, locations["Database File"])
 
     # Load data
-    entry_manager = EntryManager
+    import os
+    new_path = os.path.join(os.path.dirname(__file__), "data/database/data.warp7")
+
+    data = entry_manager.EntryManager(new_path)
     # TODO put data on sheet
 
 
     log(wb, "Showing data ... ")
-    wb.sheets[sheet_num].range("J5")
-
+    wb.sheets[default_sheet_num].range(locations["Entries Table Top Left"]).options(pd.DataFrame, expand='table',
+                                                                                    index=False,
+                                                                                    header=False).value = data.filter()
     log(wb, "Done", append=True)
