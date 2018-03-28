@@ -58,11 +58,14 @@ def get_finder(path):
     files = index_data["files"]
     ids = list(map(lambda x: int(x, 16), index_data["identifiers"]))
 
-    def find_func(board_id):
-        board_file = open(os.path.join(path, files[ids.index(board_id)]), "r")
-        board_data = json.load(board_file)
+    boards = []
+    for file in files:
+        board_file = open(os.path.join(path, file), "r")
+        boards.append(Board(json.load(board_file)))
         board_file.close()
-        return Board(board_data)
+
+    def find_func(board_id):
+        return boards[ids.index(board_id)]
 
     return find_func
 
