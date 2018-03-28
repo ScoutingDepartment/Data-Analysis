@@ -1,5 +1,3 @@
-import os
-
 import pandas as pd
 import xlwings as xw
 
@@ -26,7 +24,7 @@ log_loc = "B2"
 
 default_sheet_num = 0
 
-new_path = os.path.join(os.path.dirname(__file__), "data/database/data.warp7")
+default_path = "data/database/data.warp7"
 
 def get_val(wb, loc, sheet_num=default_sheet_num):
     return wb.sheets[sheet_num].range(loc).value
@@ -49,20 +47,25 @@ def remove_entry():
     log(wb, "Removing entries ... ")
 
     # Get inputs
-    entry_index = get_val(wb, locations["Working Entry Index"]),
-    match_number = get_val(wb, locations["Working Match Number"]),
-    team_number = get_val(wb, locations["Working Team Number"]),
-    scout_name = get_val(wb, locations["Working Scout Name"]),
-    board = get_val(wb, locations["Working Board"]),
-    time_started = get_val(wb, locations["Working Time Started"]),
-    edited = get_val(wb, locations["Working Edited"])
+    inputs = {
+        "Entry Index": get_val(wb, locations["Working Entry Index"]),
+        "Match Number": get_val(wb, locations["Working Match Number"]),
+        "Team Number": get_val(wb, locations["Working Team Number"]),
+        "Scout Name": get_val(wb, locations["Working Scout Name"]),
+        "Board": get_val(wb, locations["Working Board"]),
+        "Time Started": get_val(wb, locations["Working Time Started"]),
+        "Edited": get_val(wb, locations["Working Edited"])
+    }
+    # entry_index = get_val(wb, locations["Working Entry Index"]),
+    # match_number = get_val(wb, locations["Working Match Number"]),
+    # team_number = get_val(wb, locations["Working Team Number"]),
+    # scout_name = get_val(wb, locations["Working Scout Name"]),
+    # board = get_val(wb, locations["Working Board"]),
+    # time_started = get_val(wb, locations["Working Time Started"]),
+    # edited = get_val(wb, locations["Working Edited"])
 
-    data = entry_manager.EntryManager(new_path)
-
-    data.remove_entry(match_number, team_number, scout_name, entry_index)
-    data.save()
-
-    load_and_show_data()
+    # TODO call code to remove the entry
+    # TODO show next entry in working data table
 
     log(wb, "Done", append=True)
 
@@ -103,7 +106,6 @@ def save_changes():
     edited = get_val(wb, locations["Working Edited"])
     entry_info = wb.sheets[default_sheet_num].range(locations["Entries Table Top Left"]).options(expand='table')
 
-    # TODO call code to encode data
     # TODO call code to save changes to db
     log(wb, "Done", append=True)
 
@@ -193,6 +195,9 @@ def load_and_show_data():
     database_file = get_val(wb, locations["Database File"])
 
     # Load data
+    import os
+    new_path = os.path.join(os.path.dirname(__file__), "data/database/data.warp7")
+
     data = entry_manager.EntryManager(new_path)
     # TODO put data on sheet
 
