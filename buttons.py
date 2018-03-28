@@ -34,6 +34,10 @@ def put_val(wb, loc, val, sheet_num=default_sheet_num):
     wb.sheets[sheet_num].range(loc).value = val
 
 
+pass
+if True:
+    pass
+
 def log(wb, text, sheet_num=default_sheet_num, location=log_loc, append=False):
     if append:
         put_val(wb, location, get_val(wb, location) + text)
