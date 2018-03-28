@@ -120,17 +120,18 @@ class EntryManager:
                     }
         return {}
 
-    def increment(self, df, index, increment):
+    def increment(self, table_from_excel, index, increment_by):
         old_index = ''
-        for i in range(len(list(df.index.values))):
-            if list(df.index.values)[i] == index:
+        for i in range(len(list(table_from_excel.index.values))):
+            if list(table_from_excel.index.values)[i] == index:
                 old_index = i
                 break
 
         if old_index == '':
             return ''
 
-        new_index = list(df.index.values)[(old_index + increment) % len(list(df.index.values))]
+        new_index = list(table_from_excel.index.values)[
+            (old_index + increment_by) % len(list(table_from_excel.index.values))]
         return self.entry_at(new_index)
 
     def next(self, df, index):

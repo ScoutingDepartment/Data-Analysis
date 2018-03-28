@@ -30,105 +30,6 @@ def put_val(wb, loc, val, sheet_num=default_sheet_num):
     wb.sheets[sheet_num].range(loc).value = val
 
 
-def log(wb, text, sheet_num=default_sheet_num, location=log_loc, append=False):
-    if append:
-        put_val(wb, location, get_val(wb, location) + text)
-    else:
-        wb.sheets[sheet_num].range(location).value = text
-
-
-def remove_entry():
-
-    wb = xw.Book.caller()
-    log(wb, "Removing entries ... ")
-
-    # Get inputs
-    inputs = {
-        "Entry Index": get_val(wb, locations["Working Entry Index"]),
-        "Match Number": get_val(wb, locations["Working Match Number"]),
-        "Team Number": get_val(wb, locations["Working Team Number"]),
-        "Scout Name": get_val(wb, locations["Working Scout Name"]),
-        "Board": get_val(wb, locations["Working Board"]),
-        "Time Started": get_val(wb, locations["Working Time Started"]),
-        "Edited": get_val(wb, locations["Working Edited"])
-    }
-    # entry_index = get_val(wb, locations["Working Entry Index"]),
-    # match_number = get_val(wb, locations["Working Match Number"]),
-    # team_number = get_val(wb, locations["Working Team Number"]),
-    # scout_name = get_val(wb, locations["Working Scout Name"]),
-    # board = get_val(wb, locations["Working Board"]),
-    # time_started = get_val(wb, locations["Working Time Started"]),
-    # edited = get_val(wb, locations["Working Edited"])
-
-    # TODO call code to remove the entry
-    # TODO show next entry in working data table
-
-    log(wb, "Done", append=True)
-
-
-def revert_to_original():
-
-    wb = xw.Book.caller()
-    log(wb, "Reverting to original ... ")
-
-    # Get inputs
-    database_file = get_val(wb, locations["Database File"])
-    entry_index = get_val(wb, locations["Working Entry Index"]),
-    match_number = get_val(wb, locations["Working Match Number"]),
-    team_number = get_val(wb, locations["Working Team Number"]),
-    scout_name = get_val(wb, locations["Working Scout Name"]),
-    board = get_val(wb, locations["Working Board"]),
-    time_started = get_val(wb, locations["Working Time Started"]),
-    edited = get_val(wb, locations["Working Edited"])
-
-    # TODO call code to revert row in edited entries to original entry
-    # TODO reload data
-    log(wb, "Done", append=True)
-
-
-def save_changes():
-
-    wb = xw.Book.caller()
-    log(wb, "Saving changes ... ")
-
-    # Get inputs
-    database_file = get_val(wb, locations["Database File"])
-    entry_index = get_val(wb, locations["Working Entry Index"]),
-    match_number = get_val(wb, locations["Working Match Number"]),
-    team_number = get_val(wb, locations["Working Team Number"]),
-    scout_name = get_val(wb, locations["Working Scout Name"]),
-    board = get_val(wb, locations["Working Board"]),
-    time_started = get_val(wb, locations["Working Time Started"]),
-    edited = get_val(wb, locations["Working Edited"])
-    entry_info = wb.sheets[default_sheet_num].range(locations["Entries Table Top Left"]).options(expand='table')
-
-    # TODO call code to save changes to db
-    log(wb, "Done", append=True)
-
-
-def previous_in_list():
-
-    wb = xw.Book.caller()
-    log(wb, "Showing previous in list ... ")
-
-    # Get inputs
-    database_file = get_val(wb, locations["Database File"])
-    filtered_table = wb.sheets[default_sheet_num].range(locations["Entries Table Top Left"]).options(expand='table')
-
-    # TODO call code to show previous in list
-    log(wb, "Done", append=True)
-
-
-def next_in_list():
-
-    wb = xw.Book.caller()
-    log(wb, "Showing next in list ... ")
-
-    # Get inputs
-    database_file = get_val(wb, locations["Database File"])
-    filtered_table = wb.sheets[default_sheet_num].range(locations["Entries Table Top Left"]).options(expand='table')
-
-    # TODO call code to show next in list
     log(wb, "Done", append=True)
 
 
@@ -199,3 +100,33 @@ def load_and_show_data():
     wb.sheets[sheet_num].range("J5")
 
     log(wb, "Done", append=True)
+
+
+def parseFilterNumber(parseString, listOfNumbers):
+    parseArray = parseString.split(',')
+
+    for i in range(len(parseArray)):
+        parseArray[i] = parseArray[i].replace(' ', '')
+
+    numbers = []
+
+    for i in parseArray:
+        if '-' in i:
+            arr = i.split('-')
+            for j in listOfNumbers:
+                if j >= arr[0] and j <= arr[1]:
+                    numbers.append(j)
+
+        for j in ['>=', '<=', '>', '<']:
+            if j in i:
+                string = int(i.replace(j, ''))
+                for k in listOfNumbers:
+                    if eval(str(k) + str(j) + str(string)):
+                        numbers.append(k)
+        try:
+            for j in listOfNumbers:
+                if j == int(i):
+                    numbers.append(j)
+        except:
+            pass
+    return (numbers)
