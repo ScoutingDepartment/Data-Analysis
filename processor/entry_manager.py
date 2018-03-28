@@ -152,11 +152,11 @@ class EntryManager:
             # TODO return the proper index
 
     def remove_entry(self, match, team, name, index_value):
-        match_at_index = self.edited_data.loc[index_value, "Match"]
+        match_at_index = str(self.edited_data.loc[index_value, "Match"])
         print(match_at_index)
-        team_at_index = self.edited_data.loc[index_value, "Team"]
+        team_at_index = str(self.edited_data.loc[index_value, "Team"])
         print(team_at_index)
-        name_at_index = self.edited_data.loc[index_value, "Name"]
+        name_at_index = str(self.edited_data.loc[index_value, "Name"])
         print(name_at_index)
 
         match_correct = match_at_index == match
