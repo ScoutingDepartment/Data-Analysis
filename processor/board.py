@@ -50,7 +50,7 @@ class Board:
         return self.dc(index)["log"]
 
 
-def find(path, board_id):
+def get_finder(path):
     idf = open(os.path.join(path, "index.json"), "r")
     index_data = json.load(idf)
     idf.close()
@@ -58,12 +58,17 @@ def find(path, board_id):
     files = index_data["files"]
     ids = list(map(lambda x: int(x, 16), index_data["identifiers"]))
 
-    board_file = open(os.path.join(path, files[ids.index(board_id)]), "r")
-    board_data = json.load(board_file)
-    board_file.close()
-    return Board(board_data)
+    def find_func(board_id):
+        board_file = open(os.path.join(path, files[ids.index(board_id)]), "r")
+        board_data = json.load(board_file)
+        board_file.close()
+        return Board(board_data)
+
+    return find_func
+
 
 
 if __name__ == "__main__":
-    board = find("../data/board", int("e3bb3f98", 16))
+    find = get_finder("../data/board")
+    board = find(int("e3bb3f98", 16))
     print(board)
