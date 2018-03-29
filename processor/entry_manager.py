@@ -6,7 +6,7 @@ A list of all entries
 import pandas as pd
 from sqlalchemy.exc import SQLAlchemyError
 
-from processor import database
+from processor import database, board, decoder
 
 FILTER_HEADER = ['Match', 'Team', 'Name', "Board", "Edited"]
 FILTER_SORT = ['Match', 'Team']
@@ -14,11 +14,13 @@ FILTER_SORT = ['Match', 'Team']
 
 class EntryManager:
 
-    def __init__(self, db_file):
+    def __init__(self, db_file, board_path):
         """
         Loads raw data and edited data from database
         :param db_file: the database file to read from
         """
+
+        self.find_board = board.get_finder(board_path)
 
         self.database_file = db_file
 
@@ -62,9 +64,10 @@ class EntryManager:
 
                 self.edited_data["Edited"] = " "
 
-        except SQLAlchemyError:
+        except SQLAlchemyError as error:
             self.original_data = pd.DataFrame(columns=database.RAW_HEADER.keys())
             self.edited_data = pd.DataFrame(columns=database.EDITED_HEADER.keys())
+            print(error)
 
         finally:
             conn.close()
@@ -94,30 +97,27 @@ class EntryManager:
 
         return df.sort_values(by=FILTER_SORT)[FILTER_HEADER].reset_index()
 
+    def data_row_at(self, index):
+        if index in self.edited_data.index:
+            return self.edited_data.iloc[index]
+        return None
+
     def entry_at(self, index):
         """
         Get data for one specific entry based on the index
-        :param index:
+        :param index: the index to lookup
         :return:
         """
 
-        if not self.edited_data.empty:  # TODO Also check bounds
+        row = self.data_row_at(index)
 
-            # TODO Create data info dictionary
-            # TODO Create data list: call the decoder and formatter
+        if row is not None:
+            entry_board = self.find_board(row["Board"])
+            entry_info = {k: row[k] for k in ["Match", "Team", "Name", "StartTime", "Comments"]}
+            entry_info["Board"] = entry_board.name()
+            entry_info["Data"] = list(decoder.decode(row["Data"], entry_board))
+            return entry_info
 
-            return {"Match": self.edited_data['Match'][index],
-                    "Team": self.edited_data['Team'][index],
-                    "Name": self.edited_data['Name'][index],
-                    "StartTime": self.edited_data['StartTime'][index],
-                    "Board": self.edited_data['Board'][index],
-
-                    "Data": [("Type", "Value", "Exclude")],  # TODO Change this with actual data
-
-                    # TODO Data can be possibly a pandas table
-
-                    "Comments": self.edited_data['Comments'][index]
-                    }
         return {}
 
     def increment(self, table_from_excel, index, increment_by):
@@ -194,7 +194,8 @@ class EntryManager:
 if __name__ == "__main__":
     # Do Testing Here
 
-    entry_manager = EntryManager("../data/database/data.warp7")
-    # entry_manager.save()
-    print(entry_manager.remove_entry(42, 4152, "Sam.s", 2))
+    entry_manager = EntryManager("../data/database/data.warp7", "../data/board/")
+    print(entry_manager.entry_at(10))
+    #entry_manager.save()
+    #print(entry_manager.remove_entry(42, 4152, "Sam.s", 2))
     # print(entry_manager.edited_data)
