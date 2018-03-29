@@ -50,28 +50,33 @@ class Board:
         return self.dc(index)["log"]
 
 
-def get_finder(path):
-    idf = open(os.path.join(path, "index.json"), "r")
-    index_data = json.load(idf)
-    idf.close()
+class Finder:
+    def __init__(self, path):
+        idf = open(os.path.join(path, "index.json"), "r")
+        index_data = json.load(idf)
+        idf.close()
 
-    files = index_data["files"]
-    ids = list(map(lambda x: int(x, 16), index_data["identifiers"]))
+        self.files = index_data["files"]
+        self.id_list = list(map(lambda x: int(x, 16), index_data["identifiers"]))
 
-    boards = []
-    for file in files:
-        board_file = open(os.path.join(path, file), "r")
-        boards.append(Board(json.load(board_file)))
-        board_file.close()
+        self.boards = []
+        self.names = []
+        for file in self.files:
+            board_file = open(os.path.join(path, file), "r")
+            board = Board(json.load(board_file))
+            self.names.append(board.name())
+            self.boards.append(board)
+            board_file.close()
 
-    def find_func(board_id):
-        return boards[ids.index(board_id)]
+    def get_board_by_index(self, id):
+        return self.boards[self.id_list.index(id)]
 
-    return find_func
+    def get_board_by_name(self, name):
+        return self.boards[self.names.index(name)]
 
 
 
 if __name__ == "__main__":
-    find = get_finder("../data/board")
-    board = find(int("e3bb3f98", 16))
+    find = Finder("../data/board")
+    board = find.get_board_by_index(int("e3bb3f98", 16))
     print(board)

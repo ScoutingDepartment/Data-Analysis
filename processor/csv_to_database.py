@@ -12,7 +12,7 @@ def write_unique(database_path, scan_folder_path, board_folder_path):
     Writes entries into the database
     """
 
-    find_board = board.get_finder(board_folder_path)
+    finder = board.Finder(board_folder_path)
 
     def read_one_csv_file(file_name):
         """
@@ -51,7 +51,7 @@ def write_unique(database_path, scan_folder_path, board_folder_path):
                 "Team": int(split[1]),
                 "Name": split[2],
                 "StartTime": format_time.display_time(int(split[3], 16)),
-                "Board": find_board(int(split[4], 16)).name(),
+                "Board": finder.get_board_by_index(int(split[4], 16)).name(),
                 "Data": split[5],
                 "Comments": split[6]
                 }

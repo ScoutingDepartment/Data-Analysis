@@ -20,7 +20,7 @@ class EntryManager:
         :param db_file: the database file to read from
         """
 
-        self.find_board = board.get_finder(board_path)
+        self.finder = board.Finder(board_path)
 
         self.database_file = db_file
 
@@ -112,7 +112,7 @@ class EntryManager:
         row = self.data_row_at(index)
 
         if row is not None:
-            entry_board = self.find_board(row["Board"])
+            entry_board = self.finder.get_board_by_name(row["Board"])
             entry_info = {k: row[k] for k in ["Match", "Team", "Name", "StartTime", "Comments"]}
             entry_info["Board"] = entry_board.name()
             entry_info["Data"] = list(decoder.decode(row["Data"], entry_board))
@@ -196,6 +196,6 @@ if __name__ == "__main__":
 
     entry_manager = EntryManager("../data/database/data.warp7", "../data/board/")
     print(entry_manager.entry_at(11))
-    #entry_manager.save()
+    entry_manager.save()
     #print(entry_manager.remove_entry(42, 4152, "Sam.s", 2))
     # print(entry_manager.edited_data)
