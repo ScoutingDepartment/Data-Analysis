@@ -63,13 +63,13 @@ class Finder:
         self.names = []
         for file in self.files:
             board_file = open(os.path.join(path, file), "r")
-            board = Board(json.load(board_file))
-            self.names.append(board.name())
-            self.boards.append(board)
+            board_obj = Board(json.load(board_file))
+            self.names.append(board_obj.name())
+            self.boards.append(board_obj)
             board_file.close()
 
-    def get_board_by_index(self, id):
-        return self.boards[self.id_list.index(id)]
+    def get_board_by_id(self, board_id):
+        return self.boards[self.id_list.index(board_id)]
 
     def get_board_by_name(self, name):
         return self.boards[self.names.index(name)]
@@ -78,8 +78,7 @@ class Finder:
         return self.boards[0]
 
 
-
 if __name__ == "__main__":
     find = Finder("../data/board")
-    board = find.get_board_by_index(int("e3bb3f98", 16))
+    board = find.get_board_by_id(int("e3bb3f98", 16))
     print(board)

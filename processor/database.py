@@ -32,5 +32,6 @@ EDITED_HEADER = {
 def get_engine(file):
     return sqlalchemy.create_engine(get_sqlite_uri(file))
 
+
 def get_sqlite_uri(file):
     return "sqlite:///" + file

@@ -133,7 +133,6 @@ class EntryManager:
         """
 
         indices = list(filtered_table["index"].values)
-        print(indices)
 
         if len(indices) != 0:
             if current_index in indices:
