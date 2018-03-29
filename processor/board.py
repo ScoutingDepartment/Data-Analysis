@@ -74,6 +74,9 @@ class Finder:
     def get_board_by_name(self, name):
         return self.boards[self.names.index(name)]
 
+    def get_first(self):
+        return self.boards[0]
+
 
 
 if __name__ == "__main__":

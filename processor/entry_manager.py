@@ -3,10 +3,11 @@ Manages all the entered entries for navigation
 A list of all entries
 """
 
+import numpy as np
 import pandas as pd
 from sqlalchemy.exc import SQLAlchemyError
 
-from processor import database, board, decoder
+from processor import database, board, decoder, format_time
 
 FILTER_HEADER = ['Match', 'Team', 'Name', "Board", "Edited"]
 FILTER_SORT = ['Match', 'Team']
@@ -129,7 +130,7 @@ class EntryManager:
         :return: The entry info for the selected entry (from entry_at)
         """
 
-        indices = list(filtered_table["index"].values)
+        indices = list(filtered_table[["index"]].values)
 
         if len(indices) != 0:
             if current_index in indices:
@@ -164,14 +165,28 @@ class EntryManager:
 
         entry_data = {k.capitalize(): kwargs[k] for k in kwargs.keys()}
 
-        match = entry_data.get("Match");
+        match = entry_data.get("Match")
         team = entry_data.get("Team")
         name = entry_data.get("Name")
 
         matching_row = self.get_matching_row(match, team, name)
 
         if matching_row.empty:
-            return None
+            new_data = pd.DataFrame([{
+                "Match": match,
+                "Team": team,
+                "Name": name,
+                "StartTime": format_time.display_time(0),
+                "Board": self.finder.get_first().name(),
+                "Data": "",
+                "Comments": "",
+
+                "RawIndex": np.nan,
+                "Edited": ""
+
+            }], columns=database.EDITED_HEADER.keys())
+
+            self.edited_data = pd.concat([self.edited_data, new_data])
 
         return self.entry_at(matching_row.index[0])
 
@@ -221,7 +236,6 @@ if __name__ == "__main__":
     a = entry_manager.filter(match=[5])
     print(a)
     print(entry_manager.get_relative_entry(entry_manager.filter(match=[5]), 242, 1))
-    entry_manager.save()
 
     print(entry_manager.add_entry(match=100, team=200, name=300))
 
