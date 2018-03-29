@@ -29,20 +29,23 @@ default_path = "data/database/data.warp7"
 def get_val(wb, loc, sheet_num=default_sheet_num):
     return wb.sheets[sheet_num].range(loc).value
 
-
 def put_val(wb, loc, val, sheet_num=default_sheet_num):
     wb.sheets[sheet_num].range(loc).value = val
-
-
-pass
-if True:
-    pass
 
 def log(wb, text, sheet_num=default_sheet_num, location=log_loc, append=False):
     if append:
         put_val(wb, location, get_val(wb, location) + text)
     else:
         wb.sheets[sheet_num].range(location).value = text
+
+
+def new_manager():
+    import os
+    new_path = os.path.join(os.path.dirname(__file__), "data/database/data.warp7")
+
+    board_path = os.path.join(os.path.dirname(__file__), "data/board/")
+
+    return entry_manager.EntryManager(new_path, board_path)
 
 
 def remove_entry():
@@ -134,8 +137,12 @@ def next_in_list():
 
     # Get inputs
     database_file = get_val(wb, locations["Database File"])
-    filtered_table = wb.sheets[default_sheet_num].range(locations["Entries Table Top Left"]).options(expand='table')
+    filtered_table = wb.sheets[default_sheet_num].range(locations["Entries Table Top Left"]).options(pd.DataFrame,
+                                                                                                     expand='table')
 
+    data = new_manager()
+
+    new_index = data.next(filtered_table, locations["Working Entry Index"])
     # TODO call code to show next in list
     log(wb, "Done", append=True)
 
@@ -159,38 +166,120 @@ def go_to_beginning():
     database_file = get_val(wb, locations["Database File"])
     filtered_table = wb.sheets[default_sheet_num].range(locations["Entries Table Top Left"]).options(expand='table')
 
+    load_and_show_data()
+
     # TODO call code to show first entry in list
     log(wb, "Done", append=True)
 
 
 def clear_filters():
     wb = xw.Book.caller()
-    log(wb, "Clearing filters ... ")
-    # Get inputs
-    database_file = get_val(wb, locations["Database File"])
+    log(wb, "Loading data ... ")
 
-    # TODO call code to get unfiltered database
-    # TODO show unfiltered database
+    # Get inputs
+    folder_path = get_val(wb, locations["Import Folder"])
+    database_file = get_val(wb, locations["Database File"])
+    match_number = get_val(wb, locations["Filter Match Number"])
+    team_number = get_val(wb, locations["Filter Team Number"])
+    scout_name = get_val(wb, locations["Filter Scout Name"])
+
+    # Load data
+
+    data = new_manager()
+
+    # TODO put data on sheet
+
+
+    log(wb, "Clearing filters ... ")
+    put_val(wb, match_number, '')
+    put_val(wb, team_number, '')
+    put_val(wb, scout_name, '')
+
+    log(wb, "Showing data ... ")
+    wb.sheets[default_sheet_num].range(locations["Entries Table Top Left"]).options(pd.DataFrame, expand='table',
+                                                                                    index=False,
+                                                                                    header=False).value = data.filter()
     log(wb, "Done", append=True)
 
 
 def apply_filters():
+    def parse_filter_number(parseString, listOfNumbers):
+        if parseString == '':
+            return listOfNumbers
+
+        parseArray = parseString.split(',')
+
+        for i in range(len(parseArray)):
+            parseArray[i] = parseArray[i].replace(' ', '')
+
+        numbers = []
+
+        for i in parseArray:
+            if '-' in i:
+                arr = i.split('-')
+                for j in listOfNumbers:
+                    if j >= arr[0] and j <= arr[1]:
+                        numbers.append(j)
+
+            for j in ['>=', '<=', '>', '<']:
+                if j in i:
+                    string = int(i.replace(j, ''))
+                    for k in listOfNumbers:
+                        if eval(str(k) + str(j) + str(string)):
+                            numbers.append(k)
+            try:
+                for j in listOfNumbers:
+                    if j == int(i):
+                        numbers.append(j)
+            except:
+                pass
+        return (numbers)
+
+    def parse_filter_string(parseString, listOfStrings):
+        if parseString == '':
+            return listOfStrings
+
+        parseArray = parseString.split(',')
+
+        strings = []
+
+        for i in parseArray:
+            for j in listOfStrings:
+                if '~' in i.strip().lower():
+                    if i.strip().replace('~', '').lower() in j.strip().lower():
+                        strings.append(j)
+                if i.strip().lower() == j.strip().lower():
+                    strings.append(j)
+
     wb = xw.Book.caller()
-    log(wb, "Applying filters ... ")
+    log(wb, "Loading data ... ")
 
     # Get inputs
+    folder_path = get_val(wb, locations["Import Folder"])
     database_file = get_val(wb, locations["Database File"])
     match_number = get_val(wb, locations["Filter Match Number"])
     team_number = get_val(wb, locations["Filter Team Number"])
     scout_name = get_val(wb, locations["Filter Scout Name"])
     board = get_val(wb, locations["Filter Board"])
 
-    # TODO call code to get filtered database
-    # TODO show filtered database
+    # Load data
+    manager = new_manager()
+
+    log(wb, "Filtering data ... ")
+    data = manager.filter(Match=parse_filter_number(match_number))
+    Team = parse_filter_number(team_number)
+    Name = parse_filter_string(scout_name)
+
+    log(wb, "Showing data ... ")
+    wb.sheets[default_sheet_num].range(locations["Entries Table Top Left"]).options(pd.DataFrame, expand='table',
+                                                                                    index=False,
+                                                                                    header=False).value = data.filter()
     log(wb, "Done", append=True)
 
 
 def load_and_show_data():
+    from processor import csv_to_database
+
     wb = xw.Book.caller()
     log(wb, "Loading data ... ")
 
@@ -200,9 +289,14 @@ def load_and_show_data():
 
     # Load data
     import os
-    new_path = os.path.join(os.path.dirname(__file__), "data/database/data.warp7")
 
-    data = entry_manager.EntryManager(new_path)
+    db_path = os.path.join(os.path.dirname(__file__), "data/database/data.warp7")
+    board_path = os.path.join(os.path.dirname(__file__), "data/board/")
+    scan_path = os.path.join(os.path.dirname(__file__), "data/scan")
+
+    csv_to_database.write_unique(db_path, scan_path, board_path)
+
+    data = entry_manager.EntryManager(db_path, board_path)
     # TODO put data on sheet
 
 
