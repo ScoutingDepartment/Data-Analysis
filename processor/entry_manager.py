@@ -42,7 +42,7 @@ class EntryManager:
                                                index_col="index")
 
                 # Compute a boolean array indicating the add values to raw
-                condition = ~self.original_data.index.isin(self.edited_data["RawIndex"])
+                condition = ~self.original_data.index.isin(self.edited_data["RawIndex"].dropna())
 
                 # Filter by the condition to get new data values
                 new_data = self.original_data[condition].reset_index()
@@ -143,26 +143,37 @@ class EntryManager:
     def previous(self, filtered_table, current_index):
         return self.get_relative_entry(filtered_table, current_index, -1)
 
-    def add_entry(self, **entry_data):
+    def get_matching_row(self, match, team, name):
+        """
+        Simpler and more efficient way of matching match, team, and name than filter
+        :param match:
+        :param team:
+        :param name:
+        :return: a matching row, or an empty DataFrame if entry doesn't exist
+        """
+        return self.edited_data[(self.edited_data["Match"] == match) &
+                                (self.edited_data["Team"] == team) &
+                                (self.edited_data["Name"] == name)]
 
-        match = entry_data.get("Match")
+    def add_entry(self, **kwargs):
+        """
+        Add a new entry to the data
+        :param kwargs: entry info dictionary
+        :return: The new entry info, or old if match, team, and name already exists
+        """
+
+        entry_data = {k.capitalize(): kwargs[k] for k in kwargs.keys()}
+
+        match = entry_data.get("Match");
         team = entry_data.get("Team")
         name = entry_data.get("Name")
 
-        matching_entry = self.edited_data["Match"] == match & \
-                         self.edited_data["Team"] == team & \
-                         self.edited_data["Name"] == name
+        matching_row = self.get_matching_row(match, team, name)
 
-        print(matching_entry)
+        if matching_row.empty:
+            return None
 
-        if matching_entry.any():pass
-
-
-        # Check if entry exists
-        if len(self.filter(Match=match, Team=team, Name=name)) == 0:
-            self.edited_data.append(entry_data)
-
-            # TODO return the proper index
+        return self.entry_at(matching_row.index[0])
 
     def remove_entry(self, match, team, name, index_value):
         match_at_index = str(self.edited_data.loc[index_value, "Match"])
@@ -208,8 +219,11 @@ if __name__ == "__main__":
 
     entry_manager = EntryManager("../data/database/data.warp7", "../data/board/")
     a = entry_manager.filter(match=[5])
+    print(a)
     print(entry_manager.get_relative_entry(entry_manager.filter(match=[5]), 242, 1))
     entry_manager.save()
 
-    #print(entry_manager.remove_entry(42, 4152, "Sam.s", 2))
+    print(entry_manager.add_entry(match=100, team=200, name=300))
+
+    # print(entry_manager.remove_entry(42, 4152, "Sam.s", 2))
     # print(entry_manager.edited_data)
