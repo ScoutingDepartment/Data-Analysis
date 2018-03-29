@@ -106,7 +106,7 @@ class EntryManager:
         """
         Get data for one specific entry based on the index
         :param index: the index to lookup
-        :return:
+        :return: The entry info, or empty dict if row does not exist
         """
 
         row = self.data_row_at(index)
@@ -195,7 +195,7 @@ if __name__ == "__main__":
     # Do Testing Here
 
     entry_manager = EntryManager("../data/database/data.warp7", "../data/board/")
-    print(entry_manager.entry_at(10))
+    print(entry_manager.entry_at(11))
     #entry_manager.save()
     #print(entry_manager.remove_entry(42, 4152, "Sam.s", 2))
     # print(entry_manager.edited_data)

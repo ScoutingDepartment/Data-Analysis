@@ -10,7 +10,7 @@ RAW_HEADER = {
     "Team": sql_types.Integer,
     "Name": sql_types.String,
     "StartTime": sql_types.String,
-    "Board": sql_types.Integer,
+    "Board": sql_types.String,
     "Data": sql_types.String,
     "Comments": sql_types.String
 }
