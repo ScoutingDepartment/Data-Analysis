@@ -129,9 +129,12 @@ class EntryManager:
         :return: The entry info for the selected entry (from entry_at)
         """
 
-        indices = filtered_table["index"].values
-        if current_index in indices:
-            return self.entry_at(indices[(indices.index(current_index) + increment_by) % len(indices)])
+        indices = list(filtered_table["index"].values)
+
+        if len(indices) != 0:
+            if current_index in indices:
+                return self.entry_at(indices[(indices.index(current_index) + increment_by) % len(indices)])
+            return self.entry_at(indices[0])
         return {}
 
     def next(self, filtered_table, current_index):
@@ -145,6 +148,15 @@ class EntryManager:
         match = entry_data.get("Match")
         team = entry_data.get("Team")
         name = entry_data.get("Name")
+
+        matching_entry = self.edited_data["Match"] == match & \
+                         self.edited_data["Team"] == team & \
+                         self.edited_data["Name"] == name
+
+        print(matching_entry)
+
+        if matching_entry.any():pass
+
 
         # Check if entry exists
         if len(self.filter(Match=match, Team=team, Name=name)) == 0:
