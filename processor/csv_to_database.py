@@ -2,9 +2,22 @@
 Reads csv files scanned from the QR scanner
 """
 
+import re
+
 import pandas as pd
 
-from processor import indexing, database, validation, format_time, board
+from processor import indexing, database, format_time, board
+
+ENCODE_VALIDATION = "\d{1,3}_\d{1,4}_[^_]+_[0-9a-f]{8}_[0-9a-f]{8}_([0-9a-f]{4})*_.*"
+
+
+def validate_encode(code):
+    """
+    Checks if the app-encoded string is valid
+    :param code: The encoded string
+    :return: Whether the encode is valid
+    """
+    return re.compile(ENCODE_VALIDATION).match(code) is not None
 
 
 def write_unique(database_path, scan_folder_path, board_folder_path):
@@ -36,7 +49,7 @@ def write_unique(database_path, scan_folder_path, board_folder_path):
 
         for f in indexing.filtered_files(scan_folder_path, ".csv"):
             for entry in read_one_csv_file(f):
-                if validation.check_encode(entry):
+                if validate_encode(entry):
                     yield entry
 
     def get_entry_dict(entry):
@@ -51,7 +64,7 @@ def write_unique(database_path, scan_folder_path, board_folder_path):
                 "Team": int(split[1]),
                 "Name": split[2],
                 "StartTime": format_time.display_time(int(split[3], 16)),
-                "Board": finder.get_board_by_index(int(split[4], 16)).name(),
+                "Board": finder.get_board_by_id(int(split[4], 16)).name(),
                 "Data": split[5],
                 "Comments": split[6]
                 }
@@ -72,6 +85,7 @@ def write_unique(database_path, scan_folder_path, board_folder_path):
                                dtype=database.RAW_HEADER  # sets the column data types
                                )
     conn.close()
+
 
 if __name__ == "__main__":
     write_unique("../data/database/data.warp7", "../data/scan", "../data/board")

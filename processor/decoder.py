@@ -66,7 +66,7 @@ def decode(hex_encode, board):
     Decodes hex data into a table
     :param hex_encode: Hex encoded string from the app
     :param board: The board data for formatting
-    :return: TODO A table?
+    :return: Generator in the format of (formatted_type, formatted_value, undo)
     """
 
     for t, v, u, s in split(hex_encode):
@@ -81,5 +81,3 @@ def decode(hex_encode, board):
         undo = "Yes" if u else "No"
 
         yield (formatted_type, formatted_value, undo)
-
-

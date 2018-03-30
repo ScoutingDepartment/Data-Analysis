@@ -3,6 +3,8 @@ Manages all the entered entries for navigation
 A list of all entries
 """
 
+import time
+
 import numpy as np
 import pandas as pd
 from sqlalchemy.exc import SQLAlchemyError
@@ -130,7 +132,7 @@ class EntryManager:
         :return: The entry info for the selected entry (from entry_at)
         """
 
-        indices = list(filtered_table[["index"]].values)
+        indices = list(filtered_table["index"].values)
 
         if len(indices) != 0:
             if current_index in indices:
@@ -176,17 +178,18 @@ class EntryManager:
                 "Match": match,
                 "Team": team,
                 "Name": name,
-                "StartTime": format_time.display_time(0),
+                "StartTime": format_time.display_time(time.time()),
                 "Board": self.finder.get_first().name(),
                 "Data": "",
                 "Comments": "",
-
                 "RawIndex": np.nan,
                 "Edited": ""
 
             }], columns=database.EDITED_HEADER.keys())
 
-            self.edited_data = pd.concat([self.edited_data, new_data])
+            self.edited_data = pd.concat([self.edited_data, new_data], ignore_index=True)
+
+            return self.entry_at(self.get_matching_row(match, team, name).index[0])
 
         return self.entry_at(matching_row.index[0])
 
@@ -233,11 +236,12 @@ if __name__ == "__main__":
     # Do Testing Here
 
     entry_manager = EntryManager("../data/database/data.warp7", "../data/board/")
-    a = entry_manager.filter(match=[5])
-    print(a)
-    print(entry_manager.get_relative_entry(entry_manager.filter(match=[5]), 242, 1))
+    # a = entry_manager.filter(match=[5])
+    # print(a)
+    # print(entry_manager.get_relative_entry(entry_manager.filter(match=[5]), 242, 1))
 
-    print(entry_manager.add_entry(match=100, team=200, name=300))
+    print(entry_manager.add_entry(match=2, team=773, name="conall"))
+    print(entry_manager.add_entry(match=200, team=7730, name="conall2"))
 
     # print(entry_manager.remove_entry(42, 4152, "Sam.s", 2))
     # print(entry_manager.edited_data)

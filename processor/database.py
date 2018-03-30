@@ -16,7 +16,6 @@ RAW_HEADER = {
 }
 
 EDITED_HEADER = {
-    "index": sql_types.Integer,
     "Match": sql_types.Integer,
     "Team": sql_types.Integer,
     "Name": sql_types.String,
@@ -32,6 +31,7 @@ EDITED_HEADER = {
 
 def get_engine(file):
     return sqlalchemy.create_engine(get_sqlite_uri(file))
+
 
 def get_sqlite_uri(file):
     return "sqlite:///" + file
