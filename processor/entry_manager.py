@@ -90,7 +90,7 @@ class EntryManager:
         :return: A filtered DataFrame match the criteria
         """
 
-        filters = {k.capitalize(): kwargs[k] for k in kwargs.keys()}
+        filters = {k.capitalize(): kwargs[k] for k in kwargs.keys() if kwargs[k]}
 
         df = self.edited_data
 
@@ -240,8 +240,10 @@ if __name__ == "__main__":
     # print(a)
     # print(entry_manager.get_relative_entry(entry_manager.filter(match=[5]), 242, 1))
 
-    print(entry_manager.add_entry(match=2, team=773, name="conall"))
-    print(entry_manager.add_entry(match=200, team=7730, name="conall2"))
+    # print(entry_manager.add_entry(match=2, team=773, name="conall"))
+    # print(entry_manager.add_entry(match=200, team=7730, name="conall2"))
+
+    print(entry_manager.filter(match=[1, 2], team=[]))
 
     # print(entry_manager.remove_entry(42, 4152, "Sam.s", 2))
     # print(entry_manager.edited_data)

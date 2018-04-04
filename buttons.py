@@ -4,7 +4,7 @@ import xlwings as xw
 from processor import entry_manager
 
 locations = {"Entries Table Top Left": "J5",
-             "Working Entry Table Top Left": "Y1",
+             "Working Entry Table Top Left": "Y5",
              "Scout Comments": "Y5",
              "Import Folder": "C7",
              "Database File": "C10",
@@ -18,7 +18,8 @@ locations = {"Entries Table Top Left": "J5",
              "Working Scout Name": "R16",
              "Working Board": "R19",
              "Working Time Started": "R22",
-             "Working Edited": "R25"}
+             "Working Edited": "R25",
+             "Working Scout Comments": "Y5"}
 
 log_loc = "B2"
 
@@ -138,11 +139,18 @@ def next_in_list():
     # Get inputs
     database_file = get_val(wb, locations["Database File"])
     filtered_table = wb.sheets[default_sheet_num].range(locations["Entries Table Top Left"]).options(pd.DataFrame,
-                                                                                                     expand='table')
+                                                                                                     index=False,
+                                                                                                     header=False,
+                                                                                                     expand='table', )
 
     data = new_manager()
 
-    new_index = data.next(filtered_table, locations["Working Entry Index"])
+    working_entry_data = data.next(filtered_table, locations["Working Entry Index"])
+
+    # Update data
+    put_val(wb, locations["Working Match Number"], working_entry_data["Match"])
+
+
     # TODO call code to show next in list
     log(wb, "Done", append=True)
 
@@ -203,53 +211,56 @@ def clear_filters():
 
 
 def apply_filters():
-    def parse_filter_number(parseString, listOfNumbers):
-        if parseString == '':
-            return listOfNumbers
+    # def parse_filter_number(parseString, listOfNumbers):
+    #     if parseString == '':
+    #         return listOfNumbers
+    #
+    #     parseArray = parseString.split(',')
+    #
+    #     for i in range(len(parseArray)):
+    #         parseArray[i] = parseArray[i].replace(' ', '')
+    #
+    #     numbers = []
+    #
+    #     for i in parseArray:
+    #         if '-' in i:
+    #             arr = i.split('-')
+    #             for j in listOfNumbers:
+    #                 if j >= arr[0] and j <= arr[1]:
+    #                     numbers.append(j)
+    #
+    #         for j in ['>=', '<=', '>', '<']:
+    #             if j in i:
+    #                 string = int(i.replace(j, ''))
+    #                 for k in listOfNumbers:
+    #                     if eval(str(k) + str(j) + str(string)):
+    #                         numbers.append(k)
+    #         try:
+    #             for j in listOfNumbers:
+    #                 if j == int(i):
+    #                     numbers.append(j)
+    #         except:
+    #             pass
+    #     return (numbers)
+    #
+    # def parse_filter_string(parseString, listOfStrings):
+    #     if parseString == '':
+    #         return listOfStrings
+    #
+    #     parseArray = parseString.split(',')
+    #
+    #     strings = []
+    #
+    #     for i in parseArray:
+    #         for j in listOfStrings:
+    #             if '~' in i.strip().lower():
+    #                 if i.strip().replace('~', '').lower() in j.strip().lower():
+    #                     strings.append(j)
+    #             if i.strip().lower() == j.strip().lower():
+    #                 strings.append(j)
 
-        parseArray = parseString.split(',')
-
-        for i in range(len(parseArray)):
-            parseArray[i] = parseArray[i].replace(' ', '')
-
-        numbers = []
-
-        for i in parseArray:
-            if '-' in i:
-                arr = i.split('-')
-                for j in listOfNumbers:
-                    if j >= arr[0] and j <= arr[1]:
-                        numbers.append(j)
-
-            for j in ['>=', '<=', '>', '<']:
-                if j in i:
-                    string = int(i.replace(j, ''))
-                    for k in listOfNumbers:
-                        if eval(str(k) + str(j) + str(string)):
-                            numbers.append(k)
-            try:
-                for j in listOfNumbers:
-                    if j == int(i):
-                        numbers.append(j)
-            except:
-                pass
-        return (numbers)
-
-    def parse_filter_string(parseString, listOfStrings):
-        if parseString == '':
-            return listOfStrings
-
-        parseArray = parseString.split(',')
-
-        strings = []
-
-        for i in parseArray:
-            for j in listOfStrings:
-                if '~' in i.strip().lower():
-                    if i.strip().replace('~', '').lower() in j.strip().lower():
-                        strings.append(j)
-                if i.strip().lower() == j.strip().lower():
-                    strings.append(j)
+    def parse_filter_input(parse_string):
+        return parse_string.split(",")
 
     wb = xw.Book.caller()
     log(wb, "Loading data ... ")
@@ -257,24 +268,31 @@ def apply_filters():
     # Get inputs
     folder_path = get_val(wb, locations["Import Folder"])
     database_file = get_val(wb, locations["Database File"])
-    match_number = get_val(wb, locations["Filter Match Number"])
-    team_number = get_val(wb, locations["Filter Team Number"])
-    scout_name = get_val(wb, locations["Filter Scout Name"])
-    board = get_val(wb, locations["Filter Board"])
+    match_number = str(get_val(wb, locations["Filter Match Number"]))
+    team_number = str(get_val(wb, locations["Filter Team Number"]))
+    scout_name = str(get_val(wb, locations["Filter Scout Name"]))
+    board = str(get_val(wb, locations["Filter Board"]))
 
     # Load data
     manager = new_manager()
 
-    log(wb, "Filtering data ... ")
-    data = manager.filter(Match=parse_filter_number(match_number))
-    Team = parse_filter_number(team_number)
-    Name = parse_filter_string(scout_name)
+    match_numbers_for_filter = list(map(int, match_number.split()))
+    team_numbers_for_filter = list(map(int, team_number.split()))
+    scout_names_for_filter = scout_name.split()
 
-    log(wb, "Showing data ... ")
+    log(wb, str(list(match_numbers_for_filter)))
+
+    # log(wb, "Filtering data ... ")
+    data = manager.filter(match=match_numbers_for_filter,
+                          team=team_numbers_for_filter,
+                          name=scout_names_for_filter)
+
+    wb.sheets[default_sheet_num].range(locations["Entries Table Top Left"]).expand().value = []
+    #log(wb, "Showing data ... ")
     wb.sheets[default_sheet_num].range(locations["Entries Table Top Left"]).options(pd.DataFrame, expand='table',
                                                                                     index=False,
-                                                                                    header=False).value = data.filter()
-    log(wb, "Done", append=True)
+                                                                                    header=False).value = data
+    #log(wb, "Done", append=True)
 
 
 def load_and_show_data():
