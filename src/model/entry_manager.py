@@ -9,7 +9,8 @@ import numpy as np
 import pandas as pd
 from sqlalchemy.exc import SQLAlchemyError
 
-from processor import database, board, decoder, format_time
+from src.model import database
+from src.model import format_time, decoder, board
 
 FILTER_HEADER = ['Match', 'Team', 'Name', "Board", "Edited"]
 FILTER_SORT = ['Match', 'Team']

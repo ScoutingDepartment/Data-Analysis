@@ -6,7 +6,8 @@ import re
 
 import pandas as pd
 
-from processor import indexing, database, format_time, board
+from src.model import database
+from src.model import format_time, indexing, board
 
 ENCODE_VALIDATION = "\d{1,3}_\d{1,4}_[^_]+_[0-9a-f]{8}_[0-9a-f]{8}_([0-9a-f]{4})*_.*"
 
