@@ -2,7 +2,6 @@ import sys
 
 import numpy as np
 import pandas as pd
-from PyQt5.QtCore import pyqtSlot
 from PyQt5.QtWidgets import QApplication, QWidget, QTableWidget, QTableWidgetItem, QVBoxLayout, QComboBox
 
 
@@ -27,9 +26,11 @@ class displayDataFrame(QWidget):
         self.layout = QVBoxLayout()
         self.layout.addWidget(self.tableWidget)
         self.setLayout(self.layout)
-
         # Show widget
         self.show()
+
+    def comboBoxChange(self):
+        pass
 
     def createTable(self, df):
 
@@ -41,37 +42,55 @@ class displayDataFrame(QWidget):
         self.tableWidget.setRowCount(row_count)
         self.tableWidget.setColumnCount(column_count)
 
-        dataTypes = ['data type 1', 'Data Type 2', 'dataType 3', 'dayta type 4']
+        self.dataTypes = ['data type', 'dahta type', 'dayta type']
 
         for r in range(len(df.values)):
             for c in range(len(df.values[r])):
                 if c == 0:
-                    comboBox = QComboBox()
+                    self.comboBox = QComboBox()
 
-                    comboBox.addItems(dataTypes)
+                    self.comboBox.addItems(self.dataTypes)
 
-                    comboBox.setCurrentText(df.values[r][c])
+                    self.comboBox.setCurrentText(df.values[r][c])
 
-                    self.tableWidget.setCellWidget(r, c, comboBox)
+                    self.tableWidget.setCellWidget(r, c, self.comboBox)
+
                 else:
                     self.tableWidget.setItem(r, c, QTableWidgetItem(df.values[r][c]))
 
         self.tableWidget.setHorizontalHeaderLabels(list(df.columns.values))
         self.tableWidget.setVerticalHeaderLabels(list(df.index))
 
-        # table selection change
         self.tableWidget.doubleClicked.connect(self.on_click)
 
-    @pyqtSlot()
+    def read(self):
+        data = [[''] * (self.tableWidget.columnCount() + 1) for _ in range((self.tableWidget.rowCount() + 1))]
+        data[0][1] = 'Data Type'
+        data[0][2] = 'Value'
+        for r in range(1, self.tableWidget.rowCount() + 1):
+            for c in range(1, self.tableWidget.columnCount() + 1):
+                if c == 1:
+                    cb = self.tableWidget.cellWidget(r - 1, 0)
+                    data[r][c] = self.dataTypes[cb.currentIndex()]
+                    data[r][0] = r
+                else:
+                    data[r][c] = self.tableWidget.item(r - 1, c - 1).text()
+
+        npArray = (np.array(data))
+        df = pd.DataFrame(data=npArray[1:, 1:],
+                          index=npArray[1:, 0],
+                          columns=npArray[0, 1:])
+        return df
+
     def on_click(self):
-        pass
+        print(self.read())
 
 
 if __name__ == '__main__':
     data = np.array([['', 'Col1', 'Col2', 'col3'],
-                     ['Row1', 'Data Type 2', 2, 1],
-                     ['Row3', 'dayta type 4', 2, 2],
-                     ['Row5', 'data type 1', 3, 3],
+                     ['Row1', 'dahta type', 2, 1],
+                     ['Row3', 'dahta type', 2, 2],
+                     ['Row5', 'dayta type', 3, 3],
                      ['Row2', 3, 4, 5]])
 
     df = pd.DataFrame(data=data[1:, 1:],
