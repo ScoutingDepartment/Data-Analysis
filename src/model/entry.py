@@ -39,11 +39,41 @@ class Entry:
         self.name = info["Name"]
         self.start_time = info["StartTime"]
         self.comments = info["Comments"]
-        self.data = info["Data"]
+        self.encoded_data = info["Data"]
+        self.decoded_data = []
 
         self.board = board
 
-        self.decoded_data = []
+        self.decode()
 
-        for t, v, u, s in self.split(self.data):
-            self.decoded_data.append((self.board.log(t), v, bool(u)))
+    def decode(self):
+        self.decoded_data = []
+        for t, v, u, s in self.split(self.encoded_data):
+            self.decoded_data.append((self.board.log(t), bool(s), v, bool(u)))
+
+        return self.decoded_data
+
+    def encode(self):
+        def generate_numerical_tuple():
+            for tt, ss, vv, uu in self.decoded_data:
+                yield (self.board.data_index_from_log(tt), vv, int(uu), int(ss))
+
+        self.encoded_data = self.join(generate_numerical_tuple())
+
+        return self.encoded_data
+
+    def look(self, type_str):
+        r = []
+        for tt, ss, vv, uu in self.decoded_data:
+            if tt == type_str and not uu:
+                r.append(vv)
+        return r
+
+    def count(self, type_str):
+        return len(self.look(type_str))
+
+    def final_value(self, type_str, default_value=0):
+        l = self.look(type_str)
+        if l:
+            return l[-1]
+        return default_value

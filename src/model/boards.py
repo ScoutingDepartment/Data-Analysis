@@ -30,10 +30,10 @@ class Board:
         """Returns the letter of the alliance"""
         return self.specs["alliance"]
 
-    def data_index(self, str_id):
+    def data_index_from_log(self, log_str):
         """Returns the index from the string id"""
         for i, d in enumerate(self.specs["data"]):
-            if d["id"] == str_id:
+            if d["log"] == log_str:
                 return i
         return -1
 
