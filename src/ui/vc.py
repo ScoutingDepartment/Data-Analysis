@@ -1,3 +1,4 @@
+import random
 import sys
 
 from PyQt5.QtCore import *
@@ -30,55 +31,61 @@ class EntryInfoListItemWidget(QWidget):
 
         self.setLayout(layout)
 
-        self.setMinimumSize(200, 50)
-        self.resize(200, 50)
+        self.setMinimumSize(200, 30)
+        self.resize(200, 30)
         self.show()
 
 
-class TestAppWindow(QMainWindow):
+class VerificationCenter(QMainWindow):
 
     def __init__(self):
         super().__init__(flags=Qt.Window)
 
+        self.entries = QListWidget(self)
+
         self.setup_entries_list()
         self.setup_menus()
 
-        self.resize(500, 500)
-        self.move(300, 300)
+        self.resize(700, 500)
+
+        qr = self.frameGeometry()
+        cp = QDesktopWidget().availableGeometry().center()
+        qr.moveCenter(cp)
+        self.move(qr.topLeft())
+
         self.setWindowTitle("Verification Center")
         self.show()
 
     def setup_entries_list(self):
 
-        import random
-        entries = QListWidget(self)
-
-        def on_entry_clicked(item: QListWidgetItem):
-            _entry_info = entries.itemWidget(item)
-            self.statusBar().showMessage(str(_entry_info.team))
+        def on_entry_clicked():
+            selected = self.entries.selectedItems()
+            if selected:
+                entry = self.entries.itemWidget(selected[0])
+                # self.statusBar().showMessage(str(entry.team))
 
         for i in range(100):
-            entry_info = EntryInfoListItemWidget(entries, {"Match": i // 6 + 1,
-                                                           "Team": random.randint(1, 7999),
-                                                           "Index": random.randint(1, 660),
-                                                           "Board": random.choice(["Red 1",
-                                                                                   "Red 2",
-                                                                                   "Red 3",
-                                                                                   "Blue 1",
-                                                                                   "Blue 2",
-                                                                                   "Blue 3"]),
-                                                           "Name": "Yu"})
-            widget_item = QListWidgetItem(entries)
+            entry_info = EntryInfoListItemWidget(self.entries, {"Match": i // 6 + 1,
+                                                                "Team": random.randint(1, 7999),
+                                                                "Index": random.randint(1, 660),
+                                                                "Board": random.choice(["Red 1",
+                                                                                        "Red 2",
+                                                                                        "Red 3",
+                                                                                        "Blue 1",
+                                                                                        "Blue 2",
+                                                                                        "Blue 3"]),
+                                                                "Name": "Yu"})
+            widget_item = QListWidgetItem(self.entries)
             widget_item.setSizeHint(entry_info.sizeHint())
-            entries.addItem(widget_item)
-            entries.setItemWidget(widget_item, entry_info)
+            self.entries.addItem(widget_item)
+            self.entries.setItemWidget(widget_item, entry_info)
 
-        entries.move(0, 30)
+        self.entries.move(0, 30)
 
-        entries.setFixedWidth(300)
-        entries.setFixedHeight(400)
+        self.entries.setFixedWidth(300)
+        self.entries.setFixedHeight(465)
 
-        entries.itemClicked.connect(on_entry_clicked)
+        self.entries.itemSelectionChanged.connect(on_entry_clicked)
 
     def setup_menus(self):
         """
@@ -108,23 +115,11 @@ class TestAppWindow(QMainWindow):
 
             return action
 
-        def on_open_menu_triggered():
-            file_name = QFileDialog.getOpenFileName(self, "Open Database", filter="(*.warp7)")
-
-        def on_import_csv_menu_triggered():
-            file_name = QFileDialog.getExistingDirectory(self, "Open Folder", "", QFileDialog.ShowDirsOnly)
-
         menus = {
-            "File": [
-                ["Open", on_open_menu_triggered, Qt.CTRL | Qt.Key_O],
-                ["Save", None, Qt.CTRL | Qt.Key_S],
-                ["Save As", None, Qt.CTRL | Qt.SHIFT | Qt.Key_S],
-                ["Close", self.close, Qt.CTRL | Qt.Key_W]
-            ],
-            "Import": [
-                ["From CSV scans", on_import_csv_menu_triggered, Qt.CTRL | Qt.Key_I]
+            "Data": [
+                ["Update", None, Qt.CTRL | Qt.Key_R],
+                ["Search", None, Qt.CTRL | Qt.Key_F]
             ]
-
         }
 
         menu_bar = self.menuBar()
@@ -139,13 +134,9 @@ class TestAppWindow(QMainWindow):
 
             menu_bar.addMenu(menu_view)
 
-    def on_entries_list_selected(self, o):
-        self.statusBar().showMessage("hi")
-
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     app.setWindowIcon(QIcon("../../assets/app-icon.png"))
-    win = TestAppWindow()
-    # w = EntryInfoListItemWidget(None, {"Match": 10, "Team": 20, "Board": "Red 1", "Name": "Yu"})
+    win = VerificationCenter()
     sys.exit(app.exec_())

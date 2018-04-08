@@ -5,11 +5,15 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
+from src.ui.vc import VerificationCenter
+
 
 class MainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__(flags=Qt.Window)
+
+        self.vc = None
 
         self.scans_path = ""
         self.boards_path = ""
@@ -36,6 +40,8 @@ class MainWindow(QMainWindow):
         btn_db_existing.clicked.connect(self.on_exist_database_clicked)
 
         btn_vc = QPushButton("Verification Center")
+        btn_vc.clicked.connect(self.on_open_vc_clicked)
+
         btn_calc_table = QPushButton("Calculation Tables")
         btn_calc_table.setEnabled(False)
         btn_data_lookup = QPushButton("Data Lookup")
@@ -109,6 +115,9 @@ class MainWindow(QMainWindow):
         if f[0]:
             self.db_path = f[0]
         self.edit_db.setText(self.db_path)
+
+    def on_open_vc_clicked(self):
+        self.vc = VerificationCenter()
 
 
 def run_app():
