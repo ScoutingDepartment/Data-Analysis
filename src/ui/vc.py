@@ -7,6 +7,7 @@ from PyQt5.QtWidgets import *
 
 from src.ui.entrydetails import EntryDetailsWidget
 from src.ui.entryitem import EntryInfoListItemWidget
+from src.ui.origional import OrigionalEntryDetailsWidget
 
 
 class VerificationCenter(QMainWindow):
@@ -20,12 +21,12 @@ class VerificationCenter(QMainWindow):
                 ['dahta type', 2, False],
                 ['dayta type', 3, False],
                 [3, 4, False]]
-
         self.details = EntryDetailsWidget(self, data, ['data type', 'dahta type', 'dayta type'])
         self.setup_entries_list()
+        self.origional_details = OrigionalEntryDetailsWidget(self, data, ['data type', 'dahta type', 'dayta type'])
         self.setup_menus()
 
-        self.resize(700, 500)
+        self.resize(1300, 500)
 
         qr = self.frameGeometry()
         cp = QDesktopWidget().availableGeometry().center()
@@ -38,9 +39,14 @@ class VerificationCenter(QMainWindow):
         filtered_entries_table_top_left = (0, 50)
         filtered_entries_table_width = 300
         filtered_entries_table_height = 500
+
         entry_details_table_top_left = (300, 150)
-        entry_details_table_width = 300
+        entry_details_table_width = 500
         entry_details_table_height = 300
+
+        original_entry_details_table_top_left = (800, 150)
+        original_entry_details_table_width = 500
+        original_entry_details_table_height = 300
 
         self.entries.move(*filtered_entries_table_top_left)
         self.entries.setFixedWidth(filtered_entries_table_width)
@@ -49,6 +55,10 @@ class VerificationCenter(QMainWindow):
         self.details.move(*entry_details_table_top_left)
         self.details.setFixedWidth(entry_details_table_width)
         self.details.setFixedHeight(entry_details_table_height)
+
+        self.origional_details.move(*original_entry_details_table_top_left)
+        self.origional_details.setFixedWidth(original_entry_details_table_width)
+        self.origional_details.setFixedHeight(original_entry_details_table_height)
 
         self.show()
 
