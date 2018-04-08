@@ -62,11 +62,13 @@ class EntryDetailsWidget(QWidget):
                     else:
                         self.checkBox.setCheckState(0)
 
-                    print(self.checkBox.checkState())
                     self.tableWidget.setCellWidget(r, c, self.checkBox)
 
                 else:
-                    self.tableWidget.setItem(r, c, QTableWidgetItem(self.data[r][c]))
+                    print(str(r) + " r")
+                    print(str(c) + " c")
+                    print(self.data[r][c])
+                    self.tableWidget.setItem(r, c, QTableWidgetItem(str(self.data[r][c])))
 
         self.tableWidget.setHorizontalHeaderLabels(self.headers)
         self.tableWidget.setVerticalHeaderLabels([str(s + 1) for s in range(len(self.data))])
