@@ -5,7 +5,7 @@ from re import compile
 import numpy as np
 import pandas as pd
 
-from src.model import database, format_time, boards
+from src.model import database, format_time, boards, entry
 
 FILTER_HEADER = ['Match', 'Team', 'Name', "Board", "Edited"]
 FILTER_SORT = ['Match', 'Team']
@@ -50,29 +50,36 @@ class VerificationManager:
         """
         Get data for one specific entry based on the index
         :param index: the index to lookup
-        :return: The entry info, or empty dict if row does not exist
+        :return: The entry info, or raises exception if does not exist
         """
 
         if index in self.edited_entries.index:
-            # TODO get newer entry object
-            # TODO get both raw and edited
             row = self.edited_entries.iloc[index]
-            entry_board = self.board_finder.get_board_by_name(row["Board"])
-            entry_info = {k: row[k] for k in ["Match", "Team", "Name", "StartTime", "Comments"]}
-            entry_info["Board"] = entry_board.name()
-            entry_info["Data"] = []
-            return entry_info
+            raw = None
+            if row["RawIndex"] in self.raw_entries.index:
+                raw = entry.Entry(self.raw_entries.iloc[row["RawIndex"]], self.board_finder)
+            edited = entry.Entry(row, self.board_finder)
+
+            return raw, edited
 
         raise IndexError()
 
-    def __setitem__(self, index, value):
+    def __setitem__(self, index, value: entry.Entry):
         """
         Sets a modified entry object into the manager
         :param index: the index to lookup
-        :param value: the entry object to set
+        :param entry: the entry object to set
         """
         if index in self.edited_entries.index:
-            # TODO set using newer entry object
+            row = self.edited_entries.iloc[index]
+            row["Match"] = value.match
+            row["Team"] = value.team
+            row["Name"] = value.name
+            row["StartTime"] = value.start_time
+            row["Comments"] = value.comments
+            value.encode()
+            row["Data"] = value.encoded_data
+            row["Edited"] = format_time.display_time(time.time())
             return
 
         raise IndexError()

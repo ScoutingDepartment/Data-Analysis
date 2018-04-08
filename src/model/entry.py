@@ -33,7 +33,7 @@ class Entry:
 
         return "".join(generate_datum_hex())
 
-    def __init__(self, info, board):
+    def __init__(self, info, board_finder):
         self.team = info["Team"]
         self.match = info["Match"]
         self.name = info["Name"]
@@ -42,7 +42,7 @@ class Entry:
         self.encoded_data = info["Data"]
         self.decoded_data = []
 
-        self.board = board
+        self.board = board_finder.get_board_by_name(info["Board"])
 
         self.decode()
 
