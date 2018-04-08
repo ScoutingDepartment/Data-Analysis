@@ -6,8 +6,8 @@ from PyQt5.QtWidgets import QApplication, QWidget, QTableWidget, QTableWidgetIte
 
 class EntryDetailsWidget(QWidget):
 
-    def __init__(self, data, dataTypes):
-        super().__init__(flags=Qt.Widget)
+    def __init__(self, parent, data, dataTypes):
+        super().__init__(parent=parent, flags=Qt.Widget)
         self.title = 'PyQt5 table - pythonspot.com'
         self.left = 100
         self.top = 100

@@ -21,7 +21,7 @@ class VerificationCenter(QMainWindow):
                 ['dayta type', 3, False],
                 [3, 4, False]]
 
-        self.details = EntryDetailsWidget(data, ['data type', 'dahta type', 'dayta type'])
+        self.details = EntryDetailsWidget(self, data, ['data type', 'dahta type', 'dayta type'])
         self.setup_entries_list()
         self.setup_menus()
 
@@ -39,7 +39,7 @@ class VerificationCenter(QMainWindow):
         filtered_entries_table_width = 300
         filtered_entries_table_height = 500
         entry_details_table_top_left = (300, 150)
-        entry_details_table_width = 150
+        entry_details_table_width = 300
         entry_details_table_height = 300
 
         self.entries.move(*filtered_entries_table_top_left)
