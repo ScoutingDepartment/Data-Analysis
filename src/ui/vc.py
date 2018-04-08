@@ -25,6 +25,7 @@ class VerificationCenter(QMainWindow):
         self.origional_details = EntryDetailsWidget(self, data, ['data type', 'dahta type', 'dayta type'])
         self.setup_menus()
         self.entry_comments = QLineEdit(self)
+        self.log = QLineEdit(self)
 
         self.resize(1300, 500)
 
@@ -37,19 +38,23 @@ class VerificationCenter(QMainWindow):
 
         # layout variables
 
-        entry_comments_top_left = (310, 30)
-        entry_comments_width = 980
+        log_top_left = (10, 30)
+        log_width = 1280
+        log_height = 20
+
+        entry_comments_top_left = (320, 60)
+        entry_comments_width = 970
         entry_comments_height = 100
 
-        filtered_entries_table_top_left = (0, 50)
+        filtered_entries_table_top_left = (10, 60)
         filtered_entries_table_width = 300
         filtered_entries_table_height = 500
 
-        entry_details_table_top_left = (300, 150)
+        entry_details_table_top_left = (310, 160)
         entry_details_table_width = 500
         entry_details_table_height = 300
 
-        original_entry_details_table_top_left = (800, 150)
+        original_entry_details_table_top_left = (800, 160)
         original_entry_details_table_width = 500
         original_entry_details_table_height = 300
 
@@ -60,6 +65,10 @@ class VerificationCenter(QMainWindow):
         self.entry_comments.move(*entry_comments_top_left)
         self.entry_comments.setFixedWidth(entry_comments_width)
         self.entry_comments.setFixedHeight(entry_comments_height)
+
+        self.log.move(*log_top_left)
+        self.log.setFixedWidth(log_width)
+        self.log.setFixedHeight(log_height)
 
         self.details.move(*entry_details_table_top_left)
         self.details.setFixedWidth(entry_details_table_width)
