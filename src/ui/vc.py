@@ -7,7 +7,6 @@ from PyQt5.QtWidgets import *
 
 from src.ui.entrydetails import EntryDetailsWidget
 from src.ui.entryitem import EntryInfoListItemWidget
-from src.ui.origional import OrigionalEntryDetailsWidget
 
 
 class VerificationCenter(QMainWindow):
@@ -23,8 +22,9 @@ class VerificationCenter(QMainWindow):
                 [3, 4, False]]
         self.details = EntryDetailsWidget(self, data, ['data type', 'dahta type', 'dayta type'])
         self.setup_entries_list()
-        self.origional_details = OrigionalEntryDetailsWidget(self, data, ['data type', 'dahta type', 'dayta type'])
+        self.origional_details = EntryDetailsWidget(self, data, ['data type', 'dahta type', 'dayta type'])
         self.setup_menus()
+        self.entry_comments = QLineEdit(self)
 
         self.resize(1300, 500)
 
@@ -36,6 +36,11 @@ class VerificationCenter(QMainWindow):
         self.setWindowTitle("Verification Center")
 
         # layout variables
+
+        entry_comments_top_left = (310, 30)
+        entry_comments_width = 980
+        entry_comments_height = 100
+
         filtered_entries_table_top_left = (0, 50)
         filtered_entries_table_width = 300
         filtered_entries_table_height = 500
@@ -51,6 +56,10 @@ class VerificationCenter(QMainWindow):
         self.entries.move(*filtered_entries_table_top_left)
         self.entries.setFixedWidth(filtered_entries_table_width)
         self.entries.setFixedHeight(filtered_entries_table_height)
+
+        self.entry_comments.move(*entry_comments_top_left)
+        self.entry_comments.setFixedWidth(entry_comments_width)
+        self.entry_comments.setFixedHeight(entry_comments_height)
 
         self.details.move(*entry_details_table_top_left)
         self.details.setFixedWidth(entry_details_table_width)
