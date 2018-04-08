@@ -5,6 +5,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
+from src.ui.entrydetails import EntryDetailsWidget
 from src.ui.entryitem import EntryInfoListItemWidget
 
 
@@ -15,6 +16,12 @@ class VerificationCenter(QMainWindow):
 
         self.entries = QListWidget(self)
 
+        data = [['dahta type', 2, True],
+                ['dahta type', 2, False],
+                ['dayta type', 3, False],
+                [3, 4, False]]
+
+        self.details = EntryDetailsWidget(data, ['data type', 'dahta type', 'dayta type'])
         self.setup_entries_list()
         self.setup_menus()
 
@@ -26,6 +33,23 @@ class VerificationCenter(QMainWindow):
         self.move(qr.topLeft())
 
         self.setWindowTitle("Verification Center")
+
+        # layout variables
+        filtered_entries_table_top_left = (0, 50)
+        filtered_entries_table_width = 300
+        filtered_entries_table_height = 500
+        entry_details_table_top_left = (300, 150)
+        entry_details_table_width = 150
+        entry_details_table_height = 300
+
+        self.entries.move(*filtered_entries_table_top_left)
+        self.entries.setFixedWidth(filtered_entries_table_width)
+        self.entries.setFixedHeight(filtered_entries_table_height)
+
+        self.details.move(*entry_details_table_top_left)
+        self.details.setFixedWidth(entry_details_table_width)
+        self.details.setFixedHeight(entry_details_table_height)
+
         self.show()
 
     def setup_entries_list(self):
@@ -52,10 +76,6 @@ class VerificationCenter(QMainWindow):
             self.entries.addItem(widget_item)
             self.entries.setItemWidget(widget_item, entry_info)
 
-        self.entries.move(0, 30)
-
-        self.entries.setFixedWidth(300)
-        self.entries.setFixedHeight(465)
 
         self.entries.itemSelectionChanged.connect(on_entry_clicked)
 

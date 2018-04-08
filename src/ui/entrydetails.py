@@ -1,12 +1,13 @@
 import sys
 
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QWidget, QTableWidget, QTableWidgetItem, QVBoxLayout, QComboBox, QCheckBox
 
 
 class EntryDetailsWidget(QWidget):
 
     def __init__(self, data, dataTypes):
-        super().__init__()
+        super().__init__(flags=Qt.Widget)
         self.title = 'PyQt5 table - pythonspot.com'
         self.left = 100
         self.top = 100
@@ -18,8 +19,8 @@ class EntryDetailsWidget(QWidget):
         self.initUI()
 
     def initUI(self):
-        self.setWindowTitle(self.title)
-        self.setGeometry(self.left, self.top, self.width, self.height)
+        # self.setWindowTitle(self.title)
+        # self.setGeometry(self.left, self.top, self.width, self.height)
 
         self.createTable()
 
