@@ -1,11 +1,11 @@
+import os
 import time
-from os import walk, path
 from re import compile
 
 import numpy as np
 import pandas as pd
 
-from src.model import database, format_time, boards, entry
+from src.model import database, format_time, boards, entrylib
 
 FILTER_HEADER = ['Match', 'Team', 'Name', "Board", "Edited"]
 FILTER_SORT = ['Match', 'Team']
@@ -13,6 +13,14 @@ FILTER_SORT = ['Match', 'Team']
 
 class VerificationManager:
     """Data model manager for verifying scouting entries"""
+
+    @staticmethod
+    def list_files(dir_path):
+        """Search for CSV files"""
+        for root, _, files in os.walk(dir_path):
+            for f in files:
+                if f.split(".")[-1].lower() == "csv":
+                    yield os.path.join(root, f)
 
     def __init__(self, db_path, csv_dir_path, board_dir_path):
         """
@@ -30,7 +38,7 @@ class VerificationManager:
 
         self.board_finder = boards.Finder(board_dir_path)
 
-        if path.exists(db_path):
+        if os.path.exists(db_path):
             conn = database.get_engine(db_path).connect()
             self.raw_entries = pd.read_sql(sql="SELECT * FROM RAW_ENTRIES",
                                            con=conn,
@@ -41,8 +49,8 @@ class VerificationManager:
                                               index_col="index")
             conn.close()
         else:
-            self.raw_entries = pd.DataFrame()
-            self.edited_entries = pd.DataFrame()
+            self.raw_entries = pd.DataFrame(columns=database.RAW_HEADER.keys())
+            self.edited_entries = pd.DataFrame(columns=database.EDITED_HEADER.keys())
             self.update()
             self.save()
 
@@ -57,18 +65,18 @@ class VerificationManager:
             row = self.edited_entries.iloc[index]
             raw = None
             if row["RawIndex"] in self.raw_entries.index:
-                raw = entry.Entry(self.raw_entries.iloc[row["RawIndex"]], self.board_finder)
-            edited = entry.Entry(row, self.board_finder)
+                raw = entrylib.Entry(self.raw_entries.iloc[row["RawIndex"]], self.board_finder)
+            edited = entrylib.Entry(row, self.board_finder)
 
             return raw, edited
 
         raise IndexError()
 
-    def __setitem__(self, index, value: entry.Entry):
+    def __setitem__(self, index, value: entrylib.Entry):
         """
         Sets a modified entry object into the manager
         :param index: the index to lookup
-        :param entry: the entry object to set
+        :param value: the entry object to set
         """
         if index in self.edited_entries.index:
             row = self.edited_entries.iloc[index]
@@ -92,13 +100,6 @@ class VerificationManager:
         :return: The number of new items imported
         """
 
-        def list_files():
-            """Search for CSV files"""
-            for root, _, files in walk(self.csv_dir_path):
-                for f in files:
-                    if f.split(".")[-1].lower() == "csv":
-                        yield path.join(root, f)
-
         def read_one(f_path):
             """Read the contents of one CSV file"""
             read_file = open(f_path, "r")
@@ -110,7 +111,7 @@ class VerificationManager:
         def read_all():
             """Read all found files and yield entries that pass the format test"""
             matcher = compile("\d{1,3}_\d{1,4}_[^_]+_[0-9a-f]{8}_[0-9a-f]{8}_([0-9a-f]{4})*_.*")
-            for f in list_files():
+            for f in self.list_files(self.csv_dir_path):
                 for entry in read_one(f):
                     if matcher.match(entry) is not None:
                         yield entry
@@ -128,7 +129,7 @@ class VerificationManager:
                     }
 
         # Create the DataFrame from list of unique entries
-        self.raw_entries = pd.DataFrame([make_columns(entry) for entry in set(read_all())],
+        self.raw_entries = pd.DataFrame([make_columns(e) for e in set(read_all())],
                                         columns=database.RAW_HEADER.keys())
 
         # Compute a boolean array indicating the add values to raw
@@ -141,6 +142,7 @@ class VerificationManager:
                         inplace=True)
 
         new_data["Edited"] = " "
+        new_data = new_data[list(database.EDITED_HEADER.keys())]
 
         # Add new data to the edited table
         self.edited_entries = pd.concat([self.edited_entries, new_data],

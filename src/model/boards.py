@@ -49,6 +49,11 @@ class Board:
         """Returns the log attribute from the constants index"""
         return self.dc(index)["log"]
 
+    def list_logs(self):
+        """Returns a list of all the log strings"""
+        return list(map(lambda x: x["log"], self.specs["data"]))
+
+
 
 class Finder:
     def __init__(self, path):
@@ -79,6 +84,6 @@ class Finder:
 
 
 if __name__ == "__main__":
-    find = Finder("../data/board")
+    find = Finder("../../data/georgian-boards")
     board = find.get_board_by_id(int("e3bb3f98", 16))
-    print(board)
+    print(board.list_logs())
