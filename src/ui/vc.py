@@ -35,6 +35,9 @@ class VerificationCenter(QMainWindow):
         self.current_entry_scout_name.setEnabled(False)
         self.current_entry_time_started = QLineEdit(self)
         self.current_entry_time_started.setEnabled(False)
+        self.filter_match_number = QLineEdit(self)
+        self.filter_team_number = QLineEdit(self)
+        self.filter_scout_name = QLineEdit(self)
 
         self.resize(1300, 600)
 
@@ -50,6 +53,18 @@ class VerificationCenter(QMainWindow):
         log_top_left = (10, 30)
         log_width = 1280
         log_height = 20
+
+        filter_match_number_top_left = (70, 60)
+        filter_match_number_width = 50
+        filter_match_number_height = 30
+
+        filter_team_number_top_left = (10, 60)
+        filter_team_number_width = 50
+        filter_team_number_height = 30
+
+        filter_scout_name_top_left = (130, 60)
+        filter_scout_name_width = 50
+        filter_scout_name_height = 30
 
         current_entry_match_number_top_left = (320, 170)
         current_entry_match_number_width = 100
@@ -71,17 +86,17 @@ class VerificationCenter(QMainWindow):
         entry_comments_width = 970
         entry_comments_height = 100
 
-        filtered_entries_table_top_left = (10, 60)
+        filtered_entries_table_top_left = (10, 100)
         filtered_entries_table_width = 300
-        filtered_entries_table_height = 500
+        filtered_entries_table_height = 470
 
         entry_details_table_top_left = (310, 200)
         entry_details_table_width = 500
-        entry_details_table_height = 370
+        entry_details_table_height = 380
 
         original_entry_details_table_top_left = (800, 200)
         original_entry_details_table_width = 500
-        original_entry_details_table_height = 370
+        original_entry_details_table_height = 380
 
         self.entries.move(*filtered_entries_table_top_left)
         self.entries.setFixedWidth(filtered_entries_table_width)
@@ -110,6 +125,18 @@ class VerificationCenter(QMainWindow):
         self.log.move(*log_top_left)
         self.log.setFixedWidth(log_width)
         self.log.setFixedHeight(log_height)
+
+        self.filter_match_number.move(*filter_match_number_top_left)
+        self.filter_match_number.setFixedWidth(filter_match_number_width)
+        self.filter_match_number.setFixedHeight(filter_match_number_height)
+
+        self.filter_team_number.move(*filter_team_number_top_left)
+        self.filter_team_number.setFixedWidth(filter_team_number_width)
+        self.filter_team_number.setFixedHeight(filter_team_number_height)
+
+        self.filter_scout_name.move(*filter_scout_name_top_left)
+        self.filter_scout_name.setFixedWidth(filter_scout_name_width)
+        self.filter_scout_name.setFixedHeight(filter_scout_name_height)
 
         self.details.move(*entry_details_table_top_left)
         self.details.setFixedWidth(entry_details_table_width)
