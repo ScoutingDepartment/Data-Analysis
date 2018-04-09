@@ -26,8 +26,17 @@ class VerificationCenter(QMainWindow):
         self.setup_menus()
         self.entry_comments = QLineEdit(self)
         self.log = QLineEdit(self)
+        self.log.setEnabled(False)
+        self.current_entry_match_number = QLineEdit(self)
+        self.current_entry_match_number.setEnabled(False)
+        self.current_entry_team_number = QLineEdit(self)
+        self.current_entry_team_number.setEnabled(False)
+        self.current_entry_scout_name = QLineEdit(self)
+        self.current_entry_scout_name.setEnabled(False)
+        self.current_entry_time_started = QLineEdit(self)
+        self.current_entry_time_started.setEnabled(False)
 
-        self.resize(1300, 500)
+        self.resize(1300, 600)
 
         qr = self.frameGeometry()
         cp = QDesktopWidget().availableGeometry().center()
@@ -42,6 +51,22 @@ class VerificationCenter(QMainWindow):
         log_width = 1280
         log_height = 20
 
+        current_entry_match_number_top_left = (320, 170)
+        current_entry_match_number_width = 100
+        current_entry_match_number_height = 30
+
+        current_entry_team_number_top_left = (430, 170)
+        current_entry_team_number_width = 100
+        current_entry_team_number_height = 30
+
+        current_entry_scout_name_top_left = (540, 170)
+        current_entry_scout_name_width = 100
+        current_entry_scout_name_height = 30
+
+        current_entry_time_started_top_left = (650, 170)
+        current_entry_time_started_width = 100
+        current_entry_time_started_height = 30
+
         entry_comments_top_left = (320, 60)
         entry_comments_width = 970
         entry_comments_height = 100
@@ -50,13 +75,13 @@ class VerificationCenter(QMainWindow):
         filtered_entries_table_width = 300
         filtered_entries_table_height = 500
 
-        entry_details_table_top_left = (310, 160)
+        entry_details_table_top_left = (310, 200)
         entry_details_table_width = 500
-        entry_details_table_height = 300
+        entry_details_table_height = 370
 
-        original_entry_details_table_top_left = (800, 160)
+        original_entry_details_table_top_left = (800, 200)
         original_entry_details_table_width = 500
-        original_entry_details_table_height = 300
+        original_entry_details_table_height = 370
 
         self.entries.move(*filtered_entries_table_top_left)
         self.entries.setFixedWidth(filtered_entries_table_width)
@@ -65,6 +90,22 @@ class VerificationCenter(QMainWindow):
         self.entry_comments.move(*entry_comments_top_left)
         self.entry_comments.setFixedWidth(entry_comments_width)
         self.entry_comments.setFixedHeight(entry_comments_height)
+
+        self.current_entry_match_number.move(*current_entry_match_number_top_left)
+        self.current_entry_match_number.setFixedWidth(current_entry_match_number_width)
+        self.current_entry_match_number.setFixedHeight(current_entry_match_number_height)
+
+        self.current_entry_team_number.move(*current_entry_team_number_top_left)
+        self.current_entry_team_number.setFixedWidth(current_entry_team_number_width)
+        self.current_entry_team_number.setFixedHeight(current_entry_team_number_height)
+
+        self.current_entry_scout_name.move(*current_entry_scout_name_top_left)
+        self.current_entry_scout_name.setFixedWidth(current_entry_scout_name_width)
+        self.current_entry_scout_name.setFixedHeight(current_entry_scout_name_height)
+
+        self.current_entry_time_started.move(*current_entry_time_started_top_left)
+        self.current_entry_time_started.setFixedWidth(current_entry_time_started_width)
+        self.current_entry_time_started.setFixedHeight(current_entry_time_started_height)
 
         self.log.move(*log_top_left)
         self.log.setFixedWidth(log_width)
