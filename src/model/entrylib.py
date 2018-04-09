@@ -29,7 +29,7 @@ class Entry:
 
         def generate_datum_hex():
             for t, v, u, s in iterator:
-                yield str(hex(u << 15 | s << 15 | t << 8 | v)).zfill(4)
+                yield str(hex(u << 15 | s << 14 | t << 8 | v))[2:].zfill(4)
 
         return "".join(generate_datum_hex())
 
@@ -49,7 +49,7 @@ class Entry:
     def decode(self):
         self.decoded_data = []
         for t, v, u, s in self.split(self.encoded_data):
-            self.decoded_data.append((self.board.log(t), bool(s), v, bool(u)))
+            self.decoded_data.append([self.board.log(t), bool(s), v, bool(u)])
 
         return self.decoded_data
 

@@ -79,15 +79,15 @@ class VerificationManager:
         :param value: the entry object to set
         """
         if index in self.edited_entries.index:
-            row = self.edited_entries.iloc[index]
-            row["Match"] = value.match
-            row["Team"] = value.team
-            row["Name"] = value.name
-            row["StartTime"] = value.start_time
-            row["Comments"] = value.comments
             value.encode()
-            row["Data"] = value.encoded_data
-            row["Edited"] = format_time.display_time(time.time())
+
+            self.edited_entries.at[index, "Match"] = value.match
+            self.edited_entries.at[index, "Team"] = value.team
+            self.edited_entries.at[index, "Name"] = value.name
+            self.edited_entries.at[index, "StartTime"] = value.start_time
+            self.edited_entries.at[index, "Comments"] = value.comments
+            self.edited_entries.at[index, "Data"] = value.encoded_data
+            self.edited_entries.at[index, "Edited"] = format_time.display_time(time.time())
             return
 
         raise IndexError()
@@ -132,6 +132,9 @@ class VerificationManager:
         self.raw_entries = pd.DataFrame([make_columns(e) for e in set(read_all())],
                                         columns=database.RAW_HEADER.keys())
 
+        self.merge()
+
+    def merge(self):
         # Compute a boolean array indicating the add values to raw
         condition = ~self.raw_entries.index.isin(self.edited_entries["RawIndex"].dropna())
 
@@ -234,8 +237,3 @@ class VerificationManager:
             return self[self.match_row(match, team, name).index[0]]
 
         return self[matching_row.index[0]]
-
-    def remove(self, index):
-        """Removes the entry at the index"""
-        # TODO Possibly Use a removed flag instead of actually dropping to avoid data getting recopied
-        self.edited_entries.drop(index=index, inplace=True)
