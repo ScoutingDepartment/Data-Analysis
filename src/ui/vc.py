@@ -5,27 +5,33 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
+from src.model.verification_manager import VerificationManager
 from src.ui.entrydetails import EntryDetailsWidget
 from src.ui.entryitem import EntryInfoListItemWidget
 
+TEST_DATA = [['dahta type', 2, True],
+             ['dahta type', 2, False],
+             ['dayta type', 3, False],
+             [3, 4, False]]
+TEST_TYPES = ['data type', 'dahta type', 'dayta type']
+
 
 class VerificationCenter(QMainWindow):
+    """The verification center"""
 
-    def __init__(self):
+    def __init__(self, db_path=None, csv_dir_path=None, board_dir_path=None):
         super().__init__(parent=None, flags=Qt.Window)
+
+        if db_path and csv_dir_path and board_dir_path:
+            self.manager = VerificationManager(db_path, csv_dir_path, board_dir_path)
+        else:
+            self.manager = None
 
         self.setWindowTitle("Verification Center")
 
-        data = [['dahta type', 2, True],
-                ['dahta type', 2, False],
-                ['dayta type', 3, False],
-                [3, 4, False]]
-
-        types = ['data type', 'dahta type', 'dayta type']
-
         self.entries = QListWidget(self)
-        self.details = EntryDetailsWidget(self, data, types)
-        self.original_details = EntryDetailsWidget(self, data, types)
+        self.details = EntryDetailsWidget(self, TEST_DATA, TEST_TYPES)
+        self.original_details = EntryDetailsWidget(self, TEST_DATA, TEST_TYPES)
 
         (
             self.entry_comments,
@@ -34,8 +40,8 @@ class VerificationCenter(QMainWindow):
             self.current_entry_team_number,
             self.current_entry_scout_name,
             self.current_entry_time_started,
-            self.filter_match_number,
             self.filter_team_number,
+            self.filter_match_number,
             self.filter_scout_name
         ) = (QLineEdit(self) for _ in range(9))
 
@@ -161,12 +167,6 @@ class VerificationCenter(QMainWindow):
 
     def setup_entries_list(self):
 
-        def on_entry_clicked():
-            selected = self.entries.selectedItems()
-            if selected:
-                entry = self.entries.itemWidget(selected[0])
-                # self.statusBar().showMessage(str(entry.team))
-
         for i in range(100):
             entry_info = EntryInfoListItemWidget(self.entries, {"Match": i // 6 + 1,
                                                                 "Team": random.randint(1, 7999),
@@ -183,7 +183,7 @@ class VerificationCenter(QMainWindow):
             self.entries.addItem(widget_item)
             self.entries.setItemWidget(widget_item, entry_info)
 
-        self.entries.itemSelectionChanged.connect(on_entry_clicked)
+        self.entries.itemSelectionChanged.connect(self.on_entry_selected)
 
     def setup_menus(self):
         """
@@ -216,7 +216,8 @@ class VerificationCenter(QMainWindow):
         menus = {
             "Data": [
                 ["Update", None, Qt.CTRL | Qt.Key_R],
-                ["Search", None, Qt.CTRL | Qt.Key_F]
+                ["Search", None, Qt.CTRL | Qt.Key_F],
+                ["Save", None, Qt.CTRL | Qt.Key_S]
             ]
         }
 
@@ -231,6 +232,13 @@ class VerificationCenter(QMainWindow):
                 menu_view.addAction(menu_action)
 
             menu_bar.addMenu(menu_view)
+
+    def on_entry_selected(self):
+        selected = self.entries.selectedItems()
+        if selected:
+            entry = self.entries.itemWidget(selected[0])
+            # TODO Use this widget here
+            # self.statusBar().showMessage(str(entry.team))
 
 
 if __name__ == '__main__':
