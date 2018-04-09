@@ -12,41 +12,54 @@ from src.ui.entryitem import EntryInfoListItemWidget
 class VerificationCenter(QMainWindow):
 
     def __init__(self):
-        super().__init__(flags=Qt.Window)
+        super().__init__(parent=None, flags=Qt.Window)
 
-        self.entries = QListWidget(self)
+        self.setWindowTitle("Verification Center")
 
         data = [['dahta type', 2, True],
                 ['dahta type', 2, False],
                 ['dayta type', 3, False],
                 [3, 4, False]]
-        self.details = EntryDetailsWidget(self, data, ['data type', 'dahta type', 'dayta type'])
-        self.setup_entries_list()
-        self.origional_details = EntryDetailsWidget(self, data, ['data type', 'dahta type', 'dayta type'])
-        self.setup_menus()
-        self.entry_comments = QLineEdit(self)
-        self.log = QLineEdit(self)
-        self.log.setEnabled(False)
-        self.current_entry_match_number = QLineEdit(self)
-        self.current_entry_match_number.setEnabled(False)
-        self.current_entry_team_number = QLineEdit(self)
-        self.current_entry_team_number.setEnabled(False)
-        self.current_entry_scout_name = QLineEdit(self)
-        self.current_entry_scout_name.setEnabled(False)
-        self.current_entry_time_started = QLineEdit(self)
-        self.current_entry_time_started.setEnabled(False)
-        self.filter_match_number = QLineEdit(self)
-        self.filter_team_number = QLineEdit(self)
-        self.filter_scout_name = QLineEdit(self)
 
+        types = ['data type', 'dahta type', 'dayta type']
+
+        self.entries = QListWidget(self)
+        self.details = EntryDetailsWidget(self, data, types)
+        self.original_details = EntryDetailsWidget(self, data, types)
+
+        (
+            self.entry_comments,
+            self.log,
+            self.current_entry_match_number,
+            self.current_entry_team_number,
+            self.current_entry_scout_name,
+            self.current_entry_time_started,
+            self.filter_match_number,
+            self.filter_team_number,
+            self.filter_scout_name
+        ) = (QLineEdit(self) for _ in range(9))
+
+        self.setup_entries_list()
+        self.setup_menus()
+        self.setup_view_states()
+        self.setup_layout()
+
+        self.show()
+
+    def setup_view_states(self):
+        self.log.setEnabled(False)
+        self.current_entry_match_number.setEnabled(False)
+        self.current_entry_team_number.setEnabled(False)
+        self.current_entry_scout_name.setEnabled(False)
+        self.current_entry_time_started.setEnabled(False)
+
+    def setup_layout(self):
         self.resize(1300, 600)
 
         qr = self.frameGeometry()
         cp = QDesktopWidget().availableGeometry().center()
         qr.moveCenter(cp)
         self.move(qr.topLeft())
-
-        self.setWindowTitle("Verification Center")
 
         # layout variables
 
@@ -142,11 +155,9 @@ class VerificationCenter(QMainWindow):
         self.details.setFixedWidth(entry_details_table_width)
         self.details.setFixedHeight(entry_details_table_height)
 
-        self.origional_details.move(*original_entry_details_table_top_left)
-        self.origional_details.setFixedWidth(original_entry_details_table_width)
-        self.origional_details.setFixedHeight(original_entry_details_table_height)
-
-        self.show()
+        self.original_details.move(*original_entry_details_table_top_left)
+        self.original_details.setFixedWidth(original_entry_details_table_width)
+        self.original_details.setFixedHeight(original_entry_details_table_height)
 
     def setup_entries_list(self):
 
@@ -171,7 +182,6 @@ class VerificationCenter(QMainWindow):
             widget_item.setSizeHint(entry_info.sizeHint())
             self.entries.addItem(widget_item)
             self.entries.setItemWidget(widget_item, entry_info)
-
 
         self.entries.itemSelectionChanged.connect(on_entry_clicked)
 
