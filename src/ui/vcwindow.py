@@ -30,19 +30,21 @@ class VerificationWindow(QMainWindow):
         self.original_details = EntryDetailsWidget(self, TEST_DATA, TEST_TYPES)
 
         (
-            self.current_entry_comments,
             self.log,
+            self.filter_team_number,
+            self.filter_match_number,
+            self.filter_scout_name,
             self.current_entry_match_number,
             self.current_entry_team_number,
             self.current_entry_scout_name,
-            self.current_entry_time_started,
-            self.filter_team_number,
-            self.filter_match_number,
-            self.filter_scout_name
-        ) = (QLineEdit(self) for _ in range(9))
+            self.current_entry_time_started
+        ) = (QLineEdit(self) for _ in range(8))
+
+        self.current_entry_comments = QTextEdit(self)  # Use QTextEdit instead to have multiple lines
 
         self.setup_menus()
         self.setup_view_states()
+        self.setup_styles()
         self.setup_layouts()
 
         self.update_filtered_entries()
@@ -55,6 +57,18 @@ class VerificationWindow(QMainWindow):
         self.current_entry_team_number.setEnabled(False)
         self.current_entry_scout_name.setEnabled(False)
         self.current_entry_time_started.setEnabled(False)
+
+    def setup_styles(self):
+        self.current_entry_comments.setStyleSheet("QTextEdit{font-size:18px}")
+        for w in (self.log,
+                  self.filter_team_number,
+                  self.filter_match_number,
+                  self.filter_scout_name,
+                  self.current_entry_match_number,
+                  self.current_entry_team_number,
+                  self.current_entry_scout_name,
+                  self.current_entry_time_started):
+            w.setStyleSheet("QLineEdit{font-size:18px}")
 
     def setup_layouts(self):
         self.resize(1300, 600)
@@ -69,7 +83,7 @@ class VerificationWindow(QMainWindow):
 
             (self.filter_match_number, 70, 60, 50, 30),
             (self.filter_team_number, 10, 60, 50, 30),
-            (self.filter_scout_name, 130, 60, 50, 30),
+            (self.filter_scout_name, 130, 60, 100, 30),
             (self.filtered_entries, 10, 100, 300, 470),
 
             (self.current_entry_comments, 320, 60, 970, 100),
@@ -100,9 +114,10 @@ class VerificationWindow(QMainWindow):
     def update_filtered_entries(self):
         for i in range(100):
             self.add_entry_item(1, {"Match": i // 6 + 1,
-                                 "Team": random.randint(1, 7999),
-                                 "Index": i,
-                                 "Board": "",
+                                    "Team": random.randint(1, 7999),
+                                    "Index": i,
+                                    "Board": "",
+                                    "Edited": "",
                                     "Name": "Yu"}, None)
 
     def setup_menus(self):
