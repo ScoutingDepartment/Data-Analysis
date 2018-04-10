@@ -76,7 +76,7 @@ class VerificationWindow(QMainWindow):
             (self.current_entry_match_number, 320, 170, 100, 30),
             (self.current_entry_team_number, 430, 170, 100, 30),
             (self.current_entry_scout_name, 540, 170, 100, 30),
-            (self.current_entry_time_started, 650, 170, 100, 30),
+            (self.current_entry_time_started, 650, 170, 150, 30),
 
             (self.details, 310, 200, 500, 380),
             (self.original_details, 800, 200, 500, 380)

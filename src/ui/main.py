@@ -136,6 +136,11 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, "Cannot Open Verification Center",
                                 "Not all of the fields are filled in")
 
+    def closeEvent(self, event):
+        if self.vc is not None:
+            self.vc.close()
+        event.accept()
+
 
 def run_app():
     app = QApplication(sys.argv)
