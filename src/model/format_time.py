@@ -15,6 +15,10 @@ def display_time(timestamp):
     return datetime.fromtimestamp(timestamp).strftime(DISPLAY_TIME_FORMAT)
 
 
+def parse_display(s):
+    return int(datetime.strptime(s, DISPLAY_TIME_FORMAT).timestamp())
+
+
 def file_time(timestamp):
     """
     Returns the formatted timestamp according to FILE_TIME_FORMAT constant

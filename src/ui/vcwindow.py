@@ -68,7 +68,7 @@ class VerificationWindow(QMainWindow):
                   self.current_entry_team_number,
                   self.current_entry_scout_name,
                   self.current_entry_time_started):
-            w.setStyleSheet("QLineEdit{font-size:18px}")
+            w.setStyleSheet("QLineEdit{font-size:14px}")
 
     def setup_layouts(self):
         self.resize(1300, 600)

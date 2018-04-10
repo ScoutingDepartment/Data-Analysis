@@ -165,6 +165,23 @@ class VerificationManager:
                                    dtype=database.EDITED_HEADER,
                                    index_label="index")
 
+    def write_csv(self, target_path):
+        target_file = open(target_path, "w")
+        for _, row in self.search().iterrows():
+            items = map(str, [row["Match"],
+                              row["Team"],
+                              row["Name"],
+                              hex(format_time.parse_display(row["StartTime"]))[2:],
+                              self.board_finder.get_board_by_name(row["Board"]).specs["id"],
+                              row["Data"],
+                              row["Comments"]])
+
+            line = "_".join(items)
+            line += ", "
+            line += format_time.display_time(time.time())
+            print(line, file=target_file)
+        target_file.close()
+
     def search(self, **kwargs):
         """
         Searches the database of entries to show relevant results
