@@ -86,8 +86,12 @@ class VerificationWindow(QMainWindow):
             widget.move(x, y)
             widget.setFixedSize(width, height)
 
-    def add_entry_item(self, data):
-        custom_widget = EntryInfoListItemWidget(self.filtered_entries, data)
+    def add_entry_item(self, index, data, finder):
+        custom_widget = EntryInfoListItemWidget(parent=self.filtered_entries,
+                                                index=index,
+                                                entry_info=data,
+                                                board_finder=finder)
+
         widget_item = QListWidgetItem(self.filtered_entries)
         widget_item.setSizeHint(custom_widget.sizeHint())
         self.filtered_entries.addItem(widget_item)
@@ -95,11 +99,11 @@ class VerificationWindow(QMainWindow):
 
     def update_filtered_entries(self):
         for i in range(100):
-            self.add_entry_item({"Match": i // 6 + 1,
+            self.add_entry_item(1, {"Match": i // 6 + 1,
                                  "Team": random.randint(1, 7999),
                                  "Index": i,
                                  "Board": "",
-                                 "Name": "Yu"})
+                                    "Name": "Yu"}, None)
 
     def setup_menus(self):
         """Set up the menus that is part of the UI"""

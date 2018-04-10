@@ -15,25 +15,33 @@ class MainWindow(QMainWindow):
 
         self.vc = None
 
+        self.db_path = ""
         self.scans_path = ""
         self.boards_path = ""
-        self.db_path = ""
+
+        if os.path.exists("paths.config"):
+            cf = open("paths.config", "r")
+            lines = cf.readlines()
+            self.db_path = lines[0].strip()
+            self.scans_path = lines[1].strip()
+            self.boards_path = lines[2].strip()
+            cf.close()
 
         grid = QGridLayout()
         grid.setSpacing(10)
 
         self.edit_scans = QLineEdit()
-        # self.edit_scans.setEnabled(False)
+        self.edit_scans.setText(self.scans_path)
         btn_browse_scans = QPushButton("Browse")
         btn_browse_scans.clicked.connect(self.on_browse_scans_clicked)
 
         self.edit_boards = QLineEdit()
-        # self.edit_boards.setEnabled(False)
+        self.edit_boards.setText(self.boards_path)
         btn_browse_boards = QPushButton("Browse")
         btn_browse_boards.clicked.connect(self.on_browse_boards_clicked)
 
         self.edit_db = QLineEdit()
-        # self.edit_db.setEnabled(False)
+        self.edit_db.setText(self.db_path)
         btn_db_new = QPushButton("New")
         btn_db_new.clicked.connect(self.on_new_database_clicked)
         btn_db_existing = QPushButton("Existing")
@@ -117,8 +125,13 @@ class MainWindow(QMainWindow):
         self.edit_db.setText(self.db_path)
 
     def on_open_vc_clicked(self):
-        if self.db_path and self.scans_path and self.boards_path:
-            self.vc = VerificationCenter(self.db_path, self.scans_path, self.boards_path)
+        paths = (self.db_path, self.scans_path, self.boards_path)
+
+        if all(paths):
+            cf = open("paths.config", "w")
+            cf.writelines("\n".join(paths))
+            cf.close()
+            self.vc = VerificationCenter(*paths)
         else:
             QMessageBox.warning(self, "Cannot Open Verification Center",
                                 "Not all of the fields are filled in")
