@@ -17,10 +17,11 @@ class EntryDetailsWidget(QWidget):
 
         self.data_types = []
         self.data = []
+        self.editable = editable
 
         self.data_table = QTableWidget()
         self.data_table.doubleClicked.connect(self.on_click)
-        self.data_table.setEnabled(editable)
+        self.data_table.verticalHeader().setVisible(False)
 
         self.layout = QVBoxLayout()
         self.layout.addWidget(self.data_table)
@@ -45,26 +46,25 @@ class EntryDetailsWidget(QWidget):
                 if column == INDEXES['Data Types']:
                     type_chooser = QComboBox()
                     type_chooser.addItems(self.data_types)
-                    print(self.data[row][column])
                     type_chooser.setCurrentText(str(self.data[row][column]))
+                    type_chooser.setEnabled(self.editable)
                     self.data_table.setCellWidget(row, list(INDEXES.keys()).index('Data Types'), type_chooser)
 
                 elif column == INDEXES['Undo']:
                     undo_checker = QCheckBox()
                     undo_checker.setCheckState(2 if self.data[row][column] else 0)
+                    undo_checker.setEnabled(self.editable)
                     self.data_table.setCellWidget(row, (list(INDEXES.keys())).index('Undo'), undo_checker)
 
-                elif column == INDEXES['Values']:
-                    self.data_table.setItem(row,
-                                            list(INDEXES.keys()).index('Values'),
-                                            QTableWidgetItem(str(self.data[row][column])))
                 else:
+                    value_item = QTableWidgetItem(str(self.data[row][column]))
+                    if not self.editable:
+                        value_item.setFlags(value_item.flags() ^ Qt.ItemIsEditable)
                     self.data_table.setItem(row,
                                             list(INDEXES.keys()).index('Values'),
-                                            QTableWidgetItem(str(self.data[row][column])))
+                                            value_item)
 
         self.data_table.setHorizontalHeaderLabels(HEADERS)
-        self.data_table.setVerticalHeaderLabels([str(s + 1) for s in range(len(self.data))])
 
     def read(self):
         data = [[''] * (self.data_table.columnCount()) for _ in range((self.data_table.rowCount()))]
