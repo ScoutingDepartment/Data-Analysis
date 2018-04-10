@@ -7,6 +7,8 @@ from PyQt5.QtWidgets import *
 
 from src.ui.vc import VerificationCenter
 
+CONFIG_PATH = "paths.config"
+
 
 class MainWindow(QMainWindow):
 
@@ -19,13 +21,13 @@ class MainWindow(QMainWindow):
         self.scans_path = ""
         self.boards_path = ""
 
-        if os.path.exists("paths.config"):
-            cf = open("paths.config", "r")
-            lines = cf.readlines()
+        if os.path.exists(CONFIG_PATH):
+            config_path = open(CONFIG_PATH, "r")
+            lines = config_path.readlines()
             self.db_path = lines[0].strip()
             self.scans_path = lines[1].strip()
             self.boards_path = lines[2].strip()
-            cf.close()
+            config_path.close()
 
         grid = QGridLayout()
         grid.setSpacing(10)
@@ -79,8 +81,8 @@ class MainWindow(QMainWindow):
             (version_label, (5, 0, 1, 2))
         ]
 
-        for w, p in grid_widgets:
-            grid.addWidget(w, *p)
+        for widget, grid_position in grid_widgets:
+            grid.addWidget(widget, *grid_position)
 
         grid_container = QWidget(self, flags=Qt.Widget)
         grid_container.setLayout(grid)
@@ -95,42 +97,42 @@ class MainWindow(QMainWindow):
         self.show()
 
     def on_browse_scans_clicked(self):
-        f = QFileDialog.getExistingDirectory(self,
+        path_input = QFileDialog.getExistingDirectory(self,
                                              "Open Scans Folder",
                                              "",
-                                             QFileDialog.ShowDirsOnly)
-        if f:
-            self.scans_path = f
+                                                      QFileDialog.ShowDirsOnly)
+        if path_input:
+            self.scans_path = path_input
         self.edit_scans.setText(self.scans_path)
 
     def on_browse_boards_clicked(self):
-        f = QFileDialog.getExistingDirectory(self,
+        path_input = QFileDialog.getExistingDirectory(self,
                                              "Open Boards Folder",
                                              "",
-                                             QFileDialog.ShowDirsOnly)
-        if f:
-            self.boards_path = f
+                                                      QFileDialog.ShowDirsOnly)
+        if path_input:
+            self.boards_path = path_input
         self.edit_boards.setText(self.boards_path)
 
     def on_new_database_clicked(self):
-        f = QFileDialog.getSaveFileName(self, "Save New Database", "", filter="(*.warp7)")
-        if f[0]:
-            self.db_path = f[0]
+        path_input = QFileDialog.getSaveFileName(self, "Save New Database", "", filter="(*.warp7)")
+        if path_input[0]:
+            self.db_path = path_input[0]
         self.edit_db.setText(self.db_path)
 
     def on_exist_database_clicked(self):
-        f = QFileDialog.getOpenFileName(self, "Open Database", filter="(*.warp7)")
-        if f[0]:
-            self.db_path = f[0]
+        path_input = QFileDialog.getOpenFileName(self, "Open Database", filter="(*.warp7)")
+        if path_input[0]:
+            self.db_path = path_input[0]
         self.edit_db.setText(self.db_path)
 
     def on_open_vc_clicked(self):
         paths = (self.db_path, self.scans_path, self.boards_path)
 
         if all(paths):
-            cf = open("paths.config", "w")
-            cf.writelines("\n".join(paths))
-            cf.close()
+            config_file = open(CONFIG_PATH, "w")
+            config_file.writelines("\n".join(paths))
+            config_file.close()
             self.vc = VerificationCenter(*paths)
         else:
             QMessageBox.warning(self, "Cannot Open Verification Center",
