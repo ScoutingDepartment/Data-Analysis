@@ -5,7 +5,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
-from src.ui.vcbase import VerificationBaseInterface
+from src.ui.vc import VerificationCenter
 
 
 class MainWindow(QMainWindow):
@@ -117,7 +117,11 @@ class MainWindow(QMainWindow):
         self.edit_db.setText(self.db_path)
 
     def on_open_vc_clicked(self):
-        self.vc = VerificationBaseInterface()
+        if self.db_path and self.scans_path and self.boards_path:
+            self.vc = VerificationCenter(self.db_path, self.scans_path, self.boards_path)
+        else:
+            QMessageBox.warning(self, "Cannot Open Verification Center",
+                                "Not all of the fields are filled in")
 
 
 def run_app():

@@ -15,7 +15,7 @@ TEST_DATA = [['dahta type', 2, True],
 TEST_TYPES = ['data type', 'dahta type', 'dayta type']
 
 
-class VerificationBaseInterface(QMainWindow):
+class VerificationWindow(QMainWindow):
     """The base interface for verification center"""
 
     def __init__(self):
@@ -147,5 +147,5 @@ class VerificationBaseInterface(QMainWindow):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     app.setWindowIcon(QIcon("../../assets/app-icon.png"))
-    win = VerificationBaseInterface()
+    win = VerificationWindow()
     sys.exit(app.exec_())
