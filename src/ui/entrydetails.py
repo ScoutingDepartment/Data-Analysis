@@ -3,7 +3,7 @@ import sys
 from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import QApplication, QWidget, QTableWidget, QTableWidgetItem, QVBoxLayout, QComboBox, QCheckBox
 
-INDEXES = {'Data Types': 1,
+INDEXES = {'Data Types': 0,
            'Values': 2,
            'Undo': 3}
 
@@ -15,71 +15,72 @@ class EntryDetailsWidget(QWidget):
     def __init__(self, parent):
         super().__init__(parent=parent, flags=Qt.Widget)
 
-        self.dataTypes = []
+        self.data_types = []
         self.data = []
 
-        self.tableWidget = QTableWidget()
-        self.tableWidget.doubleClicked.connect(self.on_click)
+        self.data_table = QTableWidget()
+        self.data_table.doubleClicked.connect(self.on_click)
 
         self.layout = QVBoxLayout()
-        self.layout.addWidget(self.tableWidget)
+        self.layout.addWidget(self.data_table)
         self.setLayout(self.layout)
         self.show()
 
-    def update_data(self, data, dataTypes):
+    def update_data(self, data, data_types):
         self.data = data
-        self.dataTypes = dataTypes
+        self.data_types = data_types
 
-        self.tableWidget.clear()
+        self.data_table.clear()
 
         row_count = len(self.data)
         column_count = len(HEADERS)
 
-        self.tableWidget.setRowCount(row_count)
-        self.tableWidget.setColumnCount(column_count)
+        self.data_table.setRowCount(row_count)
+        self.data_table.setColumnCount(column_count)
 
         for row in range(len(self.data)):
             for column in range(len(self.data[row])):
 
                 if column == INDEXES['Data Types']:
                     type_chooser = QComboBox()
-                    type_chooser.addItems(self.dataTypes)
+                    type_chooser.addItems(self.data_types)
+                    print(self.data[row][column])
                     type_chooser.setCurrentText(str(self.data[row][column]))
-                    self.tableWidget.setCellWidget(row, list(INDEXES.keys()).index('Data Types'), type_chooser)
+                    self.data_table.setCellWidget(row, list(INDEXES.keys()).index('Data Types'), type_chooser)
 
                 elif column == INDEXES['Undo']:
                     undo_checker = QCheckBox()
                     undo_checker.setCheckState(2 if self.data[row][column] else 0)
-                    self.tableWidget.setCellWidget(row, (list(INDEXES.keys())).index('Undo'), undo_checker)
+                    self.data_table.setCellWidget(row, (list(INDEXES.keys())).index('Undo'), undo_checker)
 
                 elif column == INDEXES['Values']:
-                    self.tableWidget.setItem(row,
-                                             list(INDEXES.keys()).index('Values'),
-                                             QTableWidgetItem(str(self.data[row][column])))
+                    self.data_table.setItem(row,
+                                            list(INDEXES.keys()).index('Values'),
+                                            QTableWidgetItem(str(self.data[row][column])))
                 else:
-                    self.tableWidget.setItem(row,
-                                             list(INDEXES.keys()).index('Values'),
-                                             QTableWidgetItem(str(self.data[row][column])))
+                    self.data_table.setItem(row,
+                                            list(INDEXES.keys()).index('Values'),
+                                            QTableWidgetItem(str(self.data[row][column])))
 
-        self.tableWidget.setHorizontalHeaderLabels(HEADERS)
-        self.tableWidget.setVerticalHeaderLabels([str(s + 1) for s in range(len(self.data))])
+        self.data_table.setHorizontalHeaderLabels(HEADERS)
+        self.data_table.setVerticalHeaderLabels([str(s + 1) for s in range(len(self.data))])
 
     def read(self):
-        data = [[''] * (self.tableWidget.columnCount()) for _ in range((self.tableWidget.rowCount()))]
+        data = [[''] * (self.data_table.columnCount()) for _ in range((self.data_table.rowCount()))]
 
         for r in range(len(data)):
             for c in range(len(data[r])):
                 if c == INDEXES['Data Types']:
-                    comboBox = self.tableWidget.cellWidget(r, c)
-                    data[r][c] = self.dataTypes[comboBox.currentIndex()]
+                    comboBox = self.data_table.cellWidget(r, c)
+                    data[r][c] = self.data_types[comboBox.currentIndex()]
                 elif c == INDEXES['Undo']:
-                    checkBox = self.tableWidget.cellWidget(r, c)
+                    checkBox = self.data_table.cellWidget(r, c)
                     if checkBox.checkState() == 2:
                         data[r][c] = True
                     else:
                         data[r][c] = False
                 elif c == INDEXES['Values']:
-                    data[r][c] = self.tableWidget.item(r, c).text()
+                    data[r][c] = self.data_table.item(r, c).text()
 
         return data
 
