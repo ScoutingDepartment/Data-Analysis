@@ -25,3 +25,14 @@ class VerificationCenter(VerificationWindow):
             self.current_entry_scout_name.setText(str(self.working_entry.name))
             self.current_entry_time_started.setText(str(self.working_entry.start_time))
             self.current_entry_comments.setText(str(self.working_entry.comments))
+
+    def on_update(self):
+        self.log.setText("Updating")
+        self.manager.update()
+        self.update_filtered_entries()
+        self.log.setText("Updated")
+
+    def on_save(self):
+        self.log.setText("Saving")
+        self.manager.save()
+        self.log.setText("Saved")
