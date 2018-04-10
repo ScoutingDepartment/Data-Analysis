@@ -12,7 +12,7 @@ HEADERS = INDEXES.keys()
 
 class EntryDetailsWidget(QWidget):
 
-    def __init__(self, parent):
+    def __init__(self, parent, editable):
         super().__init__(parent=parent, flags=Qt.Widget)
 
         self.data_types = []
@@ -20,6 +20,7 @@ class EntryDetailsWidget(QWidget):
 
         self.data_table = QTableWidget()
         self.data_table.doubleClicked.connect(self.on_click)
+        self.data_table.setEnabled(editable)
 
         self.layout = QVBoxLayout()
         self.layout.addWidget(self.data_table)
@@ -118,6 +119,6 @@ if __name__ == '__main__':
 
     app = QApplication(sys.argv)
 
-    ex = EntryDetailsWidget(None)
+    ex = EntryDetailsWidget(None, False)
     ex.update_data(test_data, test_types)
     sys.exit(app.exec_())

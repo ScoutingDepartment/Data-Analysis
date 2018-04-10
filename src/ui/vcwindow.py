@@ -20,8 +20,8 @@ class VerificationWindow(QMainWindow):
         self.filtered_entries = QListWidget(self)
         self.filtered_entries.itemSelectionChanged.connect(self.on_entry_selected)
 
-        self.details = EntryDetailsWidget(self)
-        self.original_details = EntryDetailsWidget(self)
+        self.details = EntryDetailsWidget(self, True)
+        self.original_details = EntryDetailsWidget(self, False)
 
         (
             self.log,
