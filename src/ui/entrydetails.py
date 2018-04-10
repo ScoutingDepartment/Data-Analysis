@@ -27,6 +27,8 @@ class EntryDetailsWidget(QWidget):
         # self.setWindowTitle(self.title)
         # self.setGeometry(self.left, self.top, self.width, self.height)
 
+        self.tableWidget = QTableWidget()
+
         self.createTable()
 
         # Add box layout, add table to box layout and add box layout to widget
@@ -41,9 +43,9 @@ class EntryDetailsWidget(QWidget):
 
     def createTable(self):
 
+        while (self.tableWidget.rowCount() > 0):
+            self.tableWidget.removeRow(0)
 
-        # Create table
-        self.tableWidget = QTableWidget()
 
         row_count = len(self.data)
         column_count = len(self.headers)
@@ -82,6 +84,11 @@ class EntryDetailsWidget(QWidget):
         self.tableWidget.setVerticalHeaderLabels([str(s + 1) for s in range(len(self.data))])
 
         self.tableWidget.doubleClicked.connect(self.on_click)
+
+    def update(self, data, dataTypes):
+        self.data = data
+        self.dataTypes = dataTypes
+        self.createTable()
 
     def read(self):
         data = [[''] * (self.tableWidget.columnCount()) for _ in range((self.tableWidget.rowCount()))]
@@ -138,5 +145,4 @@ if __name__ == '__main__':
 
     app = QApplication(sys.argv)
 
-    ex = EntryDetailsWidget(None, data, types)
     sys.exit(app.exec_())
