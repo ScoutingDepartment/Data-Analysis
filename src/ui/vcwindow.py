@@ -8,12 +8,6 @@ from PyQt5.QtWidgets import *
 from src.ui.entrydetails import EntryDetailsWidget
 from src.ui.entryitem import EntryInfoListItemWidget
 
-TEST_DATA = [['dahta type', 2, True],
-             ['dahta type', 2, False],
-             ['dayta type', 3, False],
-             [3, 4, False]]
-TEST_TYPES = ['data type', 'dahta type', 'dayta type']
-
 
 class VerificationWindow(QMainWindow):
     """The base interface for verification center"""
@@ -26,8 +20,8 @@ class VerificationWindow(QMainWindow):
         self.filtered_entries = QListWidget(self)
         self.filtered_entries.itemSelectionChanged.connect(self.on_entry_selected)
 
-        self.details = EntryDetailsWidget(self, TEST_DATA, TEST_TYPES)
-        self.original_details = EntryDetailsWidget(self, TEST_DATA, TEST_TYPES)
+        self.details = EntryDetailsWidget(self)
+        self.original_details = EntryDetailsWidget(self)
 
         (
             self.log,
