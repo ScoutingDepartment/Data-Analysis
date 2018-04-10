@@ -6,42 +6,27 @@ from PyQt5.QtWidgets import QApplication, QWidget, QTableWidget, QTableWidgetIte
 
 class EntryDetailsWidget(QWidget):
 
-    def __init__(self, parent, data, dataTypes):
+    def __init__(self, parent):
         super().__init__(parent=parent, flags=Qt.Widget)
-        self.title = 'PyQt5 table - pythonspot.com'
-        self.left = 100
-        self.top = 100
-        self.width = 300
-        self.height = 200
-        self.dataTypes = dataTypes
-        self.data = data
+
+        self.dataTypes = []
+        self.data = []
         self.indexes = {'Data Types': 0,
                         'Values': 2,
                         'Undo': 3}
 
         self.headers = self.indexes.keys()
 
-        self.initUI()
-
-    def initUI(self):
-        # self.setWindowTitle(self.title)
-        # self.setGeometry(self.left, self.top, self.width, self.height)
-
         self.tableWidget = QTableWidget()
-
-        self.createTable()
+        self.tableWidget.doubleClicked.connect(self.on_click)
 
         # Add box layout, add table to box layout and add box layout to widget
         self.layout = QVBoxLayout()
         self.layout.addWidget(self.tableWidget)
         self.setLayout(self.layout)
-        # Show widget
         self.show()
 
-    def comboBoxChange(self):
-        pass
-
-    def createTable(self):
+    def create_table(self):
 
         while (self.tableWidget.rowCount() > 0):
             self.tableWidget.removeRow(0)
@@ -83,12 +68,10 @@ class EntryDetailsWidget(QWidget):
         self.tableWidget.setHorizontalHeaderLabels(self.headers)
         self.tableWidget.setVerticalHeaderLabels([str(s + 1) for s in range(len(self.data))])
 
-        self.tableWidget.doubleClicked.connect(self.on_click)
-
     def update(self, data, dataTypes):
         self.data = data
         self.dataTypes = dataTypes
-        self.createTable()
+        self.create_table()
 
     def read(self):
         data = [[''] * (self.tableWidget.columnCount()) for _ in range((self.tableWidget.rowCount()))]
@@ -110,10 +93,14 @@ class EntryDetailsWidget(QWidget):
         return data
 
     def on_click(self):
-        print(self.read())
+        self.update([['Auto line', True, 1, False],
+                     ['Platform', True, 0, False],
+                     ['Climb', True, 0, False],
+                     ['Attachment speed', True, 0, False],
+                     ['Climb speed', True, 0, False],
+                     ['Intake speed', True, 3, False],
+                     ['Intake consistency', True, 4, False]], self.dataTypes)
 
-    def contextMenuEvent(self, QContextMenuEvent):
-        pass  # print(QContextMenuEvent.)
 
 if __name__ == '__main__':
     types = ['Auto line', 'Auto scale attempt', 'Auto scale', 'Auto switch attempt', 'Auto switch',
@@ -145,4 +132,6 @@ if __name__ == '__main__':
 
     app = QApplication(sys.argv)
 
+    ex = EntryDetailsWidget(None)
+    ex.update(data, types)
     sys.exit(app.exec_())
