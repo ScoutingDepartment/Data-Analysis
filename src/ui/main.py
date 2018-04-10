@@ -5,7 +5,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
-from src.ui.vc import VerificationCenter
+from src.ui.vcbase import VerificationBaseInterface
 
 
 class MainWindow(QMainWindow):
@@ -117,7 +117,7 @@ class MainWindow(QMainWindow):
         self.edit_db.setText(self.db_path)
 
     def on_open_vc_clicked(self):
-        self.vc = VerificationCenter()
+        self.vc = VerificationBaseInterface()
 
 
 def run_app():
