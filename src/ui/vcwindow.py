@@ -31,8 +31,10 @@ class VerificationWindow(QMainWindow):
             self.current_entry_match_number,
             self.current_entry_team_number,
             self.current_entry_scout_name,
-            self.current_entry_time_started
-        ) = (QLineEdit(self) for _ in range(8))
+            self.current_entry_time_started,
+            self.current_entry_last_time_edited,
+            self.current_entry_board
+        ) = (QLineEdit(self) for _ in range(10))
 
         self.current_entry_comments = QTextEdit(self)  # Use QTextEdit instead to have multiple lines
 
@@ -51,6 +53,8 @@ class VerificationWindow(QMainWindow):
         self.current_entry_team_number.setEnabled(False)
         self.current_entry_scout_name.setEnabled(False)
         self.current_entry_time_started.setEnabled(False)
+        self.current_entry_last_time_edited.setEnabled(False)
+        self.current_entry_board.setEnabled(False)
 
     def setup_styles(self):
         self.current_entry_comments.setStyleSheet("QTextEdit{font-size:18px}")
@@ -85,6 +89,8 @@ class VerificationWindow(QMainWindow):
             (self.current_entry_team_number, 430, 170, 100, 30),
             (self.current_entry_scout_name, 540, 170, 100, 30),
             (self.current_entry_time_started, 650, 170, 150, 30),
+            (self.current_entry_last_time_edited, 810, 170, 150, 30),
+            (self.current_entry_board, 970, 170, 100, 30),
 
             (self.details, 310, 200, 500, 380),
             (self.original_details, 800, 200, 500, 380)
