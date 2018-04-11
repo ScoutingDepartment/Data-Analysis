@@ -84,6 +84,14 @@ class EntryDetailsWidget(QWidget):
     def on_double_click(self):
         self.read()
         print(self.data)
+        text_file = open("temp.txt", "w")
+        for r in self.data:
+            for c in r:
+                text_file.write(str(c))
+                text_file.write("\n")
+            text_file.write("\n")
+        text_file.close()
+        print("hi")
 
 
 if __name__ == '__main__':
