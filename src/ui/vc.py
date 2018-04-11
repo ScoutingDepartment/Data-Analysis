@@ -45,3 +45,19 @@ class VerificationCenter(VerificationWindow):
         self.log.setText("Saving")
         self.manager.save()
         self.log.setText("Saved")
+
+    def on_filter_edited(self):
+        teams = self.filter_team_number.text().split(",")
+        teams = list(map(int, [team.strip() for team in teams if team.strip()]))
+
+        matches = self.filter_match_number.text().split(",")
+        matches = list(map(int, [match.strip() for match in matches if match.strip()]))
+
+        names = self.filter_scout_name.text().split(",")
+        names = [name for name in names if name.strip()]
+
+        self.filtered_entries.clear()
+        for index, row in self.manager.search(match=matches,
+                                              team=teams,
+                                              name=names).iterrows():
+            self.add_entry_item(index, row, self.manager.board_finder)

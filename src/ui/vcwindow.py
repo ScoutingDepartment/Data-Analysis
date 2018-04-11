@@ -18,7 +18,6 @@ class VerificationWindow(QMainWindow):
         self.setWindowTitle("Verification Center")
 
         self.filtered_entries = QListWidget(self)
-        self.filtered_entries.itemSelectionChanged.connect(self.on_entry_selected)
 
         self.details = EntryDetailsWidget(self, True)
         self.original_details = EntryDetailsWidget(self, False)
@@ -39,6 +38,7 @@ class VerificationWindow(QMainWindow):
         self.current_entry_comments = QTextEdit(self)  # Use QTextEdit instead to have multiple lines
 
         self.setup_menus()
+        self.setup_event_handlers()
         self.setup_view_states()
         self.setup_styles()
         self.setup_layouts()
@@ -46,6 +46,12 @@ class VerificationWindow(QMainWindow):
         self.update_filtered_entries()
 
         self.show()
+
+    def setup_event_handlers(self):
+        self.filtered_entries.itemSelectionChanged.connect(self.on_entry_selected)
+        self.filter_team_number.textEdited.connect(self.on_filter_edited)
+        self.filter_match_number.textEdited.connect(self.on_filter_edited)
+        self.filter_scout_name.textEdited.connect(self.on_filter_edited)
 
     def setup_view_states(self):
         self.log.setEnabled(False)
@@ -160,6 +166,9 @@ class VerificationWindow(QMainWindow):
         pass
 
     def on_save(self):
+        pass
+
+    def on_filter_edited(self):
         pass
 
 
