@@ -48,9 +48,11 @@ class VerificationCenter(VerificationWindow):
 
     def on_filter_edited(self):
         teams = self.filter_team_number.text().split(",")
+        teams = [x for x in teams if x.isdigit()]
         teams = list(map(int, [team.strip() for team in teams if team.strip()]))
 
         matches = self.filter_match_number.text().split(",")
+        matches = [x for x in matches if x.isdigit()]
         matches = list(map(int, [match.strip() for match in matches if match.strip()]))
 
         names = self.filter_scout_name.text().split(",")
