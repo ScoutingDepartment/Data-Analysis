@@ -20,7 +20,7 @@ class EntryDetailsWidget(QWidget):
         self.editable = editable
 
         self.data_table = QTableWidget()
-        self.data_table.doubleClicked.connect(self.on_click)
+        self.data_table.doubleClicked.connect(self.on_double_click)
         self.data_table.verticalHeader().setVisible(False)
 
         self.layout = QVBoxLayout()
@@ -81,8 +81,7 @@ class EntryDetailsWidget(QWidget):
                 elif c == INDEXES['Values']:
                     self.data[r][c] = self.data_table.item(r, list(INDEXES.keys()).index('Values')).text()
 
-
-    def on_click(self):
+    def on_double_click(self):
         self.read()
         print(self.data)
 
