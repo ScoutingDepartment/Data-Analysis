@@ -54,9 +54,9 @@ class EntryDetailsWidget(QWidget):
                     undo_checker = QCheckBox()
                     undo_checker.setCheckState(2 if self.data[row][column] else 0)
                     undo_checker.setEnabled(self.editable)
-                    self.data_table.setCellWidget(row, (list(INDEXES.keys())).index('Undo'), undo_checker)
+                    self.data_table.setCellWidget(row, list(INDEXES.keys()).index('Undo'), undo_checker)
 
-                else:
+                elif column == INDEXES['Values']:
                     value_item = QTableWidgetItem(str(self.data[row][column]))
                     if not self.editable:
                         value_item.setFlags(value_item.flags() ^ Qt.ItemIsEditable)
@@ -67,26 +67,24 @@ class EntryDetailsWidget(QWidget):
         self.data_table.setHorizontalHeaderLabels(HEADERS)
 
     def read(self):
-        data = [[''] * (self.data_table.columnCount()) for _ in range((self.data_table.rowCount()))]
-
-        for r in range(len(data)):
-            for c in range(len(data[r])):
+        for r in range(len(self.data)):
+            for c in range(len(self.data[r])):
                 if c == INDEXES['Data Types']:
-                    comboBox = self.data_table.cellWidget(r, c)
-                    data[r][c] = self.data_types[comboBox.currentIndex()]
+                    comboBox = self.data_table.cellWidget(r, list(INDEXES.keys()).index('Data Types'))
+                    self.data[r][c] = self.data_types[comboBox.currentIndex()]
                 elif c == INDEXES['Undo']:
-                    checkBox = self.data_table.cellWidget(r, c)
+                    checkBox = self.data_table.cellWidget(r, list(INDEXES.keys()).index('Undo'))
                     if checkBox.checkState() == 2:
-                        data[r][c] = True
+                        self.data[r][c] = True
                     else:
-                        data[r][c] = False
+                        self.data[r][c] = False
                 elif c == INDEXES['Values']:
-                    data[r][c] = self.data_table.item(r, c).text()
+                    self.data[r][c] = self.data_table.item(r, list(INDEXES.keys()).index('Values')).text()
 
-        return data
 
     def on_click(self):
-        pass
+        self.read()
+        print(self.data)
 
 
 if __name__ == '__main__':
