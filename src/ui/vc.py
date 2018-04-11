@@ -12,8 +12,7 @@ class VerificationCenter(VerificationWindow):
         super().__init__()
 
     def update_filtered_entries(self):
-        for index, row in self.manager.search().iterrows():
-            self.add_entry_item(index, row, self.manager.board_finder)
+        self.on_filter_edited()
 
     def on_entry_selected(self):
         selected = self.filtered_entries.selectedItems()
@@ -48,18 +47,21 @@ class VerificationCenter(VerificationWindow):
 
     def on_filter_edited(self):
         teams = self.filter_team_number.text().split(",")
-        teams = [x for x in teams if x.isdigit()]
-        teams = list(map(int, [team.strip() for team in teams if team.strip()]))
+        teams = [team.strip() for team in teams]
+        teams = [int(team) for team in teams if team.isdigit()]
 
         matches = self.filter_match_number.text().split(",")
-        matches = [x for x in matches if x.isdigit()]
-        matches = list(map(int, [match.strip() for match in matches if match.strip()]))
+        matches = [match.strip() for match in matches]
+        matches = [int(match) for match in matches if match.isdigit()]
 
         names = self.filter_scout_name.text().split(",")
-        names = [name for name in names if name.strip()]
+        names = [name.strip() for name in names if name.strip()]
 
         self.filtered_entries.clear()
         for index, row in self.manager.search(match=matches,
                                               team=teams,
                                               name=names).iterrows():
             self.add_entry_item(index, row, self.manager.board_finder)
+
+        if self.filtered_entries.count() > 0:
+            self.filtered_entries.setCurrentRow(0)
