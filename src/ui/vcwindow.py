@@ -98,6 +98,7 @@ class VerificationWindow(QMainWindow):
             (self.current_entry_time_started, 650, 170, 150, 30),
             (self.current_entry_last_time_edited, 810, 170, 150, 30),
             (self.current_entry_board, 970, 170, 100, 30),
+            (self.add_item_in_current_entry, 810, 210, 30, 30),
 
             (self.details, 310, 200, 500, 380),
             (self.original_details, 840, 200, 500, 380)
