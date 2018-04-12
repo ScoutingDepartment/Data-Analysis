@@ -74,8 +74,8 @@ class EntryDetailsWidget(QWidget):
                                             value_item)
 
         self.data_table.setHorizontalHeaderLabels(HEADERS)
-
         self.data_table.resizeColumnsToContents()
+        self.data_table.scrollToTop()
 
         self.data_table.itemChanged.connect(self.on_edited)
 

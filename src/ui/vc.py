@@ -9,6 +9,7 @@ class VerificationCenter(VerificationWindow):
         self.manager = VerificationManager(db_path, csv_dir_path, board_dir_path)
         self.working_entry = None
         self.original_entry = None
+        self.last_selected = None
         self.working_index = -1
         self.edited = ""
 
@@ -20,6 +21,9 @@ class VerificationCenter(VerificationWindow):
     def read_working_entry_changes(self):
         # Read the edited data
         if self.working_index != -1 and self.details.user_edited:
+            if self.last_selected:
+                entry_item = self.filtered_entries.itemWidget(self.last_selected)
+                entry_item.update_edited_state(True)
             self.details.update_data()
             self.working_entry.comments = self.current_entry_comments.text()
             self.manager[self.working_index] = self.working_entry
@@ -48,6 +52,8 @@ class VerificationCenter(VerificationWindow):
                                                  self.working_entry.board.list_logs())
                 self.original_details.update_table_widget(self.original_entry.decoded_data,
                                                           self.original_entry.board.list_logs())
+
+                self.last_selected = selected[0]
         except:
             import traceback
             traceback.print_exc()

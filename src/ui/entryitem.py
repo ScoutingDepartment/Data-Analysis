@@ -33,8 +33,7 @@ class EntryInfoListItemWidget(QWidget):
         self.match_label.setFixedWidth(50)
         self.name_label = QLabel(str(self.name))
         self.board_label = QLabel(str(self.board_name))
-        e = "✓" if entry_info["Edited"].strip() else ""
-        self.edited_label = QLabel(e)
+        self.edited_label = QLabel("✓" if entry_info["Edited"].strip() else "")
         self.edited_label.setFixedWidth(20)
         self.edited_label.setStyleSheet("QLabel{color:#00a000}")
 
@@ -50,3 +49,6 @@ class EntryInfoListItemWidget(QWidget):
         self.setMinimumSize(150, 40)
         self.resize(150, 40)
         self.show()
+
+    def update_edited_state(self, state):
+        self.edited_label.setText("✓" if state else "")
