@@ -147,7 +147,8 @@ class VerificationWindow(QMainWindow):
         menus = {
             "Data": [
                 ["Update", self.on_update, Qt.CTRL | Qt.Key_R],
-                ["Save", self.on_save, Qt.CTRL | Qt.Key_S]
+                ["Save to .warp7", self.on_save, Qt.CTRL | Qt.Key_S],
+                ["Export new CSV", self.on_export_csv, None]
             ]
         }
 
@@ -173,6 +174,9 @@ class VerificationWindow(QMainWindow):
         pass
 
     def on_filter_edited(self):
+        pass
+
+    def on_export_csv(self):
         pass
 
 

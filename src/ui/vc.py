@@ -1,3 +1,5 @@
+from PyQt5.QtWidgets import QFileDialog
+
 from src.model.vcmanager import VerificationManager
 from src.ui.vcwindow import VerificationWindow
 
@@ -65,3 +67,9 @@ class VerificationCenter(VerificationWindow):
 
         if self.filtered_entries.count() > 0:
             self.filtered_entries.setCurrentRow(0)
+
+    def on_export_csv(self):
+        path = QFileDialog.getSaveFileName(self, "Save CSV", "", filter="(*.csv)")
+        if path[0]:
+            self.manager.write_csv(path[0])
+            self.log.setText("Saved CSV to: " + path[0])
