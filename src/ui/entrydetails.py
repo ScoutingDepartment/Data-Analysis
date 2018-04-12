@@ -21,6 +21,7 @@ class EntryDetailsWidget(QWidget):
 
         self.data_table = QTableWidget()
         self.data_table.doubleClicked.connect(self.on_double_click)
+
         self.data_table.verticalHeader().setVisible(False)
 
         self.layout = QVBoxLayout()
@@ -32,10 +33,12 @@ class EntryDetailsWidget(QWidget):
         self.data = data
         self.data_types = data_types
 
-        self.data_table.clear()
-
         row_count = len(self.data)
         column_count = len(HEADERS)
+
+        self.setUpdatesEnabled(False)
+
+        self.data_table.clear()
 
         self.data_table.setRowCount(row_count)
         self.data_table.setColumnCount(column_count)
@@ -65,6 +68,12 @@ class EntryDetailsWidget(QWidget):
                                             value_item)
 
         self.data_table.setHorizontalHeaderLabels(HEADERS)
+
+        self.data_table.resizeColumnsToContents()
+
+        self.setUpdatesEnabled(True)
+
+        self.update()  # Call the UI updater in Qt
 
     def read(self):
         for r in range(len(self.data)):
