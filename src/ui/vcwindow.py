@@ -37,7 +37,10 @@ class VerificationWindow(QMainWindow):
             self.remove_item_in_current_entry
         ) = (QLineEdit(self) for _ in range(12))
 
-        self.current_entry_comments = QTextEdit(self)  # Use QTextEdit instead to have multiple lines
+        self.add_item_in_current_entry_btn = QPushButton("+")
+        self.remove_item_in_current_entry_btn = QPushButton("-")
+
+        self.current_entry_comments = QTextEdit(self)
 
         self.setup_menus()
         self.setup_event_handlers()
@@ -49,11 +52,18 @@ class VerificationWindow(QMainWindow):
 
         self.show()
 
+    def read(self):
+        self.details.read()
+
     def setup_event_handlers(self):
         self.filtered_entries.itemSelectionChanged.connect(self.on_entry_selected)
+
         self.filter_team_number.textEdited.connect(self.on_filter_edited)
         self.filter_match_number.textEdited.connect(self.on_filter_edited)
         self.filter_scout_name.textEdited.connect(self.on_filter_edited)
+
+        self.add_item_in_current_entry_btn.clicked.connect(self.on_remove_item_clicked)
+        self.remove_item_in_current_entry_btn.clicked.connect(self.on_add_item_clicked)
 
     def setup_view_states(self):
         self.log.setEnabled(False)
@@ -99,8 +109,9 @@ class VerificationWindow(QMainWindow):
             (self.current_entry_time_started, 650, 170, 150, 30),
             (self.current_entry_last_time_edited, 810, 170, 150, 30),
             (self.current_entry_board, 970, 170, 100, 30),
+
             (self.add_item_in_current_entry, 810, 210, 30, 30),
-            (self.remove_item_in_current_entry, 810, 250, 30, 30),
+            (self.remove_item_in_current_entry, 810, 290, 30, 30),
 
             (self.details, 310, 200, 500, 380),
             (self.original_details, 840, 200, 500, 380)
@@ -174,6 +185,12 @@ class VerificationWindow(QMainWindow):
         pass
 
     def on_filter_edited(self):
+        pass
+
+    def on_remove_item_clicked(self):
+        pass
+
+    def on_add_item_clicked(self):
         pass
 
     def on_export_csv(self):
