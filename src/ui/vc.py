@@ -21,6 +21,7 @@ class VerificationCenter(VerificationWindow):
         # Read the edited data
         if self.working_index != -1:
             self.details.read()
+            self.working_entry.comments = self.current_entry_comments.text()
             self.manager[self.working_index] = self.working_entry
             self.log.setText("Copied Changes to RAM: #" + str(self.working_index))
 

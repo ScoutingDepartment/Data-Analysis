@@ -27,6 +27,7 @@ class VerificationWindow(QMainWindow):
             self.filter_team_number,
             self.filter_match_number,
             self.filter_scout_name,
+            self.current_entry_comments,
             self.current_entry_match_number,
             self.current_entry_team_number,
             self.current_entry_scout_name,
@@ -35,12 +36,10 @@ class VerificationWindow(QMainWindow):
             self.current_entry_board,
             self.add_item_in_current_entry,
             self.remove_item_in_current_entry
-        ) = (QLineEdit(self) for _ in range(12))
+        ) = (QLineEdit(self) for _ in range(13))
 
         self.add_item_in_current_entry_btn = QPushButton("+")
         self.remove_item_in_current_entry_btn = QPushButton("-")
-
-        self.current_entry_comments = QTextEdit(self)
 
         self.setup_menus()
         self.setup_event_handlers()
@@ -75,7 +74,7 @@ class VerificationWindow(QMainWindow):
         self.current_entry_board.setEnabled(False)
 
     def setup_styles(self):
-        self.current_entry_comments.setStyleSheet("QTextEdit{font-size:18px}")
+        self.current_entry_comments.setStyleSheet("QLineEdit{font-size:18px}")
         for w in (self.log,
                   self.filter_team_number,
                   self.filter_match_number,
