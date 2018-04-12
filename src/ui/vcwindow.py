@@ -52,7 +52,7 @@ class VerificationWindow(QMainWindow):
         self.show()
 
     def read(self):
-        self.details.read()
+        self.details.update_table_widget()
 
     def setup_event_handlers(self):
         self.filtered_entries.itemSelectionChanged.connect(self.on_entry_selected)

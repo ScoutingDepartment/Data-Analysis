@@ -29,7 +29,7 @@ class EntryDetailsWidget(QWidget):
         self.setLayout(self.layout)
         self.show()
 
-    def update_data(self, data, data_types):
+    def update_table_widget(self, data, data_types):
         self.data = data
         self.data_types = data_types
 
@@ -42,6 +42,7 @@ class EntryDetailsWidget(QWidget):
 
         self.data_table.setRowCount(row_count)
         self.data_table.setColumnCount(column_count)
+        self.data_table.disconnect()
 
         for row in range(len(self.data)):
             for column in range(len(self.data[row])):
@@ -51,12 +52,14 @@ class EntryDetailsWidget(QWidget):
                     type_chooser.addItems(self.data_types)
                     type_chooser.setCurrentText(str(self.data[row][column]))
                     type_chooser.setEnabled(self.editable)
+                    type_chooser.currentTextChanged.connect(self.on_edited)
                     self.data_table.setCellWidget(row, list(INDEXES.keys()).index('Data Types'), type_chooser)
 
                 elif column == INDEXES['Undo']:
                     undo_checker = QCheckBox()
                     undo_checker.setCheckState(2 if self.data[row][column] else 0)
                     undo_checker.setEnabled(self.editable)
+                    undo_checker.stateChanged.connect(self.on_edited)
                     self.data_table.setCellWidget(row, list(INDEXES.keys()).index('Undo'), undo_checker)
 
                 elif column == INDEXES['Values']:
@@ -71,27 +74,33 @@ class EntryDetailsWidget(QWidget):
 
         self.data_table.resizeColumnsToContents()
 
+        self.data_table.itemChanged.connect(self.on_edited)
+
         self.setUpdatesEnabled(True)
 
         self.update()  # Call the UI updater in Qt
 
-    def read(self):
+    def update_data(self):
         for r in range(len(self.data)):
             for c in range(len(self.data[r])):
                 if c == INDEXES['Data Types']:
-                    comboBox = self.data_table.cellWidget(r, list(INDEXES.keys()).index('Data Types'))
-                    self.data[r][c] = self.data_types[comboBox.currentIndex()]
+                    combo_box = self.data_table.cellWidget(r, list(INDEXES.keys()).index('Data Types'))
+                    self.data[r][c] = self.data_types[combo_box.currentIndex()]
                 elif c == INDEXES['Undo']:
-                    checkBox = self.data_table.cellWidget(r, list(INDEXES.keys()).index('Undo'))
-                    if checkBox.checkState() == 2:
+                    check_box = self.data_table.cellWidget(r, list(INDEXES.keys()).index('Undo'))
+                    if check_box.checkState() == 2:
                         self.data[r][c] = True
                     else:
                         self.data[r][c] = False
                 elif c == INDEXES['Values']:
-                    self.data[r][c] = int(self.data_table.item(r, list(INDEXES.keys()).index('Values')).text())
+                    str_value = self.data_table.item(r, list(INDEXES.keys()).index('Values')).text()
+                    if str_value.isdigit():
+                        int_value = int(str_value)
+                        if 0 < int_value < 256:
+                            self.data[r][c] = int_value
 
     def on_double_click(self):
-        self.read()
+        self.update_data()
         # print(self.data)
         text_file = open("temp.txt", "w")
         for r in self.data:
@@ -101,6 +110,9 @@ class EntryDetailsWidget(QWidget):
             text_file.write("\n")
         text_file.close()
         #print("hi")
+
+    def on_edited(self):
+        print("Edited")
 
 
 if __name__ == '__main__':
@@ -134,5 +146,5 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
 
     ex = EntryDetailsWidget(None, False)
-    ex.update_data(test_data, test_types)
+    ex.update_table_widget(test_data, test_types)
     sys.exit(app.exec_())

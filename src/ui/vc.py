@@ -20,33 +20,37 @@ class VerificationCenter(VerificationWindow):
     def read_working_entry_changes(self):
         # Read the edited data
         if self.working_index != -1:
-            self.details.read()
+            self.details.update_data()
             self.working_entry.comments = self.current_entry_comments.text()
             self.manager[self.working_index] = self.working_entry
             self.log.setText("Copied Changes to RAM: #" + str(self.working_index))
 
     def on_entry_selected(self):
-        selected = self.filtered_entries.selectedItems()
-        if selected:
-            self.read_working_entry_changes()
+        try:
+            selected = self.filtered_entries.selectedItems()
+            if selected:
+                self.read_working_entry_changes()
 
-            entry_item = self.filtered_entries.itemWidget(selected[0])
-            self.original_entry, self.working_entry, last_edited = self.manager[entry_item.db_index]
+                entry_item = self.filtered_entries.itemWidget(selected[0])
+                self.original_entry, self.working_entry, last_edited = self.manager[entry_item.db_index]
 
-            self.working_index = entry_item.db_index
+                self.working_index = entry_item.db_index
 
-            self.current_entry_match_number.setText(str(self.working_entry.match))
-            self.current_entry_team_number.setText(str(self.working_entry.team))
-            self.current_entry_scout_name.setText(str(self.working_entry.name))
-            self.current_entry_time_started.setText(str(self.working_entry.start_time))
-            self.current_entry_comments.setText(str(self.working_entry.comments))
-            self.current_entry_board.setText(str(self.working_entry.board.name()))
-            self.current_entry_last_time_edited.setText("No Edit Time Yet")
+                self.current_entry_match_number.setText(str(self.working_entry.match))
+                self.current_entry_team_number.setText(str(self.working_entry.team))
+                self.current_entry_scout_name.setText(str(self.working_entry.name))
+                self.current_entry_time_started.setText(str(self.working_entry.start_time))
+                self.current_entry_comments.setText(str(self.working_entry.comments))
+                self.current_entry_board.setText(str(self.working_entry.board.name()))
+                self.current_entry_last_time_edited.setText("No Edit Time Yet")
 
-            self.details.update_data(self.working_entry.decoded_data,
-                                     self.working_entry.board.list_logs())
-            self.original_details.update_data(self.original_entry.decoded_data,
-                                              self.original_entry.board.list_logs())
+                self.details.update_table_widget(self.working_entry.decoded_data,
+                                                 self.working_entry.board.list_logs())
+                self.original_details.update_table_widget(self.original_entry.decoded_data,
+                                                          self.original_entry.board.list_logs())
+        except:
+            import traceback
+            traceback.print_exc()
 
     def on_update(self):
         self.log.setText("Updating")
