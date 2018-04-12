@@ -148,13 +148,9 @@ class VerificationManager:
         new_data["Edited"] = " "
         new_data = new_data[list(database.EDITED_HEADER.keys())]
 
-
         # Add new data to the edited table
         self.edited_entries = pd.concat([self.edited_entries, new_data],
                                         ignore_index=True)
-
-        print(self.raw_entries.iloc[0:5][["Match", "Team", "Name"]])
-        print(self.edited_entries.iloc[0:5][["RawIndex", "Match", "Team", "Name"]])
 
     def save(self):
         conn = database.get_engine(self.db_path).connect()

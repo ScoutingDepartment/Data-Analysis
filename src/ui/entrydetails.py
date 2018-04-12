@@ -18,6 +18,7 @@ class EntryDetailsWidget(QWidget):
         self.data_types = []
         self.data = []
         self.editable = editable
+        self.user_edited = False
 
         self.data_table = QTableWidget()
         self.data_table.doubleClicked.connect(self.on_double_click)
@@ -32,6 +33,8 @@ class EntryDetailsWidget(QWidget):
     def update_table_widget(self, data, data_types):
         self.data = data
         self.data_types = data_types
+
+        self.user_edited = False
 
         row_count = len(self.data)
         column_count = len(HEADERS)
@@ -112,7 +115,7 @@ class EntryDetailsWidget(QWidget):
         #print("hi")
 
     def on_edited(self):
-        print("Edited")
+        self.user_edited = True
 
 
 if __name__ == '__main__':

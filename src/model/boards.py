@@ -54,7 +54,6 @@ class Board:
         return list(map(lambda x: x["log"], self.specs["data"]))
 
 
-
 class Finder:
     def __init__(self, path):
         idf = open(os.path.join(path, "index.json"), "r")

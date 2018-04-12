@@ -19,7 +19,7 @@ class VerificationCenter(VerificationWindow):
 
     def read_working_entry_changes(self):
         # Read the edited data
-        if self.working_index != -1:
+        if self.working_index != -1 and self.details.user_edited:
             self.details.update_data()
             self.working_entry.comments = self.current_entry_comments.text()
             self.manager[self.working_index] = self.working_entry
@@ -38,11 +38,11 @@ class VerificationCenter(VerificationWindow):
 
                 self.current_entry_match_number.setText(str(self.working_entry.match))
                 self.current_entry_team_number.setText(str(self.working_entry.team))
-                self.current_entry_scout_name.setText(str(self.working_entry.name))
-                self.current_entry_time_started.setText(str(self.working_entry.start_time))
-                self.current_entry_comments.setText(str(self.working_entry.comments))
-                self.current_entry_board.setText(str(self.working_entry.board.name()))
-                self.current_entry_last_time_edited.setText("No Edit Time Yet")
+                self.current_entry_scout_name.setText(self.working_entry.name)
+                self.current_entry_time_started.setText(self.working_entry.start_time)
+                self.current_entry_comments.setText(self.working_entry.comments)
+                self.current_entry_board.setText(self.working_entry.board.name())
+                self.current_entry_last_time_edited.setText(last_edited)
 
                 self.details.update_table_widget(self.working_entry.decoded_data,
                                                  self.working_entry.board.list_logs())
