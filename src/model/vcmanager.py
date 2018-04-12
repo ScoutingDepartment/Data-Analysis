@@ -192,25 +192,52 @@ class VerificationManager:
 
         Parameters
         ----------
-        team: Team number
-        match: Match number
-        name: Scout name
-        board: Board
-        edited: ?
+        team: Team number: List of ints
+        match: Match number: List of ints
+        name: Scout name: List of scout names
 
-        :return: A filtered DataFrame with the same columns as 
-        edited_entries and matches the searching criteria
+        Items in these list are applied with OR logic
+
+        :return: A DataFrame with search results. It is a slice of self.edited_entries
         """
 
-        filters = {k.capitalize(): kwargs[k] for k in kwargs.keys() if kwargs[k]}
+        # Clean the input keyword arguments
+        search_rules = {k.capitalize(): kwargs[k] for k in kwargs.keys() if kwargs[k]}
 
-        df = self.edited_entries
+        if "Match" in search_rules.keys():
+            matches = search_rules["Match"]
+            possible_matches = set()
+            for available_match in self.edited_entries["Match"].unique():
+                for match in matches:
+                    if str(available_match).startswith(str(match)):
+                        possible_matches.add(available_match)
+            search_rules["Match"] = possible_matches
+            
+        if "Team" in search_rules.keys():
+            teams = search_rules["Team"]
+            possible_teams = set()
+            for available_team in self.edited_entries["Team"].unique():
+                for team in teams:
+                    if str(available_team).startswith(str(team)):
+                        possible_teams.add(available_team)
+            search_rules["Team"] = possible_teams
 
-        for i in filters.keys():
+        if "Name" in search_rules.keys():
+            names = search_rules["Name"]
+            possible_names = set()
+            for available_name in self.edited_entries["Name"].unique():
+                for name in names:
+                    if name.lower() in available_name.lower():
+                        possible_names.add(available_name)
+            search_rules["Name"] = possible_names
+
+        results = self.edited_entries
+
+        for i in search_rules.keys():
             if i in FILTER_HEADER:
-                df = df[df[i].isin(filters[i])]
+                results = results[results[i].isin(search_rules[i])]
 
-        return df.sort_values(by=FILTER_SORT)
+        return results.sort_values(by=FILTER_SORT)
 
     def match_row(self, match, team, name):
         """
