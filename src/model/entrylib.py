@@ -56,7 +56,7 @@ class Entry:
     def encode(self):
         def generate_numerical_tuple():
             for tt, ss, vv, uu in self.decoded_data:
-                yield (self.board.data_index_from_log(tt), vv, int(uu), int(ss))
+                yield (self.board.data_index_from_log(tt), int(vv), int(uu), int(ss))
 
         self.encoded_data = self.join(generate_numerical_tuple())
 

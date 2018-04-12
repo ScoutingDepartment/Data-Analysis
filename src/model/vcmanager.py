@@ -67,8 +67,9 @@ class VerificationManager:
             if row["RawIndex"] in self.raw_entries.index:
                 raw = entrylib.Entry(self.raw_entries.iloc[row["RawIndex"]], self.board_finder)
             edited = entrylib.Entry(row, self.board_finder)
+            last_edit_time = row["Edited"]
 
-            return raw, edited
+            return raw, edited, last_edit_time
 
         raise IndexError()
 

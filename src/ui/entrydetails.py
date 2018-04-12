@@ -88,11 +88,11 @@ class EntryDetailsWidget(QWidget):
                     else:
                         self.data[r][c] = False
                 elif c == INDEXES['Values']:
-                    self.data[r][c] = self.data_table.item(r, list(INDEXES.keys()).index('Values')).text()
+                    self.data[r][c] = int(self.data_table.item(r, list(INDEXES.keys()).index('Values')).text())
 
     def on_double_click(self):
         self.read()
-        print(self.data)
+        # print(self.data)
         text_file = open("temp.txt", "w")
         for r in self.data:
             for c in r:
@@ -100,7 +100,7 @@ class EntryDetailsWidget(QWidget):
                 text_file.write("\n")
             text_file.write("\n")
         text_file.close()
-        print("hi")
+        #print("hi")
 
 
 if __name__ == '__main__':
