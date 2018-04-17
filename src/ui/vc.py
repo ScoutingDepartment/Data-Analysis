@@ -1,6 +1,6 @@
 from PyQt5.QtWidgets import QFileDialog
 
-from src.model.vcmanager import VerificationManager
+from src.model.vc.vcmanager import VerificationManager
 from src.ui.vcwindow import VerificationWindow
 
 
