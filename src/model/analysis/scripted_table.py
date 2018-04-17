@@ -1,7 +1,5 @@
 from importlib import import_module
 
-import pandas as pd
-
 
 class ScriptedTable:
 
@@ -10,10 +8,12 @@ class ScriptedTable:
 
         self.table_name = script.TABLE_NAME
         self.source_name = script.SOURCE_NAME
-        self.column_labels = script.COLUMN_LABELS
-        self.compute_table = script.compute_table
+        self.dependencies = script.DEPENDENCIES
 
-        self.data = pd.DataFrame(columns=self.column_labels)
+        self.result_type = script.RESULT_TYPE
+
+        self.compute_function = script.compute_table
+        self.data = None
 
     def call_compute(self, data_source):
-        self.compute_table(data_source, self.data)
+        self.data = self.compute_function(data_source)

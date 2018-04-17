@@ -1,8 +1,10 @@
 import os
+from typing import List
 
 import pandas as pd
 
 from src.model import boards
+from src.model.analysis.data_source import DataSource
 from src.model.analysis.scripted_table import ScriptedTable
 from src.model.database import get_engine
 from src.model.entrylib import Entry
@@ -23,9 +25,12 @@ class AnalysisManager:
                                     con=conn,
                                     index_col="index").sort_values(by=['Match', 'Team'])
 
-        self.entries: "Entry" = [Entry(row, self.boards_finder) for _, row in entries_table.iterrows()]
-        self.tables: "ScriptedTable" = []
+        self.entries: List["Entry"] = [Entry(row, self.boards_finder) for _, row in entries_table.iterrows()]
+        self.tables: List["ScriptedTable"] = []
         self.update_table_modules(*table_modules)
 
     def update_table_modules(self, *table_modules: "str"):
         self.tables = [ScriptedTable(m) for m in table_modules]
+
+    def create_data_source(self, tables: List["ScriptedTable"]):
+        return DataSource(self.entries, tables)
