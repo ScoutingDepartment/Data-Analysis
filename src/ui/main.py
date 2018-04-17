@@ -5,6 +5,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
+from src.ui.calc_tables import CalculationReader
 from src.ui.vc import VerificationCenter
 
 CONFIG_PATH = "paths.config"
@@ -16,6 +17,7 @@ class MainWindow(QMainWindow):
         super().__init__(flags=Qt.Window)
 
         self.vc = None
+        self.calc_tables = None
 
         self.db_path = ""
         self.scans_path = ""
@@ -53,7 +55,7 @@ class MainWindow(QMainWindow):
         btn_vc.clicked.connect(self.on_open_vc_clicked)
 
         btn_calc_table = QPushButton("Calculation Tables")
-        btn_calc_table.setEnabled(False)
+        btn_calc_table.clicked.connect(self.on_open_calc_table_clicked)
         btn_data_lookup = QPushButton("Data Lookup")
         btn_data_lookup.setEnabled(False)
 
@@ -137,6 +139,21 @@ class MainWindow(QMainWindow):
         else:
             QMessageBox.warning(self, "Cannot Open Verification Center",
                                 "Not all of the fields are filled in")
+
+    def on_open_calc_table_clicked(self):
+
+        paths = (self.db_path, self.scans_path, self.boards_path)
+
+        if all(paths):
+            config_file = open(CONFIG_PATH, "w")
+            config_file.writelines("\n".join(paths))
+            config_file.close()
+
+            self.calc_tables = CalculationReader(*paths)
+        else:
+            QMessageBox.warning(self, "Cannot Open Verification Center",
+                                "Not all of the fields are filled in")
+
 
     def closeEvent(self, event):
         if self.vc is not None:
