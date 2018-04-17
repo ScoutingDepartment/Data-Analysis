@@ -95,7 +95,7 @@ class VerificationManager:
 
     def update(self):
         """
-        Updates the two tables with new data saved in the csv dir path
+        Updates the two analysis with new data saved in the csv dir path
         Directly replaces the raw data table
         Attempts to merge the raw data into the edited data
         :return: The number of new items imported
