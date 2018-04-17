@@ -53,7 +53,7 @@ class MainWindow(QMainWindow):
         btn_vc.clicked.connect(self.on_open_vc_clicked)
 
         btn_calc_table = QPushButton("Calculation Tables")
-        btn_calc_table.setEnabled(False)
+        btn_calc_table.clicked.connect(self.on_open_calc_table_clicked)
         btn_data_lookup = QPushButton("Data Lookup")
         btn_data_lookup.setEnabled(False)
 
@@ -137,6 +137,9 @@ class MainWindow(QMainWindow):
         else:
             QMessageBox.warning(self, "Cannot Open Verification Center",
                                 "Not all of the fields are filled in")
+
+    def on_open_calc_table_clicked(self):
+        pass
 
     def closeEvent(self, event):
         if self.vc is not None:
