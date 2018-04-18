@@ -37,11 +37,6 @@ class VerificationWindow(QMainWindow):
             self.remove_item_in_current_entry
         ) = (QLineEdit(self) for _ in range(12))
 
-        self.add_item_in_current_entry_btn = QPushButton("+")
-        self.add_item_in_current_entry_btn.clicked.connect(self.on_remove_item_clicked)
-        self.remove_item_in_current_entry_btn = QPushButton("-")
-        self.remove_item_in_current_entry_btn.clicked.connect(self.on_add_item_clicked)
-
         self.current_entry_comments = QTextEdit(self)  # Use QTextEdit instead to have multiple lines
 
         self.setup_menus()
@@ -62,6 +57,8 @@ class VerificationWindow(QMainWindow):
         self.filter_team_number.textEdited.connect(self.on_filter_edited)
         self.filter_match_number.textEdited.connect(self.on_filter_edited)
         self.filter_scout_name.textEdited.connect(self.on_filter_edited)
+        self.add_item_in_current_entry.textEdited.connect(self.on_add_item_clicked)
+        self.remove_item_in_current_entry.textEdited.connect(self.on_remove_item_clicked)
 
     def setup_view_states(self):
         self.log.setEnabled(False)
@@ -184,10 +181,10 @@ class VerificationWindow(QMainWindow):
         pass
 
     def on_remove_item_clicked(self):
-        pass
+        print("2")
 
     def on_add_item_clicked(self):
-        pass
+        print("1")
 
 
 if __name__ == '__main__':
