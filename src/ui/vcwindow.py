@@ -184,7 +184,8 @@ class VerificationWindow(QMainWindow):
         print("2")
 
     def on_add_item_clicked(self):
-        print("1")
+        self.details.add_row()
+
 
 
 if __name__ == '__main__':
