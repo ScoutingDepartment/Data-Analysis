@@ -37,7 +37,6 @@ class VerificationWindow(QMainWindow):
         ) = (QLineEdit(self) for _ in range(11))
 
         self.add_item_in_current_entry_btn = QPushButton("+")
-        self.remove_item_in_current_entry_btn = QPushButton("-")
 
         self.setup_menus()
         self.setup_event_handlers()
