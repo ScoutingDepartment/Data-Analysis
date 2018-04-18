@@ -27,16 +27,22 @@ class VerificationWindow(QMainWindow):
             self.filter_team_number,
             self.filter_match_number,
             self.filter_scout_name,
-            self.current_entry_comments,
             self.current_entry_match_number,
             self.current_entry_team_number,
             self.current_entry_scout_name,
             self.current_entry_time_started,
             self.current_entry_last_time_edited,
             self.current_entry_board,
-        ) = (QLineEdit(self) for _ in range(11))
+            self.add_item_in_current_entry,
+            self.remove_item_in_current_entry
+        ) = (QLineEdit(self) for _ in range(12))
 
         self.add_item_in_current_entry_btn = QPushButton("+")
+        self.add_item_in_current_entry_btn.clicked.connect(self.on_remove_item_clicked)
+        self.remove_item_in_current_entry_btn = QPushButton("-")
+        self.remove_item_in_current_entry_btn.clicked.connect(self.on_add_item_clicked)
+
+        self.current_entry_comments = QTextEdit(self)  # Use QTextEdit instead to have multiple lines
 
         self.setup_menus()
         self.setup_event_handlers()
@@ -49,17 +55,13 @@ class VerificationWindow(QMainWindow):
         self.show()
 
     def read(self):
-        self.details.update_table_widget()
+        self.details.read()
 
     def setup_event_handlers(self):
         self.filtered_entries.itemSelectionChanged.connect(self.on_entry_selected)
-
         self.filter_team_number.textEdited.connect(self.on_filter_edited)
         self.filter_match_number.textEdited.connect(self.on_filter_edited)
         self.filter_scout_name.textEdited.connect(self.on_filter_edited)
-
-        self.add_item_in_current_entry_btn.clicked.connect(self.on_add_item_clicked)
-        self.remove_item_in_current_entry_btn.clicked.connect(self.on_remove_item_clicked)
 
     def setup_view_states(self):
         self.log.setEnabled(False)
@@ -71,7 +73,7 @@ class VerificationWindow(QMainWindow):
         self.current_entry_board.setEnabled(False)
 
     def setup_styles(self):
-        self.current_entry_comments.setStyleSheet("QLineEdit{font-size:18px}")
+        self.current_entry_comments.setStyleSheet("QTextEdit{font-size:18px}")
         for w in (self.log,
                   self.filter_team_number,
                   self.filter_match_number,
@@ -105,9 +107,8 @@ class VerificationWindow(QMainWindow):
             (self.current_entry_time_started, 650, 170, 150, 30),
             (self.current_entry_last_time_edited, 810, 170, 150, 30),
             (self.current_entry_board, 970, 170, 100, 30),
-
-            (self.add_item_in_current_entry_btn, 810, 210, 30, 30),
-            (self.remove_item_in_current_entry_btn, 810, 290, 30, 30),
+            (self.add_item_in_current_entry, 810, 210, 30, 30),
+            (self.remove_item_in_current_entry, 810, 290, 30, 30),
 
             (self.details, 310, 200, 500, 380),
             (self.original_details, 840, 200, 500, 380)
@@ -154,8 +155,7 @@ class VerificationWindow(QMainWindow):
         menus = {
             "Data": [
                 ["Update", self.on_update, Qt.CTRL | Qt.Key_R],
-                ["Save to .warp7", self.on_save, Qt.CTRL | Qt.Key_S],
-                ["Export new CSV", self.on_export_csv, None]
+                ["Save", self.on_save, Qt.CTRL | Qt.Key_S]
             ]
         }
 
@@ -187,9 +187,6 @@ class VerificationWindow(QMainWindow):
         pass
 
     def on_add_item_clicked(self):
-        pass
-
-    def on_export_csv(self):
         pass
 
 
