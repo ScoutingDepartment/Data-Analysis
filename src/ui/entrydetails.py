@@ -52,6 +52,8 @@ class EntryDetailsWidget(QWidget):
 
                 if column == INDEXES['Data Types']:
                     type_chooser = QComboBox()
+                    if self.data[row][column] == None or self.data[row][column] not in self.data_types:
+                        type_chooser.addItem(None)
                     type_chooser.addItems(self.data_types)
                     type_chooser.setCurrentText(str(self.data[row][column]))
                     type_chooser.setEnabled(self.editable)
@@ -117,6 +119,10 @@ class EntryDetailsWidget(QWidget):
     def on_edited(self):
         self.user_edited = True
 
+    def add_row(self):
+        self.data.append([None, False, '', False])
+        self.update_table_widget(self.data, self.data_types)
+        pass
 
 if __name__ == '__main__':
     test_types = ['Auto line', 'Auto scale attempt', 'Auto scale', 'Auto switch attempt', 'Auto switch',
@@ -148,6 +154,7 @@ if __name__ == '__main__':
 
     app = QApplication(sys.argv)
 
-    ex = EntryDetailsWidget(None, False)
+    ex = EntryDetailsWidget(None, True)
     ex.update_table_widget(test_data, test_types)
+    ex.add_row()
     sys.exit(app.exec_())
