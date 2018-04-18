@@ -1,7 +1,7 @@
 import sys
 
-from PyQt5.QtCore import Qt, QObject
-from PyQt5.QtWidgets import QApplication, QWidget, QTableWidget, QTableWidgetItem, QVBoxLayout, QComboBox, QCheckBox
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import *
 
 INDEXES = {'Data Types': 0,
            'Values': 2,
@@ -10,11 +10,12 @@ INDEXES = {'Data Types': 0,
 HEADERS = INDEXES.keys()
 
 
-class EDEventFilter(QObject):
-    pass
-
-
 class EntryDetailsWidget(QWidget):
+    class ModifiedComboBox(QComboBox):
+
+        # Fix mouse wheel issues that accidentally change data
+        def wheelEvent(self, e):
+            pass
 
     def __init__(self, parent, editable):
         super().__init__(parent=parent, flags=Qt.Widget)
@@ -55,14 +56,16 @@ class EntryDetailsWidget(QWidget):
             for column in range(len(self.data[row])):
 
                 if column == INDEXES['Data Types']:
-                    type_chooser = QComboBox()
-                    if self.data[row][column] == None or self.data[row][column] not in self.data_types:
+                    type_chooser = self.ModifiedComboBox()
+                    if self.data[row][column] is None or self.data[row][column] not in self.data_types:
                         type_chooser.addItem(None)
+
                     type_chooser.addItems(self.data_types)
                     type_chooser.setCurrentText(str(self.data[row][column]))
                     type_chooser.setEnabled(self.editable)
                     type_chooser.setFocusPolicy(Qt.StrongFocus)
                     type_chooser.currentTextChanged.connect(self.on_edited)
+
                     self.data_table.setCellWidget(row, list(INDEXES.keys()).index('Data Types'), type_chooser)
 
                 elif column == INDEXES['Undo']:
@@ -88,20 +91,24 @@ class EntryDetailsWidget(QWidget):
 
         self.setUpdatesEnabled(True)
 
-        self.update()  # Call the UI updater in Qt
+        self.update()
 
     def update_data(self):
+
         for r in range(len(self.data)):
             for c in range(len(self.data[r])):
+
                 if c == INDEXES['Data Types']:
                     combo_box = self.data_table.cellWidget(r, list(INDEXES.keys()).index('Data Types'))
                     self.data[r][c] = self.data_types[combo_box.currentIndex()]
+
                 elif c == INDEXES['Undo']:
                     check_box = self.data_table.cellWidget(r, list(INDEXES.keys()).index('Undo'))
                     if check_box.checkState() == 2:
                         self.data[r][c] = True
                     else:
                         self.data[r][c] = False
+
                 elif c == INDEXES['Values']:
                     str_value = self.data_table.item(r, list(INDEXES.keys()).index('Values')).text()
                     if str_value.isdigit():
@@ -110,16 +117,7 @@ class EntryDetailsWidget(QWidget):
                             self.data[r][c] = int_value
 
     def on_double_click(self):
-        self.update_data()
-        # print(self.data)
-        text_file = open("temp.txt", "w")
-        for r in self.data:
-            for c in r:
-                text_file.write(str(c))
-                text_file.write("\n")
-            text_file.write("\n")
-        text_file.close()
-        #print("hi")
+        pass
 
     def on_edited(self):
         self.user_edited = True
@@ -128,6 +126,7 @@ class EntryDetailsWidget(QWidget):
         self.data.append([None, False, '', False])
         self.update_table_widget(self.data, self.data_types)
         self.data_table.scrollToBottom()
+
 
 if __name__ == '__main__':
     test_types = ['Auto line', 'Auto scale attempt', 'Auto scale', 'Auto switch attempt', 'Auto switch',
