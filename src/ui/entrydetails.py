@@ -1,6 +1,6 @@
 import sys
 
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QObject
 from PyQt5.QtWidgets import QApplication, QWidget, QTableWidget, QTableWidgetItem, QVBoxLayout, QComboBox, QCheckBox
 
 INDEXES = {'Data Types': 0,
@@ -8,6 +8,10 @@ INDEXES = {'Data Types': 0,
            'Undo': 3}
 
 HEADERS = INDEXES.keys()
+
+
+class EDEventFilter(QObject):
+    pass
 
 
 class EntryDetailsWidget(QWidget):
@@ -57,6 +61,7 @@ class EntryDetailsWidget(QWidget):
                     type_chooser.addItems(self.data_types)
                     type_chooser.setCurrentText(str(self.data[row][column]))
                     type_chooser.setEnabled(self.editable)
+                    type_chooser.setFocusPolicy(Qt.StrongFocus)
                     type_chooser.currentTextChanged.connect(self.on_edited)
                     self.data_table.setCellWidget(row, list(INDEXES.keys()).index('Data Types'), type_chooser)
 
@@ -122,7 +127,7 @@ class EntryDetailsWidget(QWidget):
     def add_row(self):
         self.data.append([None, False, '', False])
         self.update_table_widget(self.data, self.data_types)
-        pass
+        self.data_table.scrollToBottom()
 
 if __name__ == '__main__':
     test_types = ['Auto line', 'Auto scale attempt', 'Auto scale', 'Auto switch attempt', 'Auto switch',

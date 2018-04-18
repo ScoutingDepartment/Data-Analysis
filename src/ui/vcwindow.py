@@ -37,7 +37,7 @@ class VerificationWindow(QMainWindow):
             self.remove_item_in_current_entry
         ) = (QLineEdit(self) for _ in range(12))
 
-        self.current_entry_comments = QTextEdit(self)  # Use QTextEdit instead to have multiple lines
+        self.current_entry_comments = QLineEdit(self)
 
         self.setup_menus()
         self.setup_event_handlers()
@@ -70,7 +70,7 @@ class VerificationWindow(QMainWindow):
         self.current_entry_board.setEnabled(False)
 
     def setup_styles(self):
-        self.current_entry_comments.setStyleSheet("QTextEdit{font-size:18px}")
+        self.current_entry_comments.setStyleSheet("QLineEdit{font-size:18px}")
         for w in (self.log,
                   self.filter_team_number,
                   self.filter_match_number,
@@ -153,6 +153,10 @@ class VerificationWindow(QMainWindow):
             "Data": [
                 ["Update", self.on_update, Qt.CTRL | Qt.Key_R],
                 ["Save", self.on_save, Qt.CTRL | Qt.Key_S]
+            ],
+            "Entry": [
+                # ["Add Entry", self.on_add_entry, Qt.CTRL | Qt.Key_T],
+                ["Add Row", self.on_add_item_clicked, Qt.CTRL | Qt.Key_N]
             ]
         }
 
@@ -163,7 +167,6 @@ class VerificationWindow(QMainWindow):
 
             for menu_item in menus[menu_name]:
                 menu_action = create_menu_action(*menu_item)
-                print(menu_action)
                 menu_view.addAction(menu_action)
 
             menu_bar.addMenu(menu_view)
@@ -180,12 +183,14 @@ class VerificationWindow(QMainWindow):
     def on_filter_edited(self):
         pass
 
+    def on_add_row(self):
+        print("hi")
+
     def on_remove_item_clicked(self):
         print("2")
 
     def on_add_item_clicked(self):
         self.details.add_row()
-
 
 
 if __name__ == '__main__':
