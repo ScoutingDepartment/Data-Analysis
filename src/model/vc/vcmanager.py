@@ -32,6 +32,7 @@ class VerificationManager:
         :param csv_dir_path: path to the directory of the scanned data
         :param board_dir_path: path to the direction containing boards
         """
+
         self.db_path = db_path
         self.csv_dir_path = csv_dir_path
         self.board_dir_path = board_dir_path
@@ -79,6 +80,7 @@ class VerificationManager:
         :param index: the index to lookup
         :param value: the entry object to set
         """
+
         if index in self.edited_entries.index:
             value.encode()
 
@@ -110,12 +112,17 @@ class VerificationManager:
                 yield "".join(entry.split(",")[:-1])
 
         def read_all():
-            """Read all found files and yield entries that pass the format test"""
+            """Read all found files and returns ordered unique entries that pass the format test"""
             matcher = compile("\d{1,3}_\d{1,4}_[^_]+_[0-9a-f]{8}_[0-9a-f]{8}_([0-9a-f]{4})*_.*")
+            unique_entries = []
+
             for f in self.list_files(self.csv_dir_path):
                 for entry in read_one(f):
                     if matcher.match(entry) is not None:
-                        yield entry
+                        if entry not in unique_entries:
+                            unique_entries.append(entry)
+
+            return unique_entries
 
         def make_columns(entry):
             """Make the columns to put in the database"""
@@ -209,7 +216,7 @@ class VerificationManager:
                     if str(available_match).startswith(str(match)):
                         possible_matches.add(available_match)
             search_rules["Match"] = possible_matches
-            
+
         if "Team" in search_rules.keys():
             teams = search_rules["Team"]
             possible_teams = set()
