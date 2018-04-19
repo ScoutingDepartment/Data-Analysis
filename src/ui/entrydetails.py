@@ -123,7 +123,7 @@ class EntryDetailsWidget(QWidget):
         self.user_edited = True
 
     def add_row(self):
-        self.data.append([None, False, '', False])
+        self.data.append([None, False, 0, False])
         self.update_table_widget(self.data, self.data_types)
         self.data_table.scrollToBottom()
 

@@ -15,6 +15,9 @@ class VerificationCenter(VerificationWindow):
 
         super().__init__()
 
+        # Patch for the comment edited issue (not good practice)
+        self.current_entry_comments.textEdited.connect(self.details.on_edited)
+
     def read_working_entry_changes(self):
         # Read the edited data
         if self.working_index != -1 and self.details.user_edited:
