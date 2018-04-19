@@ -1,4 +1,3 @@
-import random
 import sys
 
 from PyQt5.QtCore import *
@@ -45,7 +44,7 @@ class VerificationWindow(QMainWindow):
         self.setup_styles()
         self.setup_layouts()
 
-        self.update_filtered_entries()
+        self.on_filter_edited()  # Show the list of entries by applying empty filter
 
         self.show()
 
@@ -126,15 +125,6 @@ class VerificationWindow(QMainWindow):
         self.filtered_entries.addItem(widget_item)
         self.filtered_entries.setItemWidget(widget_item, custom_widget)
 
-    def update_filtered_entries(self):
-        for i in range(100):
-            self.add_entry_item(1, {"Match": i // 6 + 1,
-                                    "Team": random.randint(1, 7999),
-                                    "Index": i,
-                                    "Board": "",
-                                    "Edited": "",
-                                    "Name": "Yu"}, None)
-
     def setup_menus(self):
         """Set up the menus that is part of the UI"""
 
@@ -184,14 +174,11 @@ class VerificationWindow(QMainWindow):
     def on_filter_edited(self):
         pass
 
-    def on_add_row(self):
-        print("hi")
-
     def on_remove_item_clicked(self):
-        print("2")
+        pass
 
     def on_add_item_clicked(self):
-        self.details.add_row()
+        pass
 
     def on_export_csv(self):
         pass

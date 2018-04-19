@@ -15,9 +15,6 @@ class VerificationCenter(VerificationWindow):
 
         super().__init__()
 
-    def update_filtered_entries(self):
-        self.on_filter_edited()
-
     def read_working_entry_changes(self):
         # Read the edited data
         if self.working_index != -1 and self.details.user_edited:
@@ -30,38 +27,34 @@ class VerificationCenter(VerificationWindow):
             self.log.setText("Copied Changes to RAM: #" + str(self.working_index))
 
     def on_entry_selected(self):
-        try:
-            selected = self.filtered_entries.selectedItems()
-            if selected:
-                self.read_working_entry_changes()
+        selected = self.filtered_entries.selectedItems()
+        if selected:
+            self.read_working_entry_changes()
 
-                entry_item = self.filtered_entries.itemWidget(selected[0])
-                self.original_entry, self.working_entry, last_edited = self.manager[entry_item.db_index]
+            entry_item = self.filtered_entries.itemWidget(selected[0])
+            self.original_entry, self.working_entry, last_edited = self.manager[entry_item.db_index]
 
-                self.working_index = entry_item.db_index
+            self.working_index = entry_item.db_index
 
-                self.current_entry_match_number.setText(str(self.working_entry.match))
-                self.current_entry_team_number.setText(str(self.working_entry.team))
-                self.current_entry_scout_name.setText(self.working_entry.name)
-                self.current_entry_time_started.setText(self.working_entry.start_time)
-                self.current_entry_comments.setText(self.working_entry.comments)
-                self.current_entry_board.setText(self.working_entry.board.name())
-                self.current_entry_last_time_edited.setText(last_edited)
+            self.current_entry_match_number.setText(str(self.working_entry.match))
+            self.current_entry_team_number.setText(str(self.working_entry.team))
+            self.current_entry_scout_name.setText(self.working_entry.name)
+            self.current_entry_time_started.setText(self.working_entry.start_time)
+            self.current_entry_comments.setText(self.working_entry.comments)
+            self.current_entry_board.setText(self.working_entry.board.name())
+            self.current_entry_last_time_edited.setText(last_edited)
 
-                self.details.update_table_widget(self.working_entry.decoded_data,
-                                                 self.working_entry.board.list_logs())
-                self.original_details.update_table_widget(self.original_entry.decoded_data,
-                                                          self.original_entry.board.list_logs())
+            self.details.update_table_widget(self.working_entry.decoded_data,
+                                             self.working_entry.board.list_logs())
+            self.original_details.update_table_widget(self.original_entry.decoded_data,
+                                                      self.original_entry.board.list_logs())
 
-                self.last_selected = selected[0]
-        except:
-            import traceback
-            traceback.print_exc()
+            self.last_selected = selected[0]
 
     def on_update(self):
         self.log.setText("Updating")
         self.manager.update()
-        self.update_filtered_entries()
+        self.on_filter_edited()
         self.log.setText("Updated")
 
     def on_save(self):
@@ -98,6 +91,9 @@ class VerificationCenter(VerificationWindow):
         if path[0]:
             self.manager.write_csv(path[0])
             self.log.setText("Saved CSV to: " + path[0])
+
+    def on_add_item_clicked(self):
+        self.details.add_row()
 
     def closeEvent(self, event):
         # self.read_working_entry_changes()
