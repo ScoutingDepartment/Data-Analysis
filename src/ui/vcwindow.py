@@ -152,7 +152,8 @@ class VerificationWindow(QMainWindow):
         menus = {
             "Data": [
                 ["Update", self.on_update, Qt.CTRL | Qt.Key_R],
-                ["Save", self.on_save, Qt.CTRL | Qt.Key_S]
+                ["Save", self.on_save, Qt.CTRL | Qt.Key_S],
+                ["Export CSV", self.on_export_csv]
             ],
             "Entry": [
                 # ["Add Entry", self.on_add_entry, Qt.CTRL | Qt.Key_T],
@@ -191,6 +192,9 @@ class VerificationWindow(QMainWindow):
 
     def on_add_item_clicked(self):
         self.details.add_row()
+
+    def on_export_csv(self):
+        pass
 
 
 if __name__ == '__main__':
