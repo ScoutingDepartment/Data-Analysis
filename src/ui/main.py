@@ -5,8 +5,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
-from src.ui.calc_tables import CalculationReader
-from src.ui.vc import VerificationCenter
+from src.ui.verification.vc import VerificationCenter
 
 CONFIG_PATH = "paths.config"
 
@@ -100,8 +99,8 @@ class MainWindow(QMainWindow):
 
     def on_browse_scans_clicked(self):
         path_input = QFileDialog.getExistingDirectory(self,
-                                             "Open Scans Folder",
-                                             "",
+                                                      "Open Scans Folder",
+                                                      "",
                                                       QFileDialog.ShowDirsOnly)
         if path_input:
             self.scans_path = path_input
@@ -109,21 +108,26 @@ class MainWindow(QMainWindow):
 
     def on_browse_boards_clicked(self):
         path_input = QFileDialog.getExistingDirectory(self,
-                                             "Open Boards Folder",
-                                             "",
+                                                      "Open Boards Folder",
+                                                      "",
                                                       QFileDialog.ShowDirsOnly)
         if path_input:
             self.boards_path = path_input
         self.edit_boards.setText(self.boards_path)
 
     def on_new_database_clicked(self):
-        path_input = QFileDialog.getSaveFileName(self, "Save New Database", "", filter="(*.warp7)")
+        path_input = QFileDialog.getSaveFileName(self,
+                                                 "Save New Database",
+                                                 "",
+                                                 filter="(*.warp7)")
         if path_input[0]:
             self.db_path = path_input[0]
         self.edit_db.setText(self.db_path)
 
     def on_exist_database_clicked(self):
-        path_input = QFileDialog.getOpenFileName(self, "Open Database", filter="(*.warp7)")
+        path_input = QFileDialog.getOpenFileName(self,
+                                                 "Open Database",
+                                                 filter="(*.warp7)")
         if path_input[0]:
             self.db_path = path_input[0]
         self.edit_db.setText(self.db_path)
@@ -141,19 +145,7 @@ class MainWindow(QMainWindow):
                                 "Not all of the fields are filled in")
 
     def on_open_calc_table_clicked(self):
-
-        paths = (self.db_path, self.scans_path, self.boards_path)
-
-        if all(paths):
-            config_file = open(CONFIG_PATH, "w")
-            config_file.writelines("\n".join(paths))
-            config_file.close()
-
-            self.calc_tables = CalculationReader(*paths)
-        else:
-            QMessageBox.warning(self, "Cannot Open Verification Center",
-                                "Not all of the fields are filled in")
-
+        pass
 
     def closeEvent(self, event):
         if self.vc is not None:

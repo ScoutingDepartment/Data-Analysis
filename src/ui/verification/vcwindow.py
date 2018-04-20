@@ -4,8 +4,8 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
-from src.ui.entrydetails import EntryDetailsWidget
-from src.ui.entryitem import EntryInfoListItemWidget
+from src.ui.verification.entrydetails import EntryDetailsWidget
+from src.ui.verification.entryitem import EntryInfoListItemWidget
 
 
 class VerificationWindow(QMainWindow):
