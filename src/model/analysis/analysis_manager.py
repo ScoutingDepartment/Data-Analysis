@@ -1,36 +1,47 @@
-import os
-from typing import List
+from importlib import import_module
 
 import pandas as pd
 
-from src.model import boards
-from src.model.analysis.data_source import DataSource
-from src.model.analysis.scripted_table import ScriptedTable
-from src.model.database import get_engine
-from src.model.entrylib import Entry
-
 
 class AnalysisManager:
-    def __init__(self, db_path: "str",
-                 boards_dir_path: "str",
-                 *table_modules: "str"):
-        self.boards_finder = boards.Finder(boards_dir_path)
+    class Table:
+        def __init__(self, module):
+            self.title = module.TITLE_NAME
+            self.name = module.SOURCE_NAME
+            self.labels = module.LABELS
+            self.compute = module.compute_table
+            self.data = pd.DataFrame(columns=self.labels)
 
-        if not os.path.exists(db_path):
-            raise FileNotFoundError("Database file not found")
+    def __init__(self, table_scripts):  # , db_path, boards_dir_path):
 
-        conn = get_engine(db_path).connect()
+        # self.boards_finder = boards.Finder(boards_dir_path)
+        #
+        # if not os.path.exists(db_path):
+        #     raise FileNotFoundError("Database file not found")
+        #
+        # conn = get_engine(db_path).connect()
+        #
+        # entries_table = pd.read_sql(sql="SELECT * FROM EDITED_ENTRIES",
+        #                             con=conn,
+        #                             index_col="index").sort_values(by=['Match', 'Team'])
+        #
+        # self.entries = [Entry(row, self.boards_finder) for _, row in entries_table.iterrows()]
 
-        entries_table = pd.read_sql(sql="SELECT * FROM EDITED_ENTRIES",
-                                    con=conn,
-                                    index_col="index").sort_values(by=['Match', 'Team'])
+        self.entries = []
+        self.tables = [self.Table(import_module(s)) for s in table_scripts]
 
-        self.entries: List["Entry"] = [Entry(row, self.boards_finder) for _, row in entries_table.iterrows()]
-        self.tables: List["ScriptedTable"] = []
-        self.update_table_modules(*table_modules)
+    def __getitem__(self, name):
 
-    def update_table_modules(self, *table_modules: "str"):
-        self.tables = [ScriptedTable(m) for m in table_modules]
+        for table in self.tables:
+            if table.name == name:
+                return table
+        return None
 
-    def create_data_source(self, tables: List["ScriptedTable"]):
-        return DataSource(self.entries, tables)
+    def compute_all(self):
+        for table in self.tables:
+            table.compute(self, table.data)
+
+
+if __name__ == "__main__":
+    am = AnalysisManager(table_scripts=["_template"])
+    am.compute_all()
