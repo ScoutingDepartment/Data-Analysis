@@ -1,7 +1,7 @@
 import pandas as pd
 
-TITLE_NAME = ""
-SOURCE_NAME = ""
+TITLE_NAME = "Raw Data"
+SOURCE_NAME = "raw_data"
 LABELS = ["Team Number",
           "Alliance",
           "Match Number",
@@ -29,22 +29,18 @@ LABELS = ["Team Number",
           "Attachment Speed"]
 
 
-def compute_table(manager, result_table: "pd.DataFrame") -> None:
-    def combine_autos(attempt, success):
-        if success == 0:
-            if attempt == 0:
-                return 0
-            return 1
-        return 2
+def combine_autos(attempt, success):
+    if success == 0:
+        if attempt == 0:
+            return 0
+        return 1
+    return 2
 
-    result_table = result_table.iloc[0:0]  # clears the table
 
-    row_count = 0
-
+def row_data_generator(manager):
     for entry in manager.entries:
-        if entry.board.alliance() != "N":  # checks that the entry is not for power ups
+        if entry.board.alliance() != "N":
             row_data = {
-
                 "Team Number": entry.team,
                 "Alliance": entry.board.alliance(),
                 "Match Number": entry.match,
@@ -86,10 +82,13 @@ def compute_table(manager, result_table: "pd.DataFrame") -> None:
                 "Attachment Speed": entry.final_value("Attachment speed", default=0) // 2
             }
 
-            # Fix times cube dropped if any autos were done
+            # Fix times cube dropped
 
             if (row_data["Exchange Auto"] + row_data["Switch Auto"] + row_data["Scale Auto"]) > 1:
                 row_data["Times Cube Dropped"] += 1
 
-            result_table.loc[row_count] = row_data
-            row_count += 1
+            yield row_data
+
+
+def compute_table(manager):
+    return pd.DataFrame(row_data_generator(manager))[LABELS]
