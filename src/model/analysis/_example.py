@@ -2,9 +2,9 @@
 
 import pandas as pd
 
-TITLE_NAME = ""  # The name to display
-SOURCE_NAME = ""  # The name to be accessed by other code
-LABELS = []  # Column labels for table, and row labels for lookup (later thing)
+TITLE_NAME = "Template Table"  # The name to display
+SOURCE_NAME = "template_table"  # The name to be accessed by other code
+LABELS = ["Column 1", "Column 2"]  # Column labels for table, and row labels for lookup (later thing)
 
 
 def compute_table(manager, result_table: "pd.DataFrame") -> None:
@@ -38,7 +38,8 @@ def compute_table(manager, result_table: "pd.DataFrame") -> None:
     :return: Nothing needs to be returned from this function because
              changes to the data use the reference passed by the argument
     """
-    pass
+    for i in range(100):
+        result_table.loc[i] = [i, i ** 2]
 
 
 """

@@ -41,7 +41,12 @@ class AnalysisManager:
         for table in self.tables:
             table.compute(self, table.data)
 
+    def export_excel(self, fp):
+        for table in self.tables:
+            table.data.to_excel(fp, table.title)
+
 
 if __name__ == "__main__":
-    am = AnalysisManager(table_scripts=["_template"])
+    am = AnalysisManager(table_scripts=["_example"])
     am.compute_all()
+    am.export_excel("test_am" ".xlsx")
