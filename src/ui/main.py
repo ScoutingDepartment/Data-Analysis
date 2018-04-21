@@ -34,22 +34,26 @@ class MainWindow(QMainWindow):
         grid = QGridLayout()
         grid.setSpacing(5)
 
-        self.edit_scans = QLineEdit()
+        self.edit_scans = QLabel()
         self.edit_scans.setText(self.scans_path)
         btn_browse_scans = QPushButton("Browse")
         btn_browse_scans.clicked.connect(self.on_browse_scans_clicked)
 
-        self.edit_boards = QLineEdit()
+        self.edit_boards = QLabel()
         self.edit_boards.setText(self.boards_path)
         btn_browse_boards = QPushButton("Browse")
         btn_browse_boards.clicked.connect(self.on_browse_boards_clicked)
 
-        self.edit_db = QLineEdit()
+        self.edit_db = QLabel()
         self.edit_db.setText(self.db_path)
         btn_db_new = QPushButton("New")
         btn_db_new.clicked.connect(self.on_new_database_clicked)
         btn_db_existing = QPushButton("Existing")
         btn_db_existing.clicked.connect(self.on_exist_database_clicked)
+
+        self.edit_scripts = QLabel()
+        btn_scripts = QPushButton("Browse")
+        btn_scripts.setEnabled(False)
 
         self.edit_tba = QLineEdit()
 
@@ -62,24 +66,28 @@ class MainWindow(QMainWindow):
         btn_calc_table.setStyleSheet("QPushButton{color:#1e2d4a; font-weight:bold; font-size: 18px}")
 
         grid_widgets = [
-            (QLabel("Scans"), (0, 0)),
+            (QLabel("Scans:"), (0, 0)),
             (self.edit_scans, (0, 1, 1, 5)),
             (btn_browse_scans, (0, 6)),
 
-            (QLabel("Boards"), (1, 0)),
+            (QLabel("Boards:"), (1, 0)),
             (self.edit_boards, (1, 1, 1, 5)),
             (btn_browse_boards, (1, 6)),
 
-            (QLabel(".Warp7"), (2, 0)),
+            (QLabel(".Warp7:"), (2, 0)),
             (self.edit_db, (2, 1, 1, 4)),
             (btn_db_new, (2, 5)),
             (btn_db_existing, (2, 6)),
 
-            (QLabel("TBA Key"), (3, 0)),
-            (self.edit_tba, (3, 1, 1, 6)),
+            (QLabel("Scripts:"), (3, 0)),
+            (self.edit_scripts, (3, 1, 1, 5)),
+            (btn_scripts, (3, 6)),
 
-            (btn_vc, (4, 4, 1, 3)),
-            (btn_calc_table, (4, 1, 1, 3)),
+            (QLabel("TBA key:"), (4, 0)),
+            (self.edit_tba, (4, 1, 1, 6)),
+
+            (btn_vc, (5, 4, 1, 3)),
+            (btn_calc_table, (5, 1, 1, 3)),
         ]
 
         for widget, grid_position in grid_widgets:
@@ -91,7 +99,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(grid_container)
 
         # Setup window position
-        self.setFixedSize(600, 200)
+        self.setFixedSize(600, 240)
         self.setWindowTitle("Scouting Data Analysis/Verification version 1")
         self.move(0, 0)
         self.show()
