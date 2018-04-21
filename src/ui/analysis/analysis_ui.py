@@ -35,7 +35,7 @@ class AnalysisUI(QMainWindow):
 
         menus = {
             "Analysis Data": [
-                ["Calculate", None, Qt.CTRL | Qt.Key_T],
+                ["Calculate Now", None, Qt.CTRL | Qt.Key_T],
                 ["Export Tables to Excel", None, Qt.CTRL | Qt.SHIFT | Qt.Key_S]
             ],
             "Window": [

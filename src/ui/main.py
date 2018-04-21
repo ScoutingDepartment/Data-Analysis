@@ -14,7 +14,7 @@ CONFIG_PATH = "paths.config"
 class MainWindow(QMainWindow):
 
     def __init__(self):
-        super().__init__(flags=Qt.Window)
+        super().__init__(flags=Qt.Window | Qt.MSWindowsFixedSizeDialogHint)
 
         self.vc = None
         self.analysis = None
@@ -32,7 +32,7 @@ class MainWindow(QMainWindow):
             config_path.close()
 
         grid = QGridLayout()
-        grid.setSpacing(10)
+        grid.setSpacing(5)
 
         self.edit_scans = QLineEdit()
         self.edit_scans.setText(self.scans_path)
@@ -52,35 +52,29 @@ class MainWindow(QMainWindow):
         btn_db_existing.clicked.connect(self.on_exist_database_clicked)
 
         btn_vc = QPushButton("Verification Center")
+        btn_vc.setStyleSheet("QPushButton{color:#1e2d4a; font-weight:bold; font-size: 18px}")
         btn_vc.clicked.connect(self.on_open_vc_clicked)
 
-        btn_calc_table = QPushButton("Calculation Tables")
+        btn_calc_table = QPushButton("Analysis")
         btn_calc_table.clicked.connect(self.on_open_calc_table_clicked)
-        btn_data_lookup = QPushButton("Data Lookup")
-        btn_data_lookup.setEnabled(False)
-
-        version_label = QLabel("Version 1")
-        version_label.setStyleSheet("QLabel{color:#808080}")
+        btn_calc_table.setStyleSheet("QPushButton{color:#1e2d4a; font-weight:bold; font-size: 18px}")
 
         grid_widgets = [
             (QLabel("Scans"), (0, 0)),
-            (self.edit_scans, (0, 1, 1, 3)),
-            (btn_browse_scans, (0, 4)),
+            (self.edit_scans, (0, 1, 1, 5)),
+            (btn_browse_scans, (0, 6)),
 
             (QLabel("Boards"), (1, 0)),
-            (self.edit_boards, (1, 1, 1, 3)),
-            (btn_browse_boards, (1, 4)),
+            (self.edit_boards, (1, 1, 1, 5)),
+            (btn_browse_boards, (1, 6)),
 
-            (QLabel(".warp7 File"), (2, 0)),
-            (self.edit_db, (2, 1, 1, 2)),
-            (btn_db_new, (2, 3)),
-            (btn_db_existing, (2, 4)),
+            (QLabel(".Warp7"), (2, 0)),
+            (self.edit_db, (2, 1, 1, 4)),
+            (btn_db_new, (2, 5)),
+            (btn_db_existing, (2, 6)),
 
-            (btn_vc, (3, 3, 1, 2)),
-            (btn_calc_table, (4, 3, 1, 2)),
-            (btn_data_lookup, (5, 3, 1, 2)),
-
-            (version_label, (5, 0, 1, 2))
+            (btn_vc, (3, 4, 1, 3)),
+            (btn_calc_table, (3, 1, 1, 3)),
         ]
 
         for widget, grid_position in grid_widgets:
@@ -92,9 +86,8 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(grid_container)
 
         # Setup window position
-        self.setMaximumSize(540, 360)
-        self.setMinimumSize(480, 320)
-        self.setWindowTitle("Scouting Data Utilities")
+        self.setFixedSize(540, 180)
+        self.setWindowTitle("Scouting Data Analysis/Verification version 1")
         self.move(0, 0)
         self.show()
 
