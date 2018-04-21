@@ -43,7 +43,7 @@ def compute_table(manager, result_table: "pd.DataFrame") -> None:
 
     for entry in manager.entries:
         if entry.board.alliance() != "N":  # checks that the entry is not for power ups
-            result_table.loc[row_count] = {
+            row_data = {
 
                 "Team Number": entry.team,
                 "Alliance": entry.board.alliance(),
@@ -86,4 +86,10 @@ def compute_table(manager, result_table: "pd.DataFrame") -> None:
                 "Attachment Speed": entry.final_value("Attachment speed", default=0) // 2
             }
 
+            # Fix times cube dropped if any autos were done
+
+            if (row_data["Exchange Auto"] + row_data["Switch Auto"] + row_data["Scale Auto"]) > 1:
+                row_data["Times Cube Dropped"] += 1
+
+            result_table.loc[row_count] = row_data
             row_count += 1

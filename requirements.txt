@@ -1,4 +1,9 @@
 numpy
 pandas
+
 SQLAlchemy
+
 PyQt5
+
+requests
+TBAPy
