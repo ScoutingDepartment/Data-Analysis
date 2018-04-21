@@ -5,6 +5,7 @@ from PyQt5.QtCore import *
 from PyQt5.QtGui import *
 from PyQt5.QtWidgets import *
 
+from src.ui.analysis.analysis_ui import AnalysisUI
 from src.ui.verification.vc import VerificationCenter
 
 CONFIG_PATH = "paths.config"
@@ -16,7 +17,7 @@ class MainWindow(QMainWindow):
         super().__init__(flags=Qt.Window)
 
         self.vc = None
-        self.calc_tables = None
+        self.analysis = None
 
         self.db_path = ""
         self.scans_path = ""
@@ -145,7 +146,7 @@ class MainWindow(QMainWindow):
                                 "Not all of the fields are filled in")
 
     def on_open_calc_table_clicked(self):
-        pass
+        self.analysis = AnalysisUI()
 
     def closeEvent(self, event):
         if self.vc is not None:

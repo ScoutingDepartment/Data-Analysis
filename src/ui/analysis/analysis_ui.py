@@ -34,8 +34,9 @@ class AnalysisUI(QMainWindow):
             return action
 
         menus = {
-            "Analysis": [
-                ["Calculate Data", None, Qt.CTRL | Qt.Key_T]
+            "Analysis Data": [
+                ["Calculate", None, Qt.CTRL | Qt.Key_T],
+                ["Export Tables to Excel", None, Qt.CTRL | Qt.SHIFT | Qt.Key_S]
             ],
             "Window": [
                 ["Open Table in New Window"]
