@@ -39,3 +39,16 @@ def compute_table(manager, result_table: "pd.DataFrame") -> None:
              changes to the data use the reference passed by the argument
     """
     pass
+
+
+"""
+import pandas as pd
+
+TITLE_NAME = ""
+SOURCE_NAME = ""
+LABELS = []
+
+
+def compute_table(manager, result_table: "pd.DataFrame") -> None:
+    pass
+"""

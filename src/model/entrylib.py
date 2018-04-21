@@ -72,8 +72,8 @@ class Entry:
     def count(self, type_str):
         return len(self.look(type_str))
 
-    def final_value(self, type_str, default_value=0):
+    def final_value(self, type_str, default=0):
         l = self.look(type_str)
         if l:
             return l[-1]
-        return default_value
+        return default
