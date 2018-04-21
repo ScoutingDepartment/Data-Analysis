@@ -51,6 +51,8 @@ class MainWindow(QMainWindow):
         btn_db_existing = QPushButton("Existing")
         btn_db_existing.clicked.connect(self.on_exist_database_clicked)
 
+        self.edit_tba = QLineEdit()
+
         btn_vc = QPushButton("Verification Center")
         btn_vc.setStyleSheet("QPushButton{color:#1e2d4a; font-weight:bold; font-size: 18px}")
         btn_vc.clicked.connect(self.on_open_vc_clicked)
@@ -73,8 +75,11 @@ class MainWindow(QMainWindow):
             (btn_db_new, (2, 5)),
             (btn_db_existing, (2, 6)),
 
-            (btn_vc, (3, 4, 1, 3)),
-            (btn_calc_table, (3, 1, 1, 3)),
+            (QLabel("TBA Key"), (3, 0)),
+            (self.edit_tba, (3, 1, 1, 6)),
+
+            (btn_vc, (4, 4, 1, 3)),
+            (btn_calc_table, (4, 1, 1, 3)),
         ]
 
         for widget, grid_position in grid_widgets:
@@ -86,7 +91,7 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(grid_container)
 
         # Setup window position
-        self.setFixedSize(540, 180)
+        self.setFixedSize(600, 200)
         self.setWindowTitle("Scouting Data Analysis/Verification version 1")
         self.move(0, 0)
         self.show()

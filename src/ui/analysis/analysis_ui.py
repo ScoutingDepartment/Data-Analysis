@@ -35,11 +35,12 @@ class AnalysisUI(QMainWindow):
 
         menus = {
             "Analysis Data": [
-                ["Calculate Now", None, Qt.CTRL | Qt.Key_T],
-                ["Export Tables to Excel", None, Qt.CTRL | Qt.SHIFT | Qt.Key_S]
+                ["Calculate with TBA", None, Qt.CTRL | Qt.Key_T],
+                ["Calculate without TBA", None, Qt.CTRL | Qt.ALT | Qt.Key_T],
+                ["Export Tables to Excel", None, Qt.CTRL | Qt.ALT | Qt.Key_S]
             ],
             "Window": [
-                ["Open Table in New Window"]
+                ["Open Table in New Window", None, Qt.ALT | Qt.Key_0],
             ]
         }
 
