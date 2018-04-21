@@ -2,6 +2,7 @@ import os
 from importlib import import_module
 
 import pandas as pd
+from tbapy import TBA
 
 from src.model import boards, database
 from src.model.entrylib import Entry
@@ -17,7 +18,7 @@ class AnalysisManager:
             self.compute = module.compute_table
             self.data = pd.DataFrame(columns=self.labels)
 
-    def __init__(self, db_path, boards_dir_path, table_scripts):
+    def __init__(self, db_path, boards_dir_path, tba_key, table_scripts):
 
         self.boards_finder = boards.Finder(boards_dir_path)
 
@@ -32,6 +33,9 @@ class AnalysisManager:
 
         self.entries: "Entry" = [Entry(row, self.boards_finder) for _, row in entries_table.iterrows()]
 
+        self.tba = TBA(tba_key)
+        self.tba_available = True
+
         self.tables = [self.Table(import_module(s)) for s in table_scripts]
 
     def __getitem__(self, name):
@@ -41,7 +45,8 @@ class AnalysisManager:
                 return table
         return None
 
-    def compute_all(self):
+    def compute_all(self, tba_available=True):
+        self.tba_available = tba_available
         for table in self.tables:
             table.data = table.compute(self)
 
