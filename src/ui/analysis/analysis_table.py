@@ -19,7 +19,6 @@ class AnalysisTable(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
         self.setLayout(layout)
 
-        self.setMinimumSize(800, 800)
         self.show()
 
     def update_contents(self, title, data: "pd.DataFrame"):
@@ -32,12 +31,16 @@ class AnalysisTable(QWidget):
         for i in range(data.index.size):
             for j in range(data.columns.size):
                 item = QTableWidgetItem()
-                item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
+                item.setFlags(item.flags() ^ Qt.ItemIsEditable)
+
                 d = data.iat[i, j]
                 if type(d) is np.int64:
                     item.setData(Qt.DisplayRole, int(d))
+                    item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
                 else:
                     item.setData(Qt.DisplayRole, str(d))
+                    item.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+
                 self.table.setItem(i, j, item)
 
         self.table.setHorizontalHeaderLabels(map(str, data.columns))
