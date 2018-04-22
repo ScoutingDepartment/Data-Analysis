@@ -69,6 +69,7 @@ def row_data_generator(manager):
                 "Intake Speed": entry.final_value("Intake speed", default=0),
                 "Intake Consistency": entry.final_value("Intake consistency", default=0),
 
+                # TODO make this total time spent defending
                 "Defense": (2 if entry.count("Defense") != 0 else 0),
 
                 "Levitate": "",
