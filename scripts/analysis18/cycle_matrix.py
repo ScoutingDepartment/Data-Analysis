@@ -1,11 +1,12 @@
 import numpy as np
+import pandas as pd
 
 TITLE_NAME = "Cycle Matrix"
 SOURCE_NAME = "cycle_matrix"
-LABELS = []
+LABELS = ["Team", "Scale Speed", "Switch Speed", "Exchange Speed"]
 
 
-def calc_prs(data, times=None):
+def calculate_prs(data, times=None):
     """
     :param data: 2d list where d1 separates by match and d2 separates by Scale Switch Exchange respectively
     :param times:
@@ -13,34 +14,38 @@ def calc_prs(data, times=None):
     """
     if times is None:
         times = tuple([135] * len(data))
-    prs = np.linalg.lstsq(data, times, rcond= 1)
+    prs = np.linalg.lstsq(data, times, rcond=1)
     return prs[0]
 
 
-def get_values_by_team(manager):
-    data_by_team = {}
+def outtake_counts_by_team(manager):
+    counts_by_team = {}
 
     for entry in manager.entries:
         if not entry.board.alliance() == "N":  # Check for Power ups
 
-            if entry.team not in data_by_team.keys():  # Make new list if team doesn't exist
-                data_by_team[entry.team] = []
+            if entry.team not in counts_by_team.keys():  # Make new list if team doesn't exist
+                counts_by_team[entry.team] = []
 
-            data_by_team[entry.team].append((entry.count("Tele exchange"),
+            counts_by_team[entry.team].append((entry.count("Tele exchange"),
                                              entry.count("Tele alliance switch") + entry.count("Tele opponent switch"),
                                              entry.count("Tele scale")))
-    return data_by_team
+    return counts_by_team
 
 
 def calc_speeds(manager):
-    final_data_by_team = {}
-    data = get_values_by_team(manager)
-    for team in data.keys():
-        final_data_by_team[team] = calc_prs(data[team])
+    counted_data = outtake_counts_by_team(manager)
+    for team in counted_data.keys():
+        team_data = calculate_prs(counted_data[team])
 
-    return final_data_by_team
+        yield {
+            "Team": team,
+            "Scale Speed": team_data[0],
+            "Switch Speed": team_data[1],
+            "Exchange Speed": team_data[2]
+        }
 
 
 def compute_table(manager):
-    final = calc_speeds(manager)
+    final = pd.DataFrame(calc_speeds(manager))[LABELS]
     return final

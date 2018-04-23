@@ -33,12 +33,11 @@ class AnalysisTable(QWidget):
                 item = QTableWidgetItem()
                 item.setFlags(item.flags() ^ Qt.ItemIsEditable)
 
-                d = data.iat[i, j]
-                if type(d) is np.int64:
-                    item.setData(Qt.DisplayRole, int(d))
+                d = np.asscalar(data.iat[i, j])
+                item.setData(Qt.DisplayRole, d)
+                if type(d) is int or type(d) is float:
                     item.setTextAlignment(Qt.AlignRight | Qt.AlignVCenter)
                 else:
-                    item.setData(Qt.DisplayRole, str(d))
                     item.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)
 
                 self.table.setItem(i, j, item)
