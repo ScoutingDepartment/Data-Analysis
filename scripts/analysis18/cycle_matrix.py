@@ -3,7 +3,7 @@ import pandas as pd
 
 TITLE_NAME = "Cycle Matrix"
 SOURCE_NAME = "cycle_matrix"
-LABELS = ["Team", "Scale Speed", "Switch Speed", "Exchange Speed"]
+LABELS = ["Team", "Exchange Speed", "Switch Speed", "Scale Speed"]
 
 
 def calculate_prs(data, times=None):
@@ -40,9 +40,9 @@ def calc_speeds(manager):
 
         yield {
             "Team": team,
-            "Scale Speed": team_data[0],
+            "Exchange Speed": team_data[0],
             "Switch Speed": team_data[1],
-            "Exchange Speed": team_data[2]
+            "Scale Speed": team_data[2]
         }
 
 
