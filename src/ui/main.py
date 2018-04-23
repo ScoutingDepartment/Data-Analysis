@@ -3,15 +3,10 @@ import sys
 
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import (QMainWindow,
-                             QLabel,
-                             QPushButton,
-                             QLineEdit,
-                             QGridLayout,
-                             QWidget,
-                             QFileDialog,
-                             QMessageBox,
-                             QApplication)
+from PyQt5.QtWidgets import *
+
+from src.ui.analysis.analysis import AnalysisCenter
+from src.ui.verification.vc import VerificationCenter
 
 CONFIG_PATH = "paths.config"
 
@@ -167,14 +162,12 @@ class MainWindow(QMainWindow):
             config_file.writelines("\n".join(paths))
             config_file.close()
 
-            from src.ui.verification.vc import VerificationCenter
             self.vc = VerificationCenter(*paths)
         else:
             QMessageBox.warning(self, "Cannot Open Verification Center",
                                 "Not all of the fields are filled in")
 
     def on_open_calc_table_clicked(self):
-        from src.ui.analysis.analysis import AnalysisCenter
         self.analysis = AnalysisCenter()
 
     def closeEvent(self, event):
