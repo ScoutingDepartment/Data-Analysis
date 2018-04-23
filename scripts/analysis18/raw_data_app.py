@@ -1,7 +1,7 @@
 import pandas as pd
 
-TITLE_NAME = "Raw Data"
-SOURCE_NAME = "raw_data"
+TITLE_NAME = "Raw Data(App)"
+SOURCE_NAME = "raw_data_app"
 LABELS = ["Team Number",
           "Alliance",
           "Match Number",
