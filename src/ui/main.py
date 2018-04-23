@@ -1,12 +1,17 @@
 import os
 import sys
 
-from PyQt5.QtCore import *
-from PyQt5.QtGui import *
-from PyQt5.QtWidgets import *
-
-from src.ui.analysis.analysis_ui import AnalysisUI
-from src.ui.verification.vc import VerificationCenter
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import (QMainWindow,
+                             QLabel,
+                             QPushButton,
+                             QLineEdit,
+                             QGridLayout,
+                             QWidget,
+                             QFileDialog,
+                             QMessageBox,
+                             QApplication)
 
 CONFIG_PATH = "paths.config"
 
@@ -22,72 +27,66 @@ class MainWindow(QMainWindow):
         self.db_path = ""
         self.scans_path = ""
         self.boards_path = ""
+        self.scripts_path = ""
+        self.tba_key = ""
 
-        if os.path.exists(CONFIG_PATH):
-            config_path = open(CONFIG_PATH, "r")
-            lines = config_path.readlines()
-            self.db_path = lines[0].strip()
-            self.scans_path = lines[1].strip()
-            self.boards_path = lines[2].strip()
-            config_path.close()
+        self.edit_scans = QLabel()
+        self.btn_browse_scans = QPushButton("Browse")
+
+        self.edit_boards = QLabel()
+        self.btn_browse_boards = QPushButton("Browse")
+
+        self.edit_db = QLabel()
+        self.btn_db_new = QPushButton("New")
+        self.btn_db_existing = QPushButton("Existing")
+
+        self.edit_scripts = QLabel()
+        self.btn_scripts = QPushButton("Browse")
+
+        self.edit_tba = QLineEdit()
+
+        self.btn_vc = QPushButton("Verification Center")
+        self.btn_calc_table = QPushButton("Analysis")
+
+        self.setup_layouts()
+        self.setup_styles()
+        self.setup_events()
+        self.setup_config()
+
+        self.setWindowTitle("Scouting Data Analysis/Verification version 1")
+
+        self.show()
+
+    def setup_layouts(self):
+        self.setFixedSize(600, 240)
+        self.move(0, 0)
 
         grid = QGridLayout()
         grid.setSpacing(5)
 
-        self.edit_scans = QLabel()
-        self.edit_scans.setText(self.scans_path)
-        btn_browse_scans = QPushButton("Browse")
-        btn_browse_scans.clicked.connect(self.on_browse_scans_clicked)
-
-        self.edit_boards = QLabel()
-        self.edit_boards.setText(self.boards_path)
-        btn_browse_boards = QPushButton("Browse")
-        btn_browse_boards.clicked.connect(self.on_browse_boards_clicked)
-
-        self.edit_db = QLabel()
-        self.edit_db.setText(self.db_path)
-        btn_db_new = QPushButton("New")
-        btn_db_new.clicked.connect(self.on_new_database_clicked)
-        btn_db_existing = QPushButton("Existing")
-        btn_db_existing.clicked.connect(self.on_exist_database_clicked)
-
-        self.edit_scripts = QLabel()
-        btn_scripts = QPushButton("Browse")
-        btn_scripts.setEnabled(False)
-
-        self.edit_tba = QLineEdit()
-
-        btn_vc = QPushButton("Verification Center")
-        btn_vc.setStyleSheet("QPushButton{color:#1e2d4a; font-weight:bold; font-size: 18px}")
-        btn_vc.clicked.connect(self.on_open_vc_clicked)
-
-        btn_calc_table = QPushButton("Analysis")
-        btn_calc_table.clicked.connect(self.on_open_calc_table_clicked)
-        btn_calc_table.setStyleSheet("QPushButton{color:#1e2d4a; font-weight:bold; font-size: 18px}")
-
         grid_widgets = [
             (QLabel("Scans:"), (0, 0)),
             (self.edit_scans, (0, 1, 1, 5)),
-            (btn_browse_scans, (0, 6)),
+            (self.btn_browse_scans, (0, 6)),
 
             (QLabel("Boards:"), (1, 0)),
             (self.edit_boards, (1, 1, 1, 5)),
-            (btn_browse_boards, (1, 6)),
+            (self.btn_browse_boards, (1, 6)),
 
             (QLabel(".Warp7:"), (2, 0)),
             (self.edit_db, (2, 1, 1, 4)),
-            (btn_db_new, (2, 5)),
-            (btn_db_existing, (2, 6)),
+            (self.btn_db_new, (2, 5)),
+            (self.btn_db_existing, (2, 6)),
 
             (QLabel("Scripts:"), (3, 0)),
             (self.edit_scripts, (3, 1, 1, 5)),
-            (btn_scripts, (3, 6)),
+            (self.btn_scripts, (3, 6)),
 
             (QLabel("TBA key:"), (4, 0)),
             (self.edit_tba, (4, 1, 1, 6)),
 
-            (btn_vc, (5, 4, 1, 3)),
-            (btn_calc_table, (5, 1, 1, 3)),
+            (self.btn_vc, (5, 4, 1, 3)),
+            (self.btn_calc_table, (5, 1, 1, 3)),
         ]
 
         for widget, grid_position in grid_widgets:
@@ -98,11 +97,32 @@ class MainWindow(QMainWindow):
 
         self.setCentralWidget(grid_container)
 
-        # Setup window position
-        self.setFixedSize(600, 240)
-        self.setWindowTitle("Scouting Data Analysis/Verification version 1")
-        self.move(0, 0)
-        self.show()
+    def setup_styles(self):
+        s = "QPushButton{color:#1e2d4a; font-weight:bold; font-size: 18px}"
+        self.btn_vc.setStyleSheet(s)
+        self.btn_calc_table.setStyleSheet(s)
+
+    def setup_events(self):
+        self.btn_browse_scans.clicked.connect(self.on_browse_scans_clicked)
+        self.btn_browse_boards.clicked.connect(self.on_browse_boards_clicked)
+        self.btn_db_new.clicked.connect(self.on_new_database_clicked)
+        self.btn_db_existing.clicked.connect(self.on_exist_database_clicked)
+        self.btn_vc.clicked.connect(self.on_open_vc_clicked)
+        self.btn_calc_table.clicked.connect(self.on_open_calc_table_clicked)
+
+    def setup_config(self):
+        if os.path.exists(CONFIG_PATH):
+            config_path = open(CONFIG_PATH, "r")
+            lines = config_path.readlines()
+            self.db_path = lines[0].strip()
+            self.scans_path = lines[1].strip()
+            self.boards_path = lines[2].strip()
+            config_path.close()
+
+        self.edit_scans.setText(self.scans_path)
+        self.edit_boards.setText(self.boards_path)
+        self.edit_db.setText(self.db_path)
+        self.btn_scripts.setEnabled(False)
 
     def on_browse_scans_clicked(self):
         path_input = QFileDialog.getExistingDirectory(self,
@@ -146,13 +166,16 @@ class MainWindow(QMainWindow):
             config_file = open(CONFIG_PATH, "w")
             config_file.writelines("\n".join(paths))
             config_file.close()
+
+            from src.ui.verification.vc import VerificationCenter
             self.vc = VerificationCenter(*paths)
         else:
             QMessageBox.warning(self, "Cannot Open Verification Center",
                                 "Not all of the fields are filled in")
 
     def on_open_calc_table_clicked(self):
-        self.analysis = AnalysisUI()
+        from src.ui.analysis.analysis import AnalysisCenter
+        self.analysis = AnalysisCenter()
 
     def closeEvent(self, event):
         if self.vc is not None:
