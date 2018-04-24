@@ -28,3 +28,6 @@ class AnalysisCenter(AnalysisUI):
     def on_calculate_without_tba(self):
         self.manager.compute_all(tba_available=False)
         self.on_table_nav_selected()
+
+    def on_open_tables_in_excel(self):
+        self.manager.open_excel_instance()

@@ -46,7 +46,7 @@ class AnalysisUI(QMainWindow):
             ],
             "Window": [
                 ["Open Table in New Window", None, Qt.ALT | Qt.Key_0],
-                ["Open Table in Excel", None, Qt.CTRL | Qt.ALT | Qt.Key_0]
+                ["Open Tables in Excel", self.on_open_tables_in_excel, Qt.CTRL | Qt.ALT | Qt.Key_0]
             ]
         }
 
@@ -87,6 +87,9 @@ class AnalysisUI(QMainWindow):
         pass
 
     def on_calculate_without_tba(self):
+        pass
+
+    def on_open_tables_in_excel(self):
         pass
 
     def resizeEvent(self, event):

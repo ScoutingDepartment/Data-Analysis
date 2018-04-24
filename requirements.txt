@@ -1,6 +1,8 @@
 numpy
-openpyxl
 pandas
+
+pyWin32
+XLWings
 
 SQLAlchemy
 

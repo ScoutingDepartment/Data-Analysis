@@ -3,6 +3,7 @@ import sys
 from importlib import import_module
 
 import pandas as pd
+import xlwings as xl
 from tbapy import TBA
 
 from src.model import boards, database
@@ -59,9 +60,11 @@ class AnalysisManager:
         for table in self.tables:
             table.data = table.compute(self)
 
-    def export_excel(self, fp):
+    def open_excel_instance(self):
+        book = xl.Book()
         for table in self.tables:
-            table.data[table.labels].to_excel(fp, table.title, index=False)
+            sheet = book.sheets.add(table.title)
+            sheet.range("A1").options(pd.DataFrame, expand="table").value = table.data
 
     def table_names(self):
         for table in self.tables:

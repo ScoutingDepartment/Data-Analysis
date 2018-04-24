@@ -6,7 +6,7 @@ from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import *
 
-from src.ui.analysis.analysis import AnalysisCenter
+from src.ui.analysis.analysis_center import AnalysisCenter
 from src.ui.verification.vc import VerificationCenter
 
 CONFIG_PATH = "config.json"
