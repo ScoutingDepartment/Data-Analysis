@@ -7,6 +7,7 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import *
 
 from src.ui.analysis.analysis import AnalysisCenter
+from src.ui.verification.vc import VerificationCenter
 
 CONFIG_PATH = "config.json"
 
@@ -176,10 +177,20 @@ class MainWindow(QMainWindow):
 
     def on_open_vc_clicked(self):
         self.read_config()
+        config = (self._config["db"], self._config["scans"], self._config["boards"])
+        if all(config):
+            self._vc = VerificationCenter(*config)
 
     def on_open_analysis_clicked(self):
         self.read_config()
-        self._analysis = AnalysisCenter()
+        config = (self._config["boards"],
+                  self._config["db"],
+                  self._config["scripts"],
+                  self._config["tables"],
+                  self._config["tba"],
+                  self._config["tba_event"])
+        if all(config):
+            self._analysis = AnalysisCenter(*config)
 
     def closeEvent(self, event):
         if self._vc is not None:

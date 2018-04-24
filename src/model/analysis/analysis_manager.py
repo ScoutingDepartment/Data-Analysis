@@ -1,4 +1,5 @@
 import os
+import sys
 from importlib import import_module
 
 import pandas as pd
@@ -18,7 +19,13 @@ class AnalysisManager:
             self.compute = module.compute_table
             self.data = pd.DataFrame(columns=self.labels)
 
-    def __init__(self, db_path, boards_dir_path, tba_key, table_scripts):
+    def __init__(self,
+                 boards_dir_path,
+                 db_path,
+                 scripts_path,
+                 table_scripts,
+                 tba_key,
+                 tba_event):
 
         self.boards_finder = boards.Finder(boards_dir_path)
 
@@ -33,10 +40,12 @@ class AnalysisManager:
 
         self.entries: "Entry" = [Entry(row, self.boards_finder) for _, row in entries_table.iterrows()]
 
+        sys.path.append(scripts_path)
+        self.tables = [self.Table(import_module(s)) for s in table_scripts]
+
         self.tba = TBA(tba_key)
         self.tba_available = True
-
-        self.tables = [self.Table(import_module(s)) for s in table_scripts]
+        self.tba_event = tba_event
 
     def __getitem__(self, name):
 
