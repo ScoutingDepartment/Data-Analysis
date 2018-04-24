@@ -19,10 +19,10 @@ class MainWindow(QMainWindow):
         self._config = {}  # Config dictionary
         self._vc, self._analysis = None, None  # Active reference to windows
 
-        (self.edit_scans,
-         self.edit_boards,
-         self.edit_db,
-         self.edit_scripts) = (QLabel(), QLabel(), QLabel(), QLabel())
+        (self.label_scans,
+         self.label_boards,
+         self.label_db,
+         self.label_scripts) = (QLabel(), QLabel(), QLabel(), QLabel())
 
         (self.edit_tables,
          self.edit_tba,
@@ -53,20 +53,20 @@ class MainWindow(QMainWindow):
 
         grid_widgets = [
             (QLabel("Scans:"), (0, 0)),
-            (self.edit_scans, (0, 1, 1, 5)),
+            (self.label_scans, (0, 1, 1, 5)),
             (self.btn_browse_scans, (0, 6)),
 
             (QLabel("Boards:"), (1, 0)),
-            (self.edit_boards, (1, 1, 1, 5)),
+            (self.label_boards, (1, 1, 1, 5)),
             (self.btn_browse_boards, (1, 6)),
 
             (QLabel(".Warp7:"), (2, 0)),
-            (self.edit_db, (2, 1, 1, 4)),
+            (self.label_db, (2, 1, 1, 4)),
             (self.btn_db_new, (2, 5)),
             (self.btn_db_existing, (2, 6)),
 
             (QLabel("Scripts:"), (3, 0)),
-            (self.edit_scripts, (3, 1, 1, 5)),
+            (self.label_scripts, (3, 1, 1, 5)),
             (self.btn_scripts, (3, 6)),
 
             (QLabel("Tables:"), (4, 0)),
@@ -100,6 +100,7 @@ class MainWindow(QMainWindow):
         self.btn_browse_boards.clicked.connect(self.on_browse_boards_clicked)
         self.btn_db_new.clicked.connect(self.on_new_database_clicked)
         self.btn_db_existing.clicked.connect(self.on_exist_database_clicked)
+        self.btn_scripts.clicked.connect(self.on_browse_scripts_clicked)
         self.btn_vc.clicked.connect(self.on_open_vc_clicked)
         self.btn_analysis.clicked.connect(self.on_open_analysis_clicked)
 
@@ -109,9 +110,14 @@ class MainWindow(QMainWindow):
             self._config = json.load(config_file)
             config_file.close()
 
-            self.edit_scans.setText(self._config["scans"])
-            self.edit_boards.setText(self._config["boards"])
-            self.edit_db.setText(self._config["db"])
+            self.label_scans.setText(self._config["scans"])
+            self.label_boards.setText(self._config["boards"])
+            self.label_db.setText(self._config["db"])
+            self.label_scripts.setText(self._config["scripts"])
+
+            self.edit_tables.setText(",".join(self._config["tables"]))
+            self.edit_tba.setText(self._config["tba"])
+            self.edit_tba_event.setText(self._config["tba_event"])
         else:
             self._config = {
                 "scans": "",
@@ -120,7 +126,7 @@ class MainWindow(QMainWindow):
                 "scripts": "",
                 "tables": [],
                 "tba": "",
-                "event": ""
+                "tba_event": ""
             }
 
     def on_browse_scans_clicked(self):
@@ -129,7 +135,7 @@ class MainWindow(QMainWindow):
                                                       "",
                                                       QFileDialog.ShowDirsOnly)
         if path_input:
-            self.edit_scans.setText(path_input)
+            self.label_scans.setText(path_input)
 
     def on_browse_boards_clicked(self):
         path_input = QFileDialog.getExistingDirectory(None,
@@ -137,7 +143,7 @@ class MainWindow(QMainWindow):
                                                       "",
                                                       QFileDialog.ShowDirsOnly)
         if path_input:
-            self.edit_boards.setText(path_input)
+            self.label_boards.setText(path_input)
 
     def on_new_database_clicked(self):
         path_input = QFileDialog.getSaveFileName(None,
@@ -145,14 +151,22 @@ class MainWindow(QMainWindow):
                                                  "",
                                                  filter="(*.warp7)")
         if path_input[0]:
-            self.edit_db.setText(path_input[0])
+            self.label_db.setText(path_input[0])
 
     def on_exist_database_clicked(self):
         path_input = QFileDialog.getOpenFileName(None,
                                                  "Open Database",
                                                  filter="(*.warp7)")
         if path_input[0]:
-            self.edit_db.setText(path_input[0])
+            self.label_db.setText(path_input[0])
+
+    def on_browse_scripts_clicked(self):
+        path_input = QFileDialog.getExistingDirectory(None,
+                                                      "Open Scripts Folder",
+                                                      "",
+                                                      QFileDialog.ShowDirsOnly)
+        if path_input:
+            self.label_scripts.setText(path_input)
 
     def on_open_vc_clicked(self):
         QMessageBox.warning(None, "Cannot Open Verification Center",
