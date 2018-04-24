@@ -1,13 +1,7 @@
 import sys
 
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import (QWidget,
-                             QComboBox,
-                             QTableWidget,
-                             QVBoxLayout,
-                             QCheckBox,
-                             QTableWidgetItem,
-                             QApplication)
+from PyQt5.QtWidgets import *
 
 INDEXES = {'Data Types': 0,
            'Values': 2,

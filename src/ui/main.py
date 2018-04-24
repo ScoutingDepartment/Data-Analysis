@@ -139,16 +139,14 @@ class MainWindow(QMainWindow):
     def on_browse_scans_clicked(self):
         path_input = QFileDialog.getExistingDirectory(None,
                                                       "Open Scans Folder",
-                                                      "",
-                                                      QFileDialog.ShowDirsOnly)
+                                                      "")
         if path_input:
             self.label_scans.setText(path_input)
 
     def on_browse_boards_clicked(self):
         path_input = QFileDialog.getExistingDirectory(None,
                                                       "Open Boards Folder",
-                                                      "",
-                                                      QFileDialog.ShowDirsOnly)
+                                                      "")
         if path_input:
             self.label_boards.setText(path_input)
 
@@ -170,8 +168,7 @@ class MainWindow(QMainWindow):
     def on_browse_scripts_clicked(self):
         path_input = QFileDialog.getExistingDirectory(None,
                                                       "Open Scripts Folder",
-                                                      "",
-                                                      QFileDialog.ShowDirsOnly)
+                                                      "")
         if path_input:
             self.label_scripts.setText(path_input)
 
