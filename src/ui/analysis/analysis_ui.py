@@ -45,7 +45,7 @@ class AnalysisUI(QMainWindow):
                 ["Calculate without TBA", self.on_calculate_without_tba, Qt.CTRL | Qt.ALT | Qt.Key_T],
             ],
             "Window": [
-                ["Open Table in New Window", None, Qt.ALT | Qt.Key_0],
+                # ["Open Table in New Window", None, Qt.ALT | Qt.Key_0],
                 ["Open Tables in Excel", self.on_open_tables_in_excel, Qt.CTRL | Qt.ALT | Qt.Key_0]
             ]
         }

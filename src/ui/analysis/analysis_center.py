@@ -10,6 +10,7 @@ class AnalysisCenter(AnalysisUI):
         self.manager = AnalysisManager(*args)
         for title in self.manager.table_names():
             self.tables_nav.addItem(QListWidgetItem(title))
+        self.manager.compute_all(tba_available=False)
         self.tables_nav.setCurrentRow(0)
 
         # self.table_content.update_contents("Raw Data", self.manager["raw_data"].data)
