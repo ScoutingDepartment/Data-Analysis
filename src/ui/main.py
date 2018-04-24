@@ -115,19 +115,25 @@ class MainWindow(QMainWindow):
             self.label_db.setText(self._config["db"])
             self.label_scripts.setText(self._config["scripts"])
 
-            self.edit_tables.setText(",".join(self._config["tables"]))
+            self.edit_tables.setText(", ".join(self._config["tables"]))
             self.edit_tba.setText(self._config["tba"])
             self.edit_tba_event.setText(self._config["tba_event"])
         else:
-            self._config = {
-                "scans": "",
-                "boards": "",
-                "db": "",
-                "scripts": "",
-                "tables": [],
-                "tba": "",
-                "tba_event": ""
-            }
+            self.read_config()
+
+    def read_config(self):
+        self._config = {
+            "scans": self.label_scans.text(),
+            "boards": self.label_boards.text(),
+            "db": self.label_db.text(),
+            "scripts": self.label_scripts.text(),
+            "tables": list(filter(bool, map(lambda s: s.strip(), self.edit_tables.text().split(",")))),
+            "tba": self.edit_tba.text(),
+            "tba_event": self.edit_tba_event.text()
+        }
+        config_file = open(CONFIG_PATH, "w")
+        json.dump(self._config, config_file, indent=4, separators=(",", ": "))
+        config_file.close()
 
     def on_browse_scans_clicked(self):
         path_input = QFileDialog.getExistingDirectory(None,
@@ -169,10 +175,10 @@ class MainWindow(QMainWindow):
             self.label_scripts.setText(path_input)
 
     def on_open_vc_clicked(self):
-        QMessageBox.warning(None, "Cannot Open Verification Center",
-                            "Not all of the fields are filled in")
+        self.read_config()
 
     def on_open_analysis_clicked(self):
+        self.read_config()
         self._analysis = AnalysisCenter()
 
     def closeEvent(self, event):
