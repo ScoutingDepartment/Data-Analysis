@@ -1,10 +1,8 @@
 import sys
 
-import numpy as np
-import pandas as pd
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QIcon
-from PyQt5.QtWidgets import QMainWindow, QListWidget, QListWidgetItem, QAction, QMenu, QDesktopWidget, QApplication
+from PyQt5.QtWidgets import QMainWindow, QListWidget, QAction, QMenu, QDesktopWidget, QApplication
 
 from src.ui.analysis.analysis_table import AnalysisTable
 
@@ -16,12 +14,8 @@ class AnalysisUI(QMainWindow):
         self.setWindowTitle("Analysis Tables")
 
         self.tables_nav = QListWidget(self)
-        for i in range(5):
-            i1 = QListWidgetItem("Table %d" % (i + 1))
-            self.tables_nav.addItem(i1)
 
         self.table_content = AnalysisTable(self)
-        self.table_content.update_contents("Hi", pd.DataFrame(np.arange(10000).reshape(100, 100)))
 
         self.setup_menus()
         self.setup_event_handlers()

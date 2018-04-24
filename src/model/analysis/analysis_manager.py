@@ -62,3 +62,7 @@ class AnalysisManager:
     def export_excel(self, fp):
         for table in self.tables:
             table.data[table.labels].to_excel(fp, table.title, index=False)
+
+    def table_names(self):
+        for table in self.tables:
+            yield table.title
