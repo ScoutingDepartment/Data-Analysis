@@ -1,3 +1,4 @@
+import json
 import os
 import sys
 
@@ -6,9 +7,8 @@ from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import *
 
 from src.ui.analysis.analysis import AnalysisCenter
-from src.ui.verification.vc import VerificationCenter
 
-CONFIG_PATH = "paths.config"
+CONFIG_PATH = "config.json"
 
 
 class MainWindow(QMainWindow):
@@ -16,30 +16,23 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__(flags=Qt.Window | Qt.MSWindowsFixedSizeDialogHint)
 
-        self.vc = None
-        self.analysis = None
-
-        self.db_path = ""
-        self.scans_path = ""
-        self.boards_path = ""
-        self.scripts_path = ""
-        self.tba_key = ""
+        self._config = {}  # Config dictionary
+        self._vc, self._analysis = None, None  # Active reference to windows
 
         (self.edit_scans,
          self.edit_boards,
          self.edit_db,
          self.edit_scripts) = (QLabel(), QLabel(), QLabel(), QLabel())
 
+        (self.edit_tables,
+         self.edit_tba,
+         self.edit_tba_event) = (QLineEdit(), QLineEdit(), QLineEdit())
+
         self.btn_browse_scans = QPushButton("Browse")
         self.btn_browse_boards = QPushButton("Browse")
         self.btn_db_new = QPushButton("New")
         self.btn_db_existing = QPushButton("Existing")
         self.btn_scripts = QPushButton("Browse")
-
-        (self.edit_tables,
-         self.edit_tba,
-         self.edit_tba_event) = (QLineEdit(), QLineEdit(), QLineEdit())
-
         self.btn_analysis = QPushButton("Analysis")
         self.btn_vc = QPushButton("Verification Center")
 
@@ -49,7 +42,6 @@ class MainWindow(QMainWindow):
         self.setup_config()
 
         self.setWindowTitle("Scouting Data Analysis/Verification V1 Setup")
-
         self.show()
 
     def setup_layouts(self):
@@ -113,74 +105,67 @@ class MainWindow(QMainWindow):
 
     def setup_config(self):
         if os.path.exists(CONFIG_PATH):
-            config_path = open(CONFIG_PATH, "r")
-            lines = config_path.readlines()
-            self.db_path = lines[0].strip()
-            self.scans_path = lines[1].strip()
-            self.boards_path = lines[2].strip()
-            config_path.close()
+            config_file = open(CONFIG_PATH, "r")
+            self._config = json.load(config_file)
+            config_file.close()
 
-        self.edit_scans.setText(self.scans_path)
-        self.edit_boards.setText(self.boards_path)
-        self.edit_db.setText(self.db_path)
-        self.btn_scripts.setEnabled(False)
+            self.edit_scans.setText(self._config["scans"])
+            self.edit_boards.setText(self._config["boards"])
+            self.edit_db.setText(self._config["db"])
+        else:
+            self._config = {
+                "scans": "",
+                "boards": "",
+                "db": "",
+                "scripts": "",
+                "tables": [],
+                "tba": "",
+                "event": ""
+            }
 
     def on_browse_scans_clicked(self):
-        path_input = QFileDialog.getExistingDirectory(self,
+        path_input = QFileDialog.getExistingDirectory(None,
                                                       "Open Scans Folder",
                                                       "",
                                                       QFileDialog.ShowDirsOnly)
         if path_input:
-            self.scans_path = path_input
-        self.edit_scans.setText(self.scans_path)
+            self.edit_scans.setText(path_input)
 
     def on_browse_boards_clicked(self):
-        path_input = QFileDialog.getExistingDirectory(self,
+        path_input = QFileDialog.getExistingDirectory(None,
                                                       "Open Boards Folder",
                                                       "",
                                                       QFileDialog.ShowDirsOnly)
         if path_input:
-            self.boards_path = path_input
-        self.edit_boards.setText(self.boards_path)
+            self.edit_boards.setText(path_input)
 
     def on_new_database_clicked(self):
-        path_input = QFileDialog.getSaveFileName(self,
+        path_input = QFileDialog.getSaveFileName(None,
                                                  "Save New Database",
                                                  "",
                                                  filter="(*.warp7)")
         if path_input[0]:
-            self.db_path = path_input[0]
-        self.edit_db.setText(self.db_path)
+            self.edit_db.setText(path_input[0])
 
     def on_exist_database_clicked(self):
-        path_input = QFileDialog.getOpenFileName(self,
+        path_input = QFileDialog.getOpenFileName(None,
                                                  "Open Database",
                                                  filter="(*.warp7)")
         if path_input[0]:
-            self.db_path = path_input[0]
-        self.edit_db.setText(self.db_path)
+            self.edit_db.setText(path_input[0])
 
     def on_open_vc_clicked(self):
-        paths = (self.db_path, self.scans_path, self.boards_path)
-
-        if all(paths):
-            config_file = open(CONFIG_PATH, "w")
-            config_file.writelines("\n".join(paths))
-            config_file.close()
-
-            self.vc = VerificationCenter(*paths)
-        else:
-            QMessageBox.warning(self, "Cannot Open Verification Center",
-                                "Not all of the fields are filled in")
+        QMessageBox.warning(None, "Cannot Open Verification Center",
+                            "Not all of the fields are filled in")
 
     def on_open_analysis_clicked(self):
-        self.analysis = AnalysisCenter()
+        self._analysis = AnalysisCenter()
 
     def closeEvent(self, event):
-        if self.vc is not None:
-            self.vc.close()
-        if self.analysis is not None:
-            self.analysis.close()
+        if self._vc is not None:
+            self._vc.close()
+        if self._analysis is not None:
+            self._analysis.close()
         event.accept()
 
 
