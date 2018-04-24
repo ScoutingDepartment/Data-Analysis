@@ -30,10 +30,10 @@ class Board:
         """Returns the letter of the alliance"""
         return self.specs["alliance"]
 
-    def data_index(self, str_id):
+    def data_index_from_log(self, log_str):
         """Returns the index from the string id"""
         for i, d in enumerate(self.specs["data"]):
-            if d["id"] == str_id:
+            if d["log"] == log_str:
                 return i
         return -1
 
@@ -48,6 +48,10 @@ class Board:
     def log(self, index):
         """Returns the log attribute from the constants index"""
         return self.dc(index)["log"]
+
+    def list_logs(self):
+        """Returns a list of all the log strings"""
+        return list(map(lambda x: x["log"], self.specs["data"]))
 
 
 class Finder:
@@ -79,6 +83,6 @@ class Finder:
 
 
 if __name__ == "__main__":
-    find = Finder("../data/board")
+    find = Finder("../../data/georgian-boards")
     board = find.get_board_by_id(int("e3bb3f98", 16))
-    print(board)
+    print(board.list_logs())

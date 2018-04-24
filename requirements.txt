@@ -1,5 +1,12 @@
 numpy
 pandas
-sqlalchemy
-xlwings
-pywin32
+
+pyWin32
+XLWings
+
+SQLAlchemy
+
+PyQt5
+
+requests
+TBAPy

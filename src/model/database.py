@@ -16,6 +16,8 @@ RAW_HEADER = {
 }
 
 EDITED_HEADER = {
+    "RawIndex": sql_types.Integer,
+    "Edited": sql_types.String,
     "Match": sql_types.Integer,
     "Team": sql_types.Integer,
     "Name": sql_types.String,
@@ -23,9 +25,6 @@ EDITED_HEADER = {
     "Board": sql_types.String,
     "Data": sql_types.String,
     "Comments": sql_types.String,
-
-    "RawIndex": sql_types.Integer,
-    "Edited": sql_types.String
 }
 
 
