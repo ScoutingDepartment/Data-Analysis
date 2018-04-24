@@ -39,6 +39,8 @@ class MainWindow(QMainWindow):
         self.btn_scripts = QPushButton("Browse")
 
         self.edit_tba = QLineEdit()
+        self.edit_tables = QLineEdit()
+        self.edit_tba_event = QLineEdit()
 
         self.btn_vc = QPushButton("Verification Center")
         self.btn_calc_table = QPushButton("Analysis")
@@ -48,12 +50,12 @@ class MainWindow(QMainWindow):
         self.setup_events()
         self.setup_config()
 
-        self.setWindowTitle("Scouting Data Analysis/Verification version 1")
+        self.setWindowTitle("Scouting Data Analysis/Verification V1 Setup")
 
         self.show()
 
     def setup_layouts(self):
-        self.setFixedSize(600, 240)
+        self.setFixedSize(640, 320)
         self.move(0, 0)
 
         grid = QGridLayout()
@@ -77,11 +79,17 @@ class MainWindow(QMainWindow):
             (self.edit_scripts, (3, 1, 1, 5)),
             (self.btn_scripts, (3, 6)),
 
-            (QLabel("TBA key:"), (4, 0)),
-            (self.edit_tba, (4, 1, 1, 6)),
+            (QLabel("Tables:"), (4, 0)),
+            (self.edit_tables, (4, 1, 1, 6)),
 
-            (self.btn_vc, (5, 4, 1, 3)),
-            (self.btn_calc_table, (5, 1, 1, 3)),
+            (QLabel("TBA key:"), (5, 0)),
+            (self.edit_tba, (5, 1, 1, 6)),
+
+            (QLabel("TBA event:"), (6, 0)),
+            (self.edit_tba_event, (6, 1, 1, 6)),
+
+            (self.btn_vc, (7, 4, 1, 3)),
+            (self.btn_calc_table, (7, 1, 1, 3)),
         ]
 
         for widget, grid_position in grid_widgets:
