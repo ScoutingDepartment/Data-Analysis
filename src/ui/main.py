@@ -25,25 +25,23 @@ class MainWindow(QMainWindow):
         self.scripts_path = ""
         self.tba_key = ""
 
-        self.edit_scans = QLabel()
+        (self.edit_scans,
+         self.edit_boards,
+         self.edit_db,
+         self.edit_scripts) = (QLabel(), QLabel(), QLabel(), QLabel())
+
         self.btn_browse_scans = QPushButton("Browse")
-
-        self.edit_boards = QLabel()
         self.btn_browse_boards = QPushButton("Browse")
-
-        self.edit_db = QLabel()
         self.btn_db_new = QPushButton("New")
         self.btn_db_existing = QPushButton("Existing")
-
-        self.edit_scripts = QLabel()
         self.btn_scripts = QPushButton("Browse")
 
-        self.edit_tba = QLineEdit()
-        self.edit_tables = QLineEdit()
-        self.edit_tba_event = QLineEdit()
+        (self.edit_tables,
+         self.edit_tba,
+         self.edit_tba_event) = (QLineEdit(), QLineEdit(), QLineEdit())
 
+        self.btn_analysis = QPushButton("Analysis")
         self.btn_vc = QPushButton("Verification Center")
-        self.btn_calc_table = QPushButton("Analysis")
 
         self.setup_layouts()
         self.setup_styles()
@@ -88,8 +86,8 @@ class MainWindow(QMainWindow):
             (QLabel("TBA event:"), (6, 0)),
             (self.edit_tba_event, (6, 1, 1, 6)),
 
+            (self.btn_analysis, (7, 1, 1, 3)),
             (self.btn_vc, (7, 4, 1, 3)),
-            (self.btn_calc_table, (7, 1, 1, 3)),
         ]
 
         for widget, grid_position in grid_widgets:
@@ -103,7 +101,7 @@ class MainWindow(QMainWindow):
     def setup_styles(self):
         s = "QPushButton{color:#1e2d4a; font-weight:bold; font-size: 18px}"
         self.btn_vc.setStyleSheet(s)
-        self.btn_calc_table.setStyleSheet(s)
+        self.btn_analysis.setStyleSheet(s)
 
     def setup_events(self):
         self.btn_browse_scans.clicked.connect(self.on_browse_scans_clicked)
@@ -111,7 +109,7 @@ class MainWindow(QMainWindow):
         self.btn_db_new.clicked.connect(self.on_new_database_clicked)
         self.btn_db_existing.clicked.connect(self.on_exist_database_clicked)
         self.btn_vc.clicked.connect(self.on_open_vc_clicked)
-        self.btn_calc_table.clicked.connect(self.on_open_calc_table_clicked)
+        self.btn_analysis.clicked.connect(self.on_open_analysis_clicked)
 
     def setup_config(self):
         if os.path.exists(CONFIG_PATH):
@@ -175,12 +173,14 @@ class MainWindow(QMainWindow):
             QMessageBox.warning(self, "Cannot Open Verification Center",
                                 "Not all of the fields are filled in")
 
-    def on_open_calc_table_clicked(self):
+    def on_open_analysis_clicked(self):
         self.analysis = AnalysisCenter()
 
     def closeEvent(self, event):
         if self.vc is not None:
             self.vc.close()
+        if self.analysis is not None:
+            self.analysis.close()
         event.accept()
 
 
