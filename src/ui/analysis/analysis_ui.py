@@ -41,8 +41,8 @@ class AnalysisUI(QMainWindow):
 
         menus = {
             "Analysis": [
-                ["Calculate with TBA", None, Qt.CTRL | Qt.Key_T],
-                ["Calculate without TBA", None, Qt.CTRL | Qt.ALT | Qt.Key_T],
+                ["Calculate with TBA", self.on_calculate_with_tba, Qt.CTRL | Qt.Key_T],
+                ["Calculate without TBA", self.on_calculate_without_tba, Qt.CTRL | Qt.ALT | Qt.Key_T],
             ],
             "Window": [
                 ["Open Table in New Window", None, Qt.ALT | Qt.Key_0],
@@ -81,6 +81,12 @@ class AnalysisUI(QMainWindow):
         self.move(qr.topLeft())
 
     def on_table_nav_selected(self):
+        pass
+
+    def on_calculate_with_tba(self):
+        pass
+
+    def on_calculate_without_tba(self):
         pass
 
     def resizeEvent(self, event):

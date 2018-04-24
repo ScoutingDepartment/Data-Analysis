@@ -8,7 +8,6 @@ class AnalysisCenter(AnalysisUI):
     def __init__(self, *args):
         super().__init__()
         self.manager = AnalysisManager(*args)
-        self.manager.compute_all()
         for title in self.manager.table_names():
             self.tables_nav.addItem(QListWidgetItem(title))
         self.tables_nav.setCurrentRow(0)
@@ -21,3 +20,11 @@ class AnalysisCenter(AnalysisUI):
             new_table_name = self.manager.title_to_name(selected[0].text())
             new_table = self.manager[new_table_name]
             self.table_content.update_contents(new_table.title, new_table.data)
+
+    def on_calculate_with_tba(self):
+        self.manager.compute_all(tba_available=True)
+        self.on_table_nav_selected()
+
+    def on_calculate_without_tba(self):
+        self.manager.compute_all(tba_available=False)
+        self.on_table_nav_selected()
