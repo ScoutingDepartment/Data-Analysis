@@ -62,7 +62,7 @@ class AnalysisUI(QMainWindow):
             menu_bar.addMenu(menu_view)
 
     def setup_event_handlers(self):
-        pass
+        self.tables_nav.itemSelectionChanged.connect(self.on_table_nav_selected)
 
     def setup_view_states(self):
         pass
@@ -80,12 +80,8 @@ class AnalysisUI(QMainWindow):
         qr.moveCenter(cp)
         self.move(qr.topLeft())
 
-        hardcoded_layout = [
-        ]
-
-        for widget, x, y, width, height in hardcoded_layout:
-            widget.move(x, y)
-            widget.setFixedSize(width, height)
+    def on_table_nav_selected(self):
+        pass
 
     def resizeEvent(self, event):
         super().resizeEvent(event)

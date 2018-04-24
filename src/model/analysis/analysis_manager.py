@@ -66,3 +66,9 @@ class AnalysisManager:
     def table_names(self):
         for table in self.tables:
             yield table.title
+
+    def title_to_name(self, title):
+        for table in self.tables:
+            if table.title == title:
+                return table.name
+        return None
