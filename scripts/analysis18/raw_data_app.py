@@ -22,7 +22,7 @@ LABELS = ["Team Number",
           "Scale Placement",
           "Intake Speed",
           "Intake Consistency",
-          "Defense",
+          "Defense Time",
           "Levitate",
           "Force",
           "Boost",
@@ -32,9 +32,32 @@ LABELS = ["Team Number",
           "Attachment Speed"]
 
 
+
 def row_data_generator(manager):
     for entry in manager.entries:
         if entry.board.alliance() != "N":
+            defense_presses = entry.look("Defense")
+            if len(defense_presses) == 0:
+                defense_time = 0
+            else:
+                defense_pairs = []
+                start = True
+                for index, value in enumerate(defense_presses):
+                    if start:
+                       defense_pairs.append([value])
+                    else:
+                        defense_pairs[int((index - 1) / 2)].append(value)
+
+                    if start:
+                        start = False
+                    else:
+                        start = True
+                if len(defense_pairs[-1]) == 1:
+                    defense_pairs[-1].append(150)
+                defence_values = []
+                for i in defense_pairs:
+                    defence_values.append(i[1] - i[0])
+                defense_time = sum(defence_values)
             row_data = {
                 "Team Number": entry.team,
                 "Alliance": entry.board.alliance(),
@@ -68,8 +91,7 @@ def row_data_generator(manager):
                 "Intake Speed": entry.final_value("Intake speed", default=0),
                 "Intake Consistency": entry.final_value("Intake consistency", default=0),
 
-                # TODO make this total time spent defending
-                "Defense": (2 if entry.count("Defense") != 0 else 0),
+                "Defense Time": defense_time,
 
                 "Levitate": "",
                 "Force": "",
