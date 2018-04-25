@@ -26,15 +26,19 @@ def get_team_data(manager):
     return teams_data
 
 
+def avg(x):
+    return (lambda s, l: s / l if s > 0 and l > 0 else np.nan)(sum(x), len(x))
+
+
 def get_rows(manager):
     for team, counts in get_team_data(manager).items():
         scale, a_switch, o_switch, exchange = zip(*counts)  # Counts when they don't do it
 
         yield {"Team": team,
-               "Average Scale": sum(scale) / len(scale) if len(scale) > 0 else np.nan,
-               "Average Alliance Switch": sum(a_switch) / len(a_switch) if len(a_switch) > 0 else np.nan,
-               "Average Opponent Switch": sum(o_switch) / len(o_switch) if len(o_switch) > 0 else np.nan,
-               "Average Exchange": sum(exchange) / len(exchange) if len(exchange) > 0 else np.nan
+               "Average Scale": avg(scale),
+               "Average Alliance Switch": avg(a_switch),
+               "Average Opponent Switch": avg(o_switch),
+               "Average Exchange": avg(exchange)
                }
 
 
