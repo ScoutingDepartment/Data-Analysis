@@ -3,8 +3,8 @@ from itertools import chain
 import numpy as np
 import pandas as pd
 
-TITLE_NAME = "Scale Autos"
-SOURCE_NAME = "scale_autos"
+TITLE_NAME = "Switch Autos"
+SOURCE_NAME = "switch_autos"
 LABELS = ["Team",
           "Minimum Success #",
           "Maximum Success #",
@@ -14,16 +14,16 @@ LABELS = ["Team",
 
 
 def get_autos_data(manager):
-    scale_autos = {}
+    switch_autos = {}
     for entry in manager.entries:
         if not entry.board.alliance() == "N":  # Check for Power ups
 
-            if entry.team not in scale_autos.keys():  # Make new list if team doesn't exist
-                scale_autos[entry.team] = []
+            if entry.team not in switch_autos.keys():  # Make new list if team doesn't exist
+                switch_autos[entry.team] = []
 
-            scale_autos[entry.team].append((entry.look("Auto scale attempt"), entry.look("Auto scale")))
+            switch_autos[entry.team].append((entry.look("Auto switch attempt"), entry.look("Auto switch")))
 
-    return scale_autos
+    return switch_autos
 
 
 def get_rows(manager):
@@ -36,10 +36,6 @@ def get_rows(manager):
 
         attempt_sum = sum(attempt_counts)
         success_sum = sum(success_counts)
-
-        # if success_counts:
-        #     r_min_success = min(success_counts)
-        #     r_max_success
 
         a = attempt_sum + success_sum
 
