@@ -1,0 +1,12 @@
+{
+    "tables": [
+        "cycle_matrix",
+        "scale_autos",
+        "switch_autos",
+        "team_averages",
+        "team_averages_nonzero",
+        "raw_data",
+        "raw_data_app",
+        "scouts_overview"
+    ]
+}
