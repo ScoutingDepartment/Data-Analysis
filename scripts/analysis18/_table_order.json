@@ -1,6 +1,7 @@
 {
     "tables": [
         "match_schedule",
+        "scouted_entries",
         "missing_entries",
         "cycle_matrix",
         "scale_autos",
