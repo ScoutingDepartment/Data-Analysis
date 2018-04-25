@@ -9,6 +9,7 @@
         "team_averages_nonzero",
         "raw_data",
         "raw_data_app",
+        "app_cycles",
         "scouts_overview"
     ]
 }
