@@ -1,6 +1,6 @@
 import pandas as pd
 
-TITLE_NAME = "Raw Data(App)"
+TITLE_NAME = "Raw Data (App)"
 SOURCE_NAME = "raw_data_app"
 LABELS = ["Team Number",
           "Alliance",
@@ -23,7 +23,6 @@ LABELS = ["Team Number",
           "Intake Speed",
           "Intake Consistency",
           "Defense",
-          "Opponents Switch",
           "Levitate",
           "Force",
           "Boost",
@@ -43,13 +42,13 @@ def row_data_generator(manager):
 
                 "Auto Line": entry.final_value("Auto line", default=0),
 
-                "Exchange Auto Attempt": entry.count("Auto exchange attempt"),
-                "Switch Auto Attempt": entry.count("Auto switch attempt"),
-                "Scale Auto Attempt": entry.count("Auto scale attempt"),
-
                 "Exchange Auto Successes": entry.count("Auto exchange"),
                 "Switch Auto Successes": entry.count("Auto switch"),
                 "Scale Auto Successes": entry.count("Auto scale"),
+
+                "Exchange Auto Attempts": entry.count("Auto exchange attempt"),
+                "Switch Auto Attempts": entry.count("Auto switch attempt"),
+                "Scale Auto Attempts": entry.count("Auto scale attempt"),
 
                 "Exchange": entry.count("Tele exchange"),
                 "Alliance Switch": entry.count("Tele alliance switch"),
@@ -84,7 +83,14 @@ def row_data_generator(manager):
 
             # Fix times cube dropped
 
-            if (row_data["Exchange Auto"] + row_data["Switch Auto"] + row_data["Scale Auto"]) > 1:
+            total_auto = ("Exchange Auto Successes",
+                          "Switch Auto Successes",
+                          "Scale Auto Successes",
+                          "Exchange Auto Attempts",
+                          "Switch Auto Attempts",
+                          "Scale Auto Attempts",)
+
+            if sum(row_data[auto_data] for auto_data in total_auto) > 1:
                 row_data["Times Cube Dropped"] += 1
 
             yield row_data

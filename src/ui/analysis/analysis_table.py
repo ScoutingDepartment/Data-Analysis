@@ -1,3 +1,4 @@
+import math
 import sys
 
 import numpy as np
@@ -38,6 +39,8 @@ class AnalysisTable(QWidget):
                 if type(cell) is str:
                     item.setData(Qt.DisplayRole, cell)
                     item.setTextAlignment(Qt.AlignLeft | Qt.AlignVCenter)
+                elif math.isnan(cell):
+                    pass
                 else:
                     scalar = np.asscalar(cell)
                     item.setData(Qt.DisplayRole, scalar)
