@@ -26,6 +26,7 @@ class AnalysisCenter(AnalysisUI):
                 new_table_name = self.manager.title_to_name(selected[0].text())
                 new_table = self.manager[new_table_name]
                 self.table_content.update_contents(new_table.title, new_table.data)
+                self.table_content.table.scrollToTop()
         except:
             import traceback
             traceback.print_exc()

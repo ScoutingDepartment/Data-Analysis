@@ -19,7 +19,7 @@ def compute_table(manager):
 
     for entry in manager.entries:
         if entry.board.alliance() != "N":
-            m = "Qual {}".format(entry.match)
+            m = "Quals {}".format(entry.match)
             b = entry.board.name()
             t = np.int32(entry.team)
             if m in scouted_entries.index:
