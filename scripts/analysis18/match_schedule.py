@@ -1,9 +1,10 @@
+import os
+
 import pandas as pd
 
 TITLE_NAME = "MATCH SCHEDULE"
 SOURCE_NAME = "match_schedule"
-LABELS = ["Match #",
-          "Red 1",
+LABELS = ["Red 1",
           "Red 2",
           "Red 3",
           "Blue 1",
@@ -13,4 +14,6 @@ LABELS = ["Match #",
 
 
 def compute_table(manager):
+    if os.path.exists("schedule.csv"):
+        return pd.read_csv("schedule.csv", index_col=0)
     return pd.DataFrame(columns=LABELS)

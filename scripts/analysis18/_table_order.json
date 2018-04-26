@@ -1,6 +1,7 @@
 {
     "tables": [
         "match_schedule",
+        "scouted_entries",
         "missing_entries",
         "cycle_matrix",
         "scale_autos",
@@ -9,6 +10,9 @@
         "team_averages_nonzero",
         "raw_data",
         "raw_data_app",
-        "scouts_overview"
+        "app_cycles",
+        "app_power_ups",
+      "scouts_overview",
+      "tba_powerups"
     ]
 }

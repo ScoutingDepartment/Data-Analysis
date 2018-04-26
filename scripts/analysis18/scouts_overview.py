@@ -1,10 +1,8 @@
 import pandas as pd
 
-TITLE_NAME = "Scouts"
-SOURCE_NAME = "scouts"
-LABELS = ["Scout Name",
-          "# Scouted"
-          ]
+TITLE_NAME = "Scouts Overview"
+SOURCE_NAME = "scouts_overview"
+LABELS = ["Scout Name", "# Scouted"]
 
 
 def compile_scouts(manager):
