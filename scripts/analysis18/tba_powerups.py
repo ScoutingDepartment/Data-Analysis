@@ -46,4 +46,6 @@ def row_data_generator(manager):
 
 
 def compute_table(manager):
-    return pd.DataFrame(row_data_generator(manager))[LABELS]
+    if manager.tba_available:
+        return pd.DataFrame(row_data_generator(manager))[LABELS]
+    return pd.DataFrame(columns=LABELS)
