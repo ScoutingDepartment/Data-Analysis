@@ -1,5 +1,3 @@
-import pandas as pd
-
 TITLE_NAME = "Missing Entries"
 SOURCE_NAME = "missing_entries"
 LABELS = ["Match #",
@@ -13,4 +11,6 @@ LABELS = ["Match #",
 
 
 def compute_table(manager):
-    return pd.DataFrame(columns=LABELS)
+    ms = manager["match_schedule"].data
+    se = manager["scouted_entries"].data
+    return ms[ms != se]
