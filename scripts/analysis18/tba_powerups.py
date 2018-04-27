@@ -15,8 +15,8 @@ def row_data_generator(manager):
     tba = manager.tba
     event = tba.event_matches(manager.tba_event)
     for match in event:
-        if match['score_breakdown'] != None and match['comp_level'] == 'qm':
-            row_data = {'Match': match['match_number']}
+        if match['score_breakdown'] is not None and match['comp_level'] == 'qm':
+            row_data = {'Match': int(match['match_number'])}
             for alliance in ['red', 'blue']:
                 row_data[alliance.capitalize() + " force played"] = match['score_breakdown'][alliance][
                     'vaultForcePlayed']
@@ -47,5 +47,5 @@ def row_data_generator(manager):
 
 def compute_table(manager):
     if manager.tba_available:
-        return pd.DataFrame(row_data_generator(manager))[LABELS]
+        return pd.DataFrame(row_data_generator(manager))[LABELS].sort_values(by=["Match"]).reset_index(drop=True)
     return pd.DataFrame(columns=LABELS)
