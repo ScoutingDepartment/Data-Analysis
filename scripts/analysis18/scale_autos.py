@@ -39,10 +39,6 @@ def get_rows(manager):
         attempt_sum = sum(attempt_counts)
         success_sum = sum(success_counts)
 
-        # if success_counts:
-        #     r_min_success = min(success_counts)
-        #     r_max_success
-
         attempt_success_sum = attempt_sum + success_sum
 
         yield {

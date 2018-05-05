@@ -6,7 +6,7 @@ import pandas as pd
 TITLE_NAME = "Switch Autos"
 SOURCE_NAME = "switch_autos"
 LABELS = ["Team",
-          "Minimum Success #",
+          "Max coded blocks",
           "Maximum Success #",
           "Fastest Success Time",
           "Success/Attempt Ratio"
@@ -32,19 +32,21 @@ def get_rows(manager):
 
         attempt_counts = list(filter(bool, map(len, attempt)))
         success_counts = list(filter(bool, map(len, success)))
+        attempt_success_counts = list(filter(bool, map(lambda x: sum(map(len, x)), auto_data)))
+
         success_times = list(chain(*success))
 
         attempt_sum = sum(attempt_counts)
         success_sum = sum(success_counts)
 
-        a = attempt_sum + success_sum
+        attempt_success_sum = attempt_sum + success_sum
 
         yield {
             "Team": team,
-            "Minimum Success #": min(success_counts) if success_counts else np.nan,
+            "Max coded blocks": max(attempt_success_counts) if attempt_success_counts else np.nan,
             "Maximum Success #": max(success_counts) if success_counts else np.nan,
             "Fastest Success Time": min(success_times) if success_times else np.nan,
-            "Success/Attempt Ratio": success_sum / a if a != 0 else np.nan
+            "Success/Attempt Ratio": success_sum / attempt_success_sum if attempt_success_sum != 0 else np.nan
         }
 
 
