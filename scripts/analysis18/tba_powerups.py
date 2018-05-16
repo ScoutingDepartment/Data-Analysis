@@ -18,16 +18,11 @@ def row_data_generator(manager):
         if match['score_breakdown'] is not None and match['comp_level'] == 'qm':
             row_data = {'Match': int(match['match_number'])}
             for alliance in ['red', 'blue']:
-                row_data[alliance.capitalize() + " force played"] = match['score_breakdown'][alliance][
-                    'vaultForcePlayed']
-                row_data[alliance.capitalize() + " force total"] = match['score_breakdown'][alliance]['vaultForceTotal']
-                row_data[alliance.capitalize() + " levitate played"] = match['score_breakdown'][alliance][
-                    'vaultLevitatePlayed']
-                row_data[alliance.capitalize() + " levitate total"] = match['score_breakdown'][alliance][
-                    'vaultLevitateTotal']
-                row_data[alliance.capitalize() + " boost played"] = match['score_breakdown'][alliance][
-                    'vaultBoostPlayed']
-                row_data[alliance.capitalize() + " boost total"] = match['score_breakdown'][alliance]['vaultBoostTotal']
+                for powerup in ['force', 'levitate', 'boost']:
+                    row_data[alliance.capitalize() + " "+powerup+" played"] = match['score_breakdown'][alliance][
+                    'vault'+powerup.capitalize()+'Played']
+                    row_data[alliance.capitalize() + " "+powerup+" total"] = match['score_breakdown'][alliance][
+                    'vault'+powerup.capitalize()+'Total']
             yield row_data
 
     yield {"Match": 0,
