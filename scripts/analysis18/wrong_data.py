@@ -36,6 +36,7 @@ def get_rows(manager):
                     if event in outtakes:
                         if not has_cube:
                             double_outtakes += 1
+                        has_cube = False
                     if event == "Tele intake":
                         has_cube = True
 
