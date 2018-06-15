@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-TITLE_NAME = "Cycle Matrix"
+TITLE_NAME = "Cycle Matrix (experimental)"
 SOURCE_NAME = "cycle_matrix"
 LABELS = ["Team", "Exchange Speed", "Switch Speed", "Scale Speed"]
 

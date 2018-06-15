@@ -36,6 +36,7 @@ def n_std(arr):
 def get_rows(manager):
     for entry in manager.entries:
         if not entry.board.alliance() == "N":
+
             tracked_data_types = ['Tele scale',
                                   'Tele exchange',
                                   'Tele opponent switch',
@@ -43,7 +44,6 @@ def get_rows(manager):
                                   'Tele alliance switch']
 
             time_series = [None for _ in range(150)]
-
             for data_type in tracked_data_types:
                 for occurrence_time in entry.look(data_type):
                     time_series[occurrence_time - 1] = data_type
