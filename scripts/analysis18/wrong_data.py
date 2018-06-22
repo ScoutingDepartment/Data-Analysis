@@ -18,7 +18,10 @@ def get_rows(manager):
                                   'Tele opponent switch',
                                   'Tele alliance switch']
 
-            outtakes = tracked_data_types[1:]
+            outtakes = ['Tele scale',
+                        'Tele exchange',
+                        'Tele opponent switch',
+                        'Tele alliance switch']
 
             time_series = [None for _ in range(150)]
             for data_type in tracked_data_types:
@@ -31,7 +34,7 @@ def get_rows(manager):
             for event in time_series:
                 if not first_outtake_ignored:
                     if event in outtakes:
-                        first_outtake_ignored == True
+                        first_outtake_ignored = True
                 else:
                     if event in outtakes:
                         if not has_cube:
@@ -40,11 +43,12 @@ def get_rows(manager):
                     if event == "Tele intake":
                         has_cube = True
 
-        yield {"Scout": entry.name,
-               "Team": entry.team,
-               "Match": entry.match,
-               "Alliance": entry.board.alliance(),
-               "Double outtakes": double_outtakes}
+
+            yield {"Scout": entry.name,
+                   "Team": entry.team,
+                   "Match": entry.match,
+                   "Alliance": entry.board.alliance(),
+                   "Double outtakes": double_outtakes}
 
 
 def compute_table(manager):
