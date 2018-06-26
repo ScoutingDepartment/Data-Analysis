@@ -12,18 +12,19 @@ LABELS = ["Scout",
 
 
 def get_rows(manager):
+    tracked_data_types = ['Tele intake',
+                          'Tele scale',
+                          'Tele exchange',
+                          'Tele opponent switch',
+                          'Tele alliance switch']
+
+    outtakes = ['Tele scale',
+                'Tele exchange',
+                'Tele opponent switch',
+                'Tele alliance switch']
+
     for entry in manager.entries:
         if not entry.board.alliance() == "N":
-            tracked_data_types = ['Tele intake',
-                                  'Tele scale',
-                                  'Tele exchange',
-                                  'Tele opponent switch',
-                                  'Tele alliance switch']
-
-            outtakes = ['Tele scale',
-                        'Tele exchange',
-                        'Tele opponent switch',
-                        'Tele alliance switch']
 
             time_series = [None for _ in range(150)]
             for data_type in tracked_data_types:
@@ -33,6 +34,7 @@ def get_rows(manager):
             has_cube = False
             first_outtake_ignored = False
             double_outtakes = 0
+
             for event in time_series:
                 if not first_outtake_ignored:
                     if event in outtakes:
@@ -46,41 +48,38 @@ def get_rows(manager):
                         has_cube = True
 
             if manager.tba_available:
-                try:
-                    tba = manager.tba
-                    app_climbed = entry.final_value("Climb", default=0) == 2
+                tba = manager.tba
+                # app_climbed = entry.final_value("Climb", default=0) == 2
 
-                    match_key = str(manager.tba_event) + "_qm" + str(entry.match)
+                match_key = str(manager.tba_event) + "_qm" + str(entry.match)
 
-                    if entry.board.alliance().lower() == "r":
-                        all = "blue"
-                    elif entry.board.alliance().lower() == "b":
-                        all = "red"
-                    else:
-                        all = "unknown"
+                if entry.board.alliance().lower() == "r":
+                    alliance = "blue"
+                elif entry.board.alliance().lower() == "b":
+                    alliance = "red"
+                else:
+                    alliance = "unknown"
 
-                    alliance_teams = tba.match(key=match_key)['alliances'][all]["team_keys"]
-                    if "frc" + str(entry.team) in alliance_teams:
-                        tba_robot_number = alliance_teams.index("frc" + str(entry.team)) + 1
-                    else:
-                        continue
+                tba_match = tba.match(key=match_key)
 
-                    tba_climbed = tba.match(key=match_key)['score_breakdown'][all][
-                                      "endgameRobot" + str(tba_robot_number)] == "Climbing"
-                    tba_auto_line = tba.match(key=match_key)['score_breakdown'][all][
-                                        "autoRobot" + str(tba_robot_number)] == "AutoRun"
+                alliance_teams = tba_match['alliances'][alliance]["team_keys"]
+                if "frc" + str(entry.team) in alliance_teams:
+                    tba_robot_number = alliance_teams.index("frc" + str(entry.team)) + 1
+                else:
+                    continue
 
-                    yield {"Scout": entry.name,
-                           "Team": entry.team,
-                           "Match": entry.match,
-                           "Alliance": entry.board.alliance(),
-                           "Double outtakes": double_outtakes,
-                           "Wrong auto line": not (entry.final_value("Auto line", default=0) == 1) == tba_auto_line,
-                           "Wrong climb": not (entry.final_value("Climb", default=0) == 2) == tba_climbed}
-                except:
-                    import traceback
-                    traceback.print_exc()
+                tba_climbed = tba_match['score_breakdown'][alliance][
+                                  "endgameRobot" + str(tba_robot_number)] == "Climbing"
+                tba_auto_line = tba_match['score_breakdown'][alliance][
+                                    "autoRobot" + str(tba_robot_number)] == "AutoRun"
 
+                yield {"Scout": entry.name,
+                       "Team": entry.team,
+                       "Match": entry.match,
+                       "Alliance": entry.board.alliance(),
+                       "Double outtakes": double_outtakes,
+                       "Wrong auto line": not (entry.final_value("Auto line", default=0) == 1) == tba_auto_line,
+                       "Wrong climb": not (entry.final_value("Climb", default=0) == 2) == tba_climbed}
 
             else:
                 yield {"Scout": entry.name,

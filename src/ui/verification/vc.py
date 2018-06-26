@@ -90,10 +90,14 @@ class VerificationCenter(VerificationWindow):
             self.working_index = -1
 
     def on_export_csv(self):
-        path = QFileDialog.getSaveFileName(self, "Save CSV", "", filter="(*.csv)")
-        if path[0]:
-            self.manager.write_csv(path[0])
-            self.log.setText("Saved CSV to: " + path[0])
+        try:
+            path = QFileDialog.getSaveFileName(self, "Save CSV", "", filter="(*.csv)")
+            if path[0]:
+                self.manager.write_csv(path[0])
+                self.log.setText("Saved CSV to: " + path[0])
+        except:
+            import traceback
+            traceback.print_exc()
 
     def on_add_item_clicked(self):
         self.details.add_row()
