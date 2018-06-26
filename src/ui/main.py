@@ -179,15 +179,20 @@ class MainWindow(QMainWindow):
             self._vc = VerificationCenter(*config)
 
     def on_open_analysis_clicked(self):
-        self.read_config()
-        config = (self._config["boards"],
-                  self._config["db"],
-                  self._config["scripts"],
-                  self._config["tables"],
-                  self._config["tba"],
-                  self._config["tba_event"])
-        if all(config):
-            self._analysis = AnalysisCenter(*config)
+        try:
+            self.read_config()
+            config = (self._config["boards"],
+                      self._config["db"],
+                      self._config["scripts"],
+                      self._config["tables"],
+                      self._config["tba"],
+                      self._config["tba_event"])
+            if all(config):
+                self._analysis = AnalysisCenter(*config)
+        except:
+            import traceback
+            traceback.print_exc()
+
 
     def closeEvent(self, event):
         if self._vc is not None:

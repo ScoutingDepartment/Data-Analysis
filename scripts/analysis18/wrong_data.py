@@ -6,7 +6,9 @@ LABELS = ["Scout",
           "Team",
           "Match",
           "Alliance",
-          "Double outtakes"]
+          "Double outtakes",
+          "Wrong auto line",
+          "Wrong climb"]
 
 
 def get_rows(manager):
@@ -43,12 +45,51 @@ def get_rows(manager):
                     if event == "Tele intake":
                         has_cube = True
 
+            if manager.tba_available:
+                try:
+                    tba = manager.tba
+                    app_climbed = entry.final_value("Climb", default=0) == 2
 
-            yield {"Scout": entry.name,
-                   "Team": entry.team,
-                   "Match": entry.match,
-                   "Alliance": entry.board.alliance(),
-                   "Double outtakes": double_outtakes}
+                    match_key = str(manager.tba_event) + "_qm" + str(entry.match)
+
+                    if entry.board.alliance().lower() == "r":
+                        all = "blue"
+                    elif entry.board.alliance().lower() == "b":
+                        all = "red"
+                    else:
+                        all = "unknown"
+
+                    alliance_teams = tba.match(key=match_key)['alliances'][all]["team_keys"]
+                    if "frc" + str(entry.team) in alliance_teams:
+                        tba_robot_number = alliance_teams.index("frc" + str(entry.team)) + 1
+                    else:
+                        continue
+
+                    tba_climbed = tba.match(key=match_key)['score_breakdown'][all][
+                                      "endgameRobot" + str(tba_robot_number)] == "Climbing"
+                    tba_auto_line = tba.match(key=match_key)['score_breakdown'][all][
+                                        "autoRobot" + str(tba_robot_number)] == "AutoRun"
+
+                    yield {"Scout": entry.name,
+                           "Team": entry.team,
+                           "Match": entry.match,
+                           "Alliance": entry.board.alliance(),
+                           "Double outtakes": double_outtakes,
+                           "Wrong auto line": not (entry.final_value("Auto line", default=0) == 1) == tba_auto_line,
+                           "Wrong climb": not (entry.final_value("Climb", default=0) == 2) == tba_climbed}
+                except:
+                    import traceback
+                    traceback.print_exc()
+
+
+            else:
+                yield {"Scout": entry.name,
+                       "Team": entry.team,
+                       "Match": entry.match,
+                       "Alliance": entry.board.alliance(),
+                       "Double outtakes": double_outtakes,
+                       "Wrong auto line": "",
+                       "Wrong climb": ""}
 
 
 def compute_table(manager):
