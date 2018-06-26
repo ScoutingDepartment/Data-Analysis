@@ -46,7 +46,8 @@ class AnalysisUI(QMainWindow):
             ],
             "Window": [
                 # ["Open Table in New Window", None, Qt.ALT | Qt.Key_0],
-                ["Open Tables in Excel", self.on_open_tables_in_excel, Qt.CTRL | Qt.ALT | Qt.Key_0]
+                ["Open Tables in Excel", self.on_open_tables_in_excel, Qt.CTRL | Qt.ALT | Qt.Key_0],
+                ["Save CSV in Folder", self.on_save_csv_in_folder, Qt.CTRL | Qt.ALT | Qt.Key_1]
             ]
         }
 
@@ -90,6 +91,9 @@ class AnalysisUI(QMainWindow):
         pass
 
     def on_open_tables_in_excel(self):
+        pass
+
+    def on_save_csv_in_folder(self):
         pass
 
     def resizeEvent(self, event):

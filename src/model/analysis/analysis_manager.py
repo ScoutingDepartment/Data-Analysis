@@ -66,6 +66,11 @@ class AnalysisManager:
             sheet = book.sheets.add(table.title)
             sheet.range("A1").options(pd.DataFrame, expand="table").value = table.data
 
+    def save_csv_folder(self, path):
+        for table in self.tables:
+            fp = os.path.join(path, "{}.csv".format(table.name))
+            table.data.to_csv(fp)
+
     def table_names(self):
         for table in self.tables:
             yield table.title

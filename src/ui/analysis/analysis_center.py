@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QListWidgetItem
+from PyQt5.QtWidgets import QListWidgetItem, QFileDialog
 
 from src.model.analysis.analysis_manager import AnalysisManager
 from src.ui.analysis.analysis_ui import AnalysisUI
@@ -41,3 +41,10 @@ class AnalysisCenter(AnalysisUI):
 
     def on_open_tables_in_excel(self):
         self.manager.open_excel_instance()
+
+    def on_save_csv_in_folder(self):
+        path_input = QFileDialog.getExistingDirectory(None,
+                                                      "Open Scripts Folder",
+                                                      "")
+        if path_input:
+            self.manager.save_csv_folder(path_input)
