@@ -19,21 +19,24 @@ LABELS = ["Team",
 
 
 def get_rows(manager) -> None:
-    auto_data_points = ["Auto scale", "Auto switch", "Auto scale success", "Auto switch success"]
+    auto_data_points = ["Auto scale", "Auto switch", "Auto scale attempt", "Auto switch attempt"]
     for entry in manager.entries:
         if not entry.board.alliance() == "N":
-            times = {
-                "Auto scale": [],
-                "Auto switch": [],
-                "Auto scale success": [],
-                "Auto switch success": []
-            }
+            times={}
+            for i in auto_data_points:
+                times[i]=[]
+
             actions = []
             for data_point in auto_data_points:
                 for occurrence_time in entry.look(data_point):
                     times[data_point].append(occurrence_time)
                     actions.append((occurrence_time, data_point))
+
+            if actions == []:
+                continue
+
             actions = sorted(actions, key=lambda x: (x[0]))
+
             num_actions = len(actions)
             action_list = []
             for i in range(5):
@@ -41,10 +44,6 @@ def get_rows(manager) -> None:
                     action_list.append(actions[i][1])
                 else:
                     action_list.append("None")
-
-            if action_list[0]=="None":
-                continue
-
             switch_auto_successes = entry.count("Auto switch")
             scale_auto_successes= entry.count("Auto scale")
             switch_auto_attempts= entry.count("Auto switch attempt")
