@@ -25,19 +25,19 @@ def row_data_generator(manager):
                     'vault'+powerup.capitalize()+'Total']
             yield row_data
 
-    yield {"Match": 0,
-           "Red force played": 0,
-           "Red force total": 0,
-           "Red levitate played": 0,
-           "Red levitate total": 0,
-           "Red boost played": 0,
-           "Red boost total": 0,
-           "Blue force played": 0,
-           "Blue force total": 0,
-           "Blue levitate played": 0,
-           "Blue levitate total": 0,
-           "Blue boost played": 0,
-           "Blue boost total": 0}
+    yield {"Match": '',
+           "Red force played": '',
+           "Red force total": '',
+           "Red levitate played": '',
+           "Red levitate total": '',
+           "Red boost played": '',
+           "Red boost total": '',
+           "Blue force played": '',
+           "Blue force total": '',
+           "Blue levitate played": '',
+           "Blue levitate total": '',
+           "Blue boost played": '',
+           "Blue boost total": ''}
 
 
 def compute_table(manager):

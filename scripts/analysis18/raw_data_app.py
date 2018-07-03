@@ -75,7 +75,7 @@ def row_data_generator(manager):
 
                 "Exchange": entry.count("Tele exchange"),
                 "Alliance Switch": entry.count("Tele alliance switch"),
-                "Opponent Switch": entry.count("Tele  opponent switch"),
+                "Opponent Switch": entry.count("Tele opponent switch"),
                 "Scale": entry.count("Tele scale"),
 
                 "Times Cube Dropped": (entry.count("Tele intake") -
