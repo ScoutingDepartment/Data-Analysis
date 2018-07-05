@@ -54,7 +54,7 @@ def compute_table(manager):
             table = pd.DataFrame(get_rows(manager))[LABELS]
         else:
             table = pd.DataFrame({})
+        return table
     except:
         import traceback
         traceback.print_exc()
-    return table

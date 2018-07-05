@@ -2,3 +2,5 @@
 /data
 /.idea
 config.json
+schedule.csv
+*.xlsx

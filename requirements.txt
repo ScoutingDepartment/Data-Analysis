@@ -1,12 +1,9 @@
 numpy
 pandas
-
 pyWin32
 XLWings
-
 SQLAlchemy
-
 PyQt5
-
 requests
 TBAPy
+wheel
