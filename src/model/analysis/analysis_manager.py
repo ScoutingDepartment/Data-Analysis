@@ -11,7 +11,6 @@ from src.model.entrylib import Entry
 
 
 class AnalysisManager:
-
     class Table:
         def __init__(self, module):
             self.title = module.TITLE_NAME
@@ -41,7 +40,9 @@ class AnalysisManager:
 
         self.entries: "Entry" = [Entry(row, self.boards_finder) for _, row in entries_table.iterrows()]
 
-        sys.path.append(scripts_path)
+        if scripts_path not in sys.path:
+            sys.path.append(scripts_path)
+
         self.tables = [self.Table(import_module(s)) for s in table_scripts]
 
         self.tba = TBA(tba_key)

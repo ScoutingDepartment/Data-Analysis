@@ -34,6 +34,7 @@ class MainWindow(QMainWindow):
         self.btn_db_new = QPushButton("New")
         self.btn_db_existing = QPushButton("Existing")
         self.btn_scripts = QPushButton("Browse")
+        self.btn_scripts_all = QPushButton("All")
         self.btn_analysis = QPushButton("Analysis")
         self.btn_vc = QPushButton("Verification Center")
 
@@ -71,7 +72,8 @@ class MainWindow(QMainWindow):
             (self.btn_scripts, (3, 6)),
 
             (QLabel("Tables:"), (4, 0)),
-            (self.edit_tables, (4, 1, 1, 6)),
+            (self.edit_tables, (4, 1, 1, 5)),
+            (self.btn_scripts_all, (4, 6)),
 
             (QLabel("TBA key:"), (5, 0)),
             (self.edit_tba, (5, 1, 1, 6)),
@@ -104,6 +106,7 @@ class MainWindow(QMainWindow):
         self.btn_scripts.clicked.connect(self.on_browse_scripts_clicked)
         self.btn_vc.clicked.connect(self.on_open_vc_clicked)
         self.btn_analysis.clicked.connect(self.on_open_analysis_clicked)
+        self.btn_scripts_all.clicked.connect(self.on_all_scripts_clicked)
 
     def setup_config(self):
         if os.path.exists(CONFIG_PATH):
@@ -171,6 +174,15 @@ class MainWindow(QMainWindow):
                                                       "")
         if path_input:
             self.label_scripts.setText(path_input)
+
+    def on_all_scripts_clicked(self):
+        self.read_config()
+        sc_path = self._config["scripts"]
+        if os.path.isdir(sc_path):
+            if sc_path not in sys.path:
+                sys.path.append(sc_path)
+            paths = [f[:-3] for f in os.listdir(sc_path) if f.endswith(".py")]
+            self.edit_tables.setText(", ".join(paths))
 
     def on_open_vc_clicked(self):
         self.read_config()
