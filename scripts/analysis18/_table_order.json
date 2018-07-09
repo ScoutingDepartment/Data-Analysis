@@ -17,7 +17,7 @@
         "raw_data_app",
         "app_cycles",
         "app_power_ups",
-      "tba_powerups",
-      "tba_team_overview"
+        "tba_powerups",
+        "tba_team_overview"
     ]
 }

@@ -96,9 +96,5 @@ def get_rows(manager):
 
 
 def compute_table(manager):
-    try:
-        table = pd.DataFrame(get_rows(manager))[LABELS]
-    except:
-        import traceback
-        traceback.print_exc()
+    table = pd.DataFrame(get_rows(manager))[LABELS]
     return table

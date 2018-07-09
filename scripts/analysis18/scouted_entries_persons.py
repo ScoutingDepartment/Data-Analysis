@@ -1,4 +1,3 @@
-import numpy as np
 import pandas as pd
 
 TITLE_NAME = "Scouted Entries by Person"
@@ -21,7 +20,6 @@ def compute_table(manager):
         if entry.board.alliance() != "N":
             m = "Quals {}".format(entry.match)
             b = entry.board.name()
-            t = np.int32(entry.team)
             if m in scouted_entries.index:
                 if int(ms.at[m, b]) == entry.team:
                     scouted_entries.at[m, b] = entry.name

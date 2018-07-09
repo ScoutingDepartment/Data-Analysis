@@ -28,8 +28,9 @@ def outtake_counts_by_team(manager):
                 counts_by_team[entry.team] = []
 
             counts_by_team[entry.team].append((entry.count("Tele exchange"),
-                                             entry.count("Tele alliance switch") + entry.count("Tele opponent switch"),
-                                             entry.count("Tele scale")))
+                                               entry.count("Tele alliance switch") + entry.count(
+                                                   "Tele opponent switch"),
+                                               entry.count("Tele scale")))
     return counts_by_team
 
 

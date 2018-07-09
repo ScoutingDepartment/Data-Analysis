@@ -2,8 +2,7 @@ import pandas as pd
 
 TITLE_NAME = "Team By Matches"
 SOURCE_NAME = "team_by_matches"
-LABELS = ["Team",
-          "Matches"]
+LABELS = ["Team", "Matches"]
 
 
 def get_team_data(manager):

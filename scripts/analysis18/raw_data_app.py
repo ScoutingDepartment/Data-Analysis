@@ -32,7 +32,6 @@ LABELS = ["Team Number",
           "Attachment Speed"]
 
 
-
 def row_data_generator(manager):
     for entry in manager.entries:
         if entry.board.alliance() != "N":
@@ -44,7 +43,7 @@ def row_data_generator(manager):
                 start = True
                 for index, value in enumerate(defense_presses):
                     if start:
-                       defense_pairs.append([value])
+                        defense_pairs.append([value])
                     else:
                         defense_pairs[int((index - 1) / 2)].append(value)
 

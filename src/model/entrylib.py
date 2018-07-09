@@ -73,7 +73,7 @@ class Entry:
         return len(self.look(type_str))
 
     def final_value(self, type_str, default=0):
-        l = self.look(type_str)
-        if l:
-            return l[-1]
+        looked_list = self.look(type_str)
+        if looked_list:
+            return looked_list[-1]
         return default

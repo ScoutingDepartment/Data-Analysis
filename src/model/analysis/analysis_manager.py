@@ -38,7 +38,7 @@ class AnalysisManager:
                                     con=conn,
                                     index_col="index").sort_values(by=['Match', 'Team'])
 
-        self.entries: "Entry" = [Entry(row, self.boards_finder) for _, row in entries_table.iterrows()]
+        self.entries = [Entry(row, self.boards_finder) for _, row in entries_table.iterrows()]
 
         if scripts_path not in sys.path:
             sys.path.append(scripts_path)

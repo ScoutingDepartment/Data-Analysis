@@ -49,12 +49,8 @@ def get_rows(manager):
 
 
 def compute_table(manager):
-    try:
-        if manager.tba_available:
-            table = pd.DataFrame(get_rows(manager))[LABELS]
-        else:
-            table = pd.DataFrame({})
-        return table
-    except:
-        import traceback
-        traceback.print_exc()
+    if manager.tba_available:
+        table = pd.DataFrame(get_rows(manager))[LABELS]
+    else:
+        table = pd.DataFrame({})
+    return table

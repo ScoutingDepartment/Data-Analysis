@@ -13,7 +13,7 @@ LABELS = ["Red 1",
           ]
 
 
-def compute_table(manager):
+def compute_table(_):
     if os.path.exists("schedule.csv"):
         return pd.read_csv("schedule.csv", index_col=0)
     return pd.DataFrame(columns=LABELS)

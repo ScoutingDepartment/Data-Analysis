@@ -19,10 +19,10 @@ def row_data_generator(manager):
             row_data = {'Match': int(match['match_number'])}
             for alliance in ['red', 'blue']:
                 for powerup in ['force', 'levitate', 'boost']:
-                    row_data[alliance.capitalize() + " "+powerup+" played"] = match['score_breakdown'][alliance][
-                    'vault'+powerup.capitalize()+'Played']
-                    row_data[alliance.capitalize() + " "+powerup+" total"] = match['score_breakdown'][alliance][
-                    'vault'+powerup.capitalize()+'Total']
+                    row_data[alliance.capitalize() + " " + powerup + " played"] = match['score_breakdown'][alliance][
+                        'vault' + powerup.capitalize() + 'Played']
+                    row_data[alliance.capitalize() + " " + powerup + " total"] = match['score_breakdown'][alliance][
+                        'vault' + powerup.capitalize() + 'Total']
             yield row_data
 
     yield {"Match": '',
