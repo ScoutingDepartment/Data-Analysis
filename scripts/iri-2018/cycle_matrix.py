@@ -48,4 +48,4 @@ def calc_speeds(manager):
 
 
 def compute_table(manager):
-    return pd.DataFrame(calc_speeds(manager))[LABELS]
+    return pd.DataFrame(calc_speeds(manager), columns=LABELS)[LABELS]

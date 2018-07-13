@@ -43,4 +43,4 @@ def get_rows(manager):
 
 
 def compute_table(manager):
-    return pd.DataFrame(get_rows(manager))[LABELS]
+    return pd.DataFrame(get_rows(manager), columns=LABELS)[LABELS]

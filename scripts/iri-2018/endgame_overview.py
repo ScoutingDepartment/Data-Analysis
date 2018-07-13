@@ -73,5 +73,5 @@ def get_rows(manager):
 
 
 def compute_table(manager):
-    table = pd.DataFrame(get_rows(manager))[LABELS]
+    table = pd.DataFrame(get_rows(manager), columns=LABELS)[LABELS]
     return table

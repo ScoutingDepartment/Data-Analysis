@@ -118,4 +118,4 @@ def row_data_generator(manager):
 
 
 def compute_table(manager):
-    return pd.DataFrame(row_data_generator(manager))[LABELS]
+    return pd.DataFrame(row_data_generator(manager), columns=LABELS)[LABELS]
