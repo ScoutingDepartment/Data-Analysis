@@ -97,8 +97,8 @@ def row_data_generator(manager):
                 "Force": "",
                 "Boost": "",
 
-                "Platform": len(entry.look("Platform timer")) % 2 == 1,
-                "Climb": len(entry.look("Platform timer")) % 2 == 1,
+                "Platform": int(len(entry.look("Platform timer")) % 2 == 1),
+                "Climb": int(len(entry.look("Platform timer")) % 2 == 1),
                 "Climb Speed": "",
                 "Attachment Speed": ""
             }

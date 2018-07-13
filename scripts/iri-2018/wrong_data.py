@@ -88,8 +88,8 @@ def get_rows(manager):
                        "Alliance": entry.board.alliance(),
                        "Double outtakes": double_outtakes,
                        "Wrong auto line": not (climbed == tba_auto_line),
-                       "Wrong climb": not (entry.final_value("Climb", default=0) == 2) == tba_climbed}
-
+                       "Wrong climb": not climbed == tba_climbed
+                       }
             else:
                 yield {"Scout": entry.name,
                        "Team": entry.team,
