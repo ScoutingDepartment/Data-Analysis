@@ -57,6 +57,7 @@ def row_data_generator(manager):
                 for i in defense_pairs:
                     defence_values.append(i[1] - i[0])
                 defense_time = sum(defence_values)
+
             row_data = {
                 "Team Number": entry.team,
                 "Alliance": entry.board.alliance(),
@@ -83,12 +84,12 @@ def row_data_generator(manager):
                                        entry.count("Tele opponent switch") -
                                        entry.count("Tele scale")),
 
-                "Exchange Placement": entry.final_value("Exchange speed", default=0),
-                "Switch Placement": entry.final_value("Switch speed", default=0),
-                "Scale Placement": entry.final_value("Scale speed", default=0),
+                "Exchange Placement": "",
+                "Switch Placement": "",
+                "Scale Placement": "",
 
-                "Intake Speed": entry.final_value("Intake speed", default=0),
-                "Intake Consistency": entry.final_value("Intake consistency", default=0),
+                "Intake Speed": "",
+                "Intake Consistency": "",
 
                 "Defense Time": defense_time,
 
@@ -96,10 +97,10 @@ def row_data_generator(manager):
                 "Force": "",
                 "Boost": "",
 
-                "Platform": entry.final_value("Platform", default=0),
-                "Climb": entry.final_value("Climb", default=0),
-                "Climb Speed": entry.final_value("Climb speed", default=0) // 2,
-                "Attachment Speed": entry.final_value("Attachment speed", default=0) // 2
+                "Platform": len(entry.look("Platform timer")) % 2 == 1,
+                "Climb": len(entry.look("Platform timer")) % 2 == 1,
+                "Climb Speed": "",
+                "Attachment Speed": ""
             }
 
             # Fix times cube dropped
