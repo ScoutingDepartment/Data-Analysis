@@ -5,6 +5,7 @@ SOURCE_NAME = "raw_data_app"
 LABELS = ["Team Number",
           "Alliance",
           "Match Number",
+          "Start Position",
           "Auto Line",
           "Exchange Auto Successes",
           "Switch Auto Successes",
@@ -17,19 +18,25 @@ LABELS = ["Team Number",
           "Opponent Switch",
           "Scale",
           "Times Cube Dropped",
-          "Exchange Placement",
-          "Switch Placement",
-          "Scale Placement",
-          "Intake Speed",
-          "Intake Consistency",
           "Defense Time",
-          "Levitate",
-          "Force",
-          "Boost",
-          "Platform",
-          "Climb",
-          "Climb Speed",
-          "Attachment Speed"]
+          "Endgame Type"]
+
+START_POSITION = [
+    "None",
+    "Left",
+    "Center",
+    "Right"
+]
+
+ENDGAME_TYPE = [
+    "None",
+    "Platform",
+    "Failed Climb",
+    "Single Climb",
+    "Double Climb",
+    "Single Climb, Lifting Another Robot",
+    "Lifted by Another Robot"
+]
 
 
 def row_data_generator(manager):
@@ -46,11 +53,7 @@ def row_data_generator(manager):
                         defense_pairs.append([value])
                     else:
                         defense_pairs[int((index - 1) / 2)].append(value)
-
-                    if start:
-                        start = False
-                    else:
-                        start = True
+                    start = not start
                 if len(defense_pairs[-1]) == 1:
                     defense_pairs[-1].append(150)
                 defence_values = []
@@ -63,6 +66,7 @@ def row_data_generator(manager):
                 "Alliance": entry.board.alliance(),
                 "Match Number": entry.match,
 
+                "Start Position": START_POSITION[entry.final_value("Start position", 0)],
                 "Auto Line": entry.final_value("Auto line", default=0),
 
                 "Exchange Auto Successes": entry.count("Auto exchange"),
@@ -84,23 +88,8 @@ def row_data_generator(manager):
                                        entry.count("Tele opponent switch") -
                                        entry.count("Tele scale")),
 
-                "Exchange Placement": "",
-                "Switch Placement": "",
-                "Scale Placement": "",
-
-                "Intake Speed": "",
-                "Intake Consistency": "",
-
                 "Defense Time": defense_time,
-
-                "Levitate": "",
-                "Force": "",
-                "Boost": "",
-
-                "Platform": int(len(entry.look("Platform timer")) % 2 == 1),
-                "Climb": int(len(entry.look("Platform timer")) % 2 == 1),
-                "Climb Speed": "",
-                "Attachment Speed": ""
+                "Endgame Type": ENDGAME_TYPE[entry.final_value("Endgame type", 0)]
             }
 
             # Fix times cube dropped
