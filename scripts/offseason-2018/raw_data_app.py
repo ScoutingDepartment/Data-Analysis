@@ -26,6 +26,7 @@ LABELS = ["Team Number",
           "Total Climbed Duration",
           "Last Climbed Duration",
           "Climb Attempts",
+          "Relative Climb Time",
           "Objective",
           "Comments"
           ]
@@ -83,7 +84,7 @@ def row_data_generator(manager):
                 else:
                     defense_time = 0
 
-            platform_presses = entry.look("Platform")
+            platform_presses = entry.look("Platform timer")
             platform_pairs = []
             start = True
 
@@ -105,7 +106,7 @@ def row_data_generator(manager):
 
             total_platform_duration = sum(map(lambda x: x[1] - x[0], platform_pairs))
 
-            climbed_presses = entry.look("Climbed")
+            climbed_presses = entry.look("Climbed timer")
             climbed_pairs = []
             start = True
 
@@ -164,6 +165,8 @@ def row_data_generator(manager):
                 "Total Climbed Duration": total_climbed_duration,
                 "Last Climbed Duration": last_climbed_duration,
                 "Climb Attempts": climb_attempts,
+
+                "Relative Climb Time": last_platform_duration - last_climbed_duration,
 
                 "Objective": OBJECTIVES[entry.final_value("Objective", 0)],
                 "Comments": entry.comments

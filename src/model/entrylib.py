@@ -44,12 +44,23 @@ class Entry:
 
         self.board = board_finder.get_board_by_name(info["Board"])
 
-        self.decode()
+        try:
+            self.decode()
+        except TypeError:
+            print("Error!!!")
+            print("match: ", self.match)
+            print("team: ", self.team)
+            print("board: ", self.board.name())
+            print()
 
     def decode(self):
         self.decoded_data = []
         for t, v, u, s in self.split(self.encoded_data):
-            self.decoded_data.append([self.board.log(t), bool(s), v, bool(u)])
+            try:
+                self.decoded_data.append([self.board.log(t), bool(s), v, bool(u)])
+            except TypeError:
+                print(t, v, u, s)
+                raise TypeError()
 
         return self.decoded_data
 

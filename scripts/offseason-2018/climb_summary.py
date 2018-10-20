@@ -5,9 +5,9 @@ TITLE_NAME = "Climb summary"  # The name to display
 SOURCE_NAME = "climb_summary"  # The name to be accessed by other code
 LABELS = ["Team",
           "Match",
-          "Platform",
           "Climbed",
           "Climb time",
+          "Relative climb time",
           "Climb failed",
           "Lifted",
           "Lifting"
@@ -30,16 +30,18 @@ def get_rows(manager):
     for entry in manager.entries:
         row_data = {}
 
-        if entry.final_value("Climbed"):
-            row_data["Relative climb time"] = max(entry.look("Climbed")) - max(entry.look("Platform"))
-            row_data["Climb time"] = max(entry.look("Climbed"))
+        climbed_look = entry.look("Climbed timer")
+
+        if len(climbed_look) % 2 == 1:
+            row_data["Relative climb time"] = max(climbed_look) - max(entry.look("Platform timer"))
+            row_data["Climb time"] = max(climbed_look)
         else:
             row_data["Relative climb time"] = np.nan
             row_data["Climb time"] = np.nan
 
         yield {"Team": entry.team,
                "Match": entry.match,
-               "Climbed": len(entry.look("Climbed")) % 2,
+               "Climbed": len(climbed_look) % 2,
                "Climb time": row_data["Climb time"],
                "Relative climb time": row_data["Relative climb time"],
                "Climb failed": int(entry.final_value("Endgame type") == 2),
