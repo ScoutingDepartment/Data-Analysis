@@ -19,7 +19,7 @@ LABELS = ["Team Number",
           "Scale",
           "Times Cube Dropped",
           "Defense Time",
-          "Endgame Type"
+          "Endgame Type",
           "Total Platform Duration",
           "Last Platform Duration",
           "Platform Attempts",
