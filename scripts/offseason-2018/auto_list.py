@@ -51,7 +51,7 @@ def get_rows(manager):
             switch_auto_attempts = entry.count("Auto switch attempt")
             scale_auto_attempts = entry.count("Auto scale attempt")
 
-            starting_pos = entry.final_value("Starting position", default=0)
+            starting_pos = entry.final_value("Start position", default=0)
             starting_pos_str = ["None", "Left", "Center", "Right"][starting_pos]
 
             if manager.tba_available:

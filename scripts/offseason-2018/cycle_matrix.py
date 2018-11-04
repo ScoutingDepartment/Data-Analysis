@@ -39,6 +39,13 @@ def calc_speeds(manager):
     for team in counted_data.keys():
         team_data = calculate_prs(counted_data[team])
 
+        if team_data[0] == 0:
+            team_data[0] = np.nan
+        if team_data[1] == 0:
+            team_data[1] = np.nan
+        if team_data[2] == 0:
+            team_data[2] = np.nan
+
         yield {
             "Team": team,
             "Exchange Speed": team_data[0],

@@ -33,7 +33,10 @@ def get_rows(manager):
         climbed_look = entry.look("Climbed timer")
 
         if len(climbed_look) % 2 == 1:
-            row_data["Relative climb time"] = max(climbed_look) - max(entry.look("Platform timer"))
+            if entry.look("Platform timer")!=[]:
+                row_data["Relative climb time"] = max(climbed_look) - max(entry.look("Platform timer"))
+            else:
+                row_data["Relative climb time"] = np.nan
             row_data["Climb time"] = max(climbed_look)
         else:
             row_data["Relative climb time"] = np.nan

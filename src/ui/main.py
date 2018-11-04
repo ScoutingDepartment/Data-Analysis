@@ -185,10 +185,14 @@ class MainWindow(QMainWindow):
             self.edit_tables.setText(", ".join(paths))
 
     def on_open_vc_clicked(self):
-        self.read_config()
-        config = (self._config["db"], self._config["scans"], self._config["boards"])
-        if all(config):
-            self._vc = VerificationCenter(*config)
+        try:
+            self.read_config()
+            config = (self._config["db"], self._config["scans"], self._config["boards"])
+            if all(config):
+                self._vc = VerificationCenter(*config)
+        except:
+            import traceback
+            traceback.print_exc()
 
     def on_open_analysis_clicked(self):
         try:
