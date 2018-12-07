@@ -23,9 +23,9 @@ class EntryInfoListItemWidget(QWidget):
         if board_finder:
             board = board_finder.get_board_by_name(entry_info["Board"])
             alliance = board.alliance()
-            if alliance == "R":
+            if alliance == "red":
                 color = "#FF0000"
-            if alliance == "B":
+            if alliance == "blue":
                 color = "#0000FF"
 
         self.team_label.setStyleSheet("QLabel{font:bold; color:" + color + "}")

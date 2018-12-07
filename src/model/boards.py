@@ -28,6 +28,8 @@ class Board:
 
     def alliance(self):
         """Returns the letter of the alliance"""
+        if self.specs["alliance"] in ['R','B']:
+            return {'R':'red','B':'blue'}[self.specs["alliance"]]
         return self.specs["alliance"]
 
     def data_index_from_log(self, log_str):

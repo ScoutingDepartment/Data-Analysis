@@ -20,8 +20,10 @@ LABELS = [
     "Auto run TBA",
     "Scale auto successes",
     "Switch auto successes",
-    "Scale auto attempts",
-    "Switch auto attempts",
+    "Scale auto fails",
+    "Switch auto fails",
+    "Scale auto attempted",
+    "Switch auto attempted",
     "Auto action 1",
     "Auto action 2",
     "Auto action 3",
@@ -42,7 +44,7 @@ LABELS = [
     "Climb attempts",
     "Climb failed",
     "Lifted",
-    "Lifting"
+    "Lifting",
     "Endgame type",
 
     "Average scale time",
@@ -57,7 +59,9 @@ LABELS = [
     "Std intake time",
 
     "Objective",
-    "Comments"
+    "Comments",
+
+    "Double outtakes"
 ]
 
 
@@ -168,8 +172,8 @@ def raw_data_app(manager, entry):
         "Switch auto successes": entry.count("Auto switch"),
         "Scale auto successes": entry.count("Auto scale"),
 
-        "Switch auto attempts": entry.count("Auto switch attempt"),
-        "Scale auto attempts": entry.count("Auto scale attempt"),
+        "Switch auto fails": entry.count("Auto switch attempt"),
+        "Scale auto fails": entry.count("Auto scale attempt"),
 
         "Exchange": entry.count("Tele exchange"),
         "Alliance switch": entry.count("Tele alliance switch"),
@@ -203,8 +207,8 @@ def raw_data_app(manager, entry):
 
     total_auto = ("Switch auto successes",
                   "Scale auto successes",
-                  "Switch auto attempts",
-                  "Scale auto attempts",)
+                  "Switch auto fails",
+                  "Scale auto fails")
 
     if sum(row_data[auto_data] for auto_data in total_auto) > 1:
         row_data["Times cube dropped"] += 1
@@ -235,61 +239,34 @@ def auto(manager, entry):
 
     scale_auto_successes = entry.count("Auto scale")
     switch_auto_successes = entry.count("Auto switch")
-    scale_auto_attempts = entry.count("Auto scale attempt")
-    switch_auto_attempts = entry.count("Auto switch attempt")
+    scale_auto_fails = entry.count("Auto scale attempt")
+    switch_auto_fails = entry.count("Auto switch attempt")
+
+    scale=scale_auto_successes>0 or scale_auto_fails>0
+    switch=switch_auto_successes>0 or switch_auto_fails>0
 
     starting_pos = entry.final_value("Start position", default=0)
     starting_pos_str = ["None", "Left", "Center", "Right"][starting_pos]
 
-    if manager.tba_available:
-        plate_assignments = manager.tba.match(key='2018dar_qm49')['score_breakdown']['red']['tba_gameData']
-        if entry.board.alliance() == "R":
-            scale_assignment = plate_assignments[1]
-            switch_assignment = plate_assignments[0]
-        else:
-            for i, v in enumerate(plate_assignments):
-                if v == "R":
-                    plate_assignments[i] = "L"
-                elif v == "L":
-                    plate_assignments[i] = "R"
+    row_data = {
+        "Team": entry.team,
+        "Match": entry.match,
+        "Start position": starting_pos_str,
+        "Scale assignment": '',
+        "Switch assignment": '',
+        "Scale auto successes": scale_auto_successes,
+        "Switch auto successes": switch_auto_successes,
+        "Scale auto fails": scale_auto_fails,
+        "Switch auto fails": switch_auto_fails,
+        "Scale auto attempted": scale_auto_successes if scale else '',
+        "Switch auto attempted": switch_auto_successes if switch else '',
+        "Auto action 1": action_list[0],
+        "Auto action 2": action_list[1],
+        "Auto action 3": action_list[2],
+        "Auto action 4": action_list[3],
+        "Auto action 5": action_list[4]
+    }
 
-            plate_assignments = plate_assignments
-            scale_assignment = plate_assignments[1]
-            switch_assignment = plate_assignments[0]
-
-        row_data = {
-            "Team": entry.team,
-            "Match": entry.match,
-            "Start position": starting_pos_str,
-            "Scale assignment": scale_assignment,
-            "Switch assignment": switch_assignment,
-            "Scale auto successes": scale_auto_successes,
-            "Switch auto successes": switch_auto_successes,
-            "Scale auto fails": scale_auto_successes,
-            "Switch auto fails": switch_auto_successes,
-            "Auto action 1": action_list[0],
-            "Auto action 2": action_list[1],
-            "Auto action 3": action_list[2],
-            "Auto action 4": action_list[3],
-            "Auto action 5": action_list[4]
-        }
-    else:
-        row_data = {
-            "Team": entry.team,
-            "Match": entry.match,
-            "Start position": starting_pos_str,
-            "Scale assignment": "",
-            "Switch assignment": "",
-            "Scale auto successes": scale_auto_successes,
-            "Switch auto successes": switch_auto_successes,
-            "Scale auto attempts": scale_auto_successes,
-            "Switch auto attempts": switch_auto_successes,
-            "Auto action 1": action_list[0],
-            "Auto action 2": action_list[1],
-            "Auto action 3": action_list[2],
-            "Auto action 4": action_list[3],
-            "Auto action 5": action_list[4]
-        }
     return row_data
 
 
@@ -386,11 +363,11 @@ def climb(manager, entry):
         if entry.look("Platform timer") != []:
             row_data["Relative climb time"] = max(climbed_look) - max(entry.look("Platform timer"))
         else:
-            row_data["Relative climb time"] = np.nan
+            row_data["Relative climb time"] = ''
         row_data["Climb time"] = max(climbed_look)
     else:
-        row_data["Relative climb time"] = np.nan
-        row_data["Climb time"] = np.nan
+        row_data["Relative climb time"] = ''
+        row_data["Climb time"] = ''
 
     return {"Team": entry.team,
             "Match": entry.match,
@@ -442,12 +419,22 @@ def wrong_data(manager, entry):
 def tba_wrong_data(manager, entry):
     match_key = str(manager.tba_event) + "_qm" + str(entry.match)
 
-    if entry.board.alliance().lower() == "r":
+    if entry.board.alliance() == "red":
         alliance = "red"
-    elif entry.board.alliance().lower() == "b":
+    elif entry.board.alliance() == "blue":
         alliance = "blue"
     else:
         alliance = "unknown"
+
+    climbed_times = entry.look("Climbed timer")
+    climbed = False
+    if len(climbed_times) % 2 == 1:
+        climbed = True
+
+    auto_run = entry.final_value("Auto line", default=0)
+
+    tba_climbed = ''
+    tba_auto_line = ''
 
     for match in manager.tba_matches:
         if match['key'] == match_key:
@@ -464,21 +451,16 @@ def tba_wrong_data(manager, entry):
             tba_auto_line = tba_match['score_breakdown'][alliance][
                                 "autoRobot" + str(tba_robot_number)] == "AutoRun"
 
-            climbed_times = entry.look("Climbed timer")
-            climbed = False
-            if len(climbed_times) % 2 == 1:
-                climbed = True
-
     return {"Scout": entry.name,
             "Team": entry.team,
             "Match": entry.match,
-            "Alliance": entry.alliance,
-            "Wrong auto line": not (climbed == tba_auto_line),
-            "Wrong climb": not climbed == tba_climbed
+            "Alliance": entry.board.alliance(),
+            "Wrong auto line": not (auto_run == tba_auto_line),
+            "Wrong climb": not (climbed == tba_climbed)
             }
 
 
-def tba_tam(manager, entry):
+def tba_tm(manager, entry):
     match_key = manager.tba_event + "_qm" + str(entry.match)
 
     ds_number = ''
@@ -487,25 +469,37 @@ def tba_tam(manager, entry):
     if manager.tba_available:
         tba = manager.tba
 
-        i = [manager.tba_event + "_qm" + entry.match, entry.team]
-
         match = tba.match(match_key)
 
         if 'frc' + str(entry.team) in match['alliances']['red']['team_keys']:
-            ds_number = match['alliances']['red']['team_keys'].index('frc' + str(i[1])) + 1
+            ds_number = match['alliances']['red']['team_keys'].index('frc' + str(entry.team)) + 1
             auto_run = int(match['score_breakdown']['red']['autoRobot' + str(ds_number)] == 'AutoRun')
             climbing = int(match['score_breakdown']['red']['endgameRobot' + str(ds_number)] == 'Climbing')
-            ds_number = 'R' + ds_number
+            ds_number = 'red' + ds_number
         elif 'frc' + str(entry.team) in match['alliances']['blue']['team_keys']:
-            ds_number = match['alliances']['blue']['team_keys'].index('frc' + str(i[1])) + 1
+            ds_number = match['alliances']['blue']['team_keys'].index('frc' + str(entry.team)) + 1
             auto_run = int(match['score_breakdown']['blue']['autoRobot' + str(ds_number)] == 'AutoRun')
             climbing = int(match['score_breakdown']['blue']['endgameRobot' + str(ds_number)] == 'Climbing')
-            ds_number = 'B' + ds_number
+            ds_number = 'blue' + ds_number
+
+        plate_assignments = manager.tba.match(key=match_key)['score_breakdown'][entry.board.alliance()]['tba_gameData']
+
+        if entry.board.alliance() == "red":
+            scale_assignment = plate_assignments[1]
+            switch_assignment = plate_assignments[0]
+        elif entry.board.alliance() == "blue":
+            for i, v in enumerate(plate_assignments):
+                if v == "red":
+                    plate_assignments[i] = "L"
+                elif v == "L":
+                    plate_assignments[i] = "red"
+            scale_assignment = plate_assignments[1]
+            switch_assignment = plate_assignments[0]
 
     return {
         "Team": entry.team,
         "Match": entry.match,
-        "Alliance": ds_number[0],
+        "Alliance": ds_number[0] if ds_number != '' else '',
         "Match key": match_key,
         "Driver station number": ds_number,
         "Auto line TBA": auto_run,
@@ -515,8 +509,9 @@ def tba_tam(manager, entry):
 
 def row_data_generator(manager):
     for entry in manager.entries:
-        if entry.board.alliance() == "R" or entry.board.alliance() == "B":
+        if entry.board.alliance() == 'red' or entry.board.alliance() == 'blue':
             row_data = {
+                **wrong_data(manager, entry),
                 **climb(manager, entry),
                 **speeds(manager, entry),
                 **auto(manager, entry),
@@ -526,7 +521,7 @@ def row_data_generator(manager):
             if manager.tba_available:
                 row_data.update({
                     **tba_wrong_data(manager, entry),
-                    **tba_tam(manager, entry)
+                    **tba_tm(manager, entry)
                 })
 
             yield row_data

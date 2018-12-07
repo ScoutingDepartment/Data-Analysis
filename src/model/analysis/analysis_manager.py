@@ -49,11 +49,6 @@ class AnalysisManager:
         self.tba_available = True
         self.tba_event = tba_event
 
-        if self.tba_available:
-            self.tba_matches = self.tba.event_matches(self.tba_event)
-        else:
-            self.tba_matches = None
-
     def __getitem__(self, name):
 
         for table in self.tables:
@@ -62,9 +57,13 @@ class AnalysisManager:
         return None
 
     def compute_all(self, tba_available=True):
-        self.tba_available = tba_available
-        for table in self.tables:
-            table.data = table.compute(self)
+        try:
+            self.tba_available = tba_available
+            for table in self.tables:
+                table.data = table.compute(self)
+        except:
+            import traceback
+            traceback.print_exc()
 
     def open_excel_instance(self):
         book = xl.Book()
